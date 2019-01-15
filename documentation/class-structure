@@ -23,7 +23,7 @@ remove
 
 
 -----------------
->> Order
+>> OrderLineItem
 -----------------
 customerId
 datetime
@@ -38,7 +38,7 @@ remove
 
 
 -----------------
->> Cart
+>> Order
 -----------------
 id
 customer
