@@ -3,17 +3,23 @@ package ase.cw.gui;
 import ase.cw.model.Item;
 
 import javax.swing.*;
+<<<<<<< HEAD
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+=======
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+>>>>>>> Added template classes.
 
 /**
  * Created by User on 04.02.2019.
  */
 public class OrderFrame extends JFrame implements ActionListener {
 
+<<<<<<< HEAD
     private JPanel content = new JPanel(new BorderLayout(10,10));
 
     // Drop-downs
@@ -44,11 +50,14 @@ public class OrderFrame extends JFrame implements ActionListener {
 
     // Display frame
 
+=======
+>>>>>>> Added template classes.
 
     public void setStockItems(Item[] items) {
 
     }
 
+<<<<<<< HEAD
     public OrderFrame() {
 
         this.setTitle("Register");
@@ -77,6 +86,8 @@ public class OrderFrame extends JFrame implements ActionListener {
             }
         }
     }
+=======
+>>>>>>> Added template classes.
     @Override
     public void actionPerformed(ActionEvent e) {
 
