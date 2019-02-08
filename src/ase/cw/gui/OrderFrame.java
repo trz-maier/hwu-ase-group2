@@ -2,6 +2,7 @@ package ase.cw.gui;
 
 import ase.cw.model.Item;
 import javax.swing.*;
+import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
@@ -22,7 +23,7 @@ public class OrderFrame extends JFrame implements ActionListener {
 
     // Buttons
     private JButton start_order_button      = new JButton("Start Order");
-    private JButton pay_button              = new JButton("Pay");
+    private JButton submit_order_button     = new JButton("Submit");
     private JButton cancel_order_button     = new JButton("Cancel");
     private JButton item_search_button      = new JButton("Search");
     private JButton clear_search_button     = new JButton("Clear");
@@ -146,7 +147,7 @@ public class OrderFrame extends JFrame implements ActionListener {
     private void BuildFrame() {
 
         start_order_button.setEnabled(true);
-        pay_button.setEnabled(false);
+        submit_order_button.setEnabled(false);
         cancel_order_button.setEnabled(false);
         remove_item_button.setEnabled(false);
         add_item_button.setEnabled(false);
@@ -229,8 +230,8 @@ public class OrderFrame extends JFrame implements ActionListener {
 
 
         JPanel right_bottom_buttons = new JPanel(new GridLayout(1,2, 5, 5));
-        pay_button.addActionListener(this);
-        right_bottom_buttons.add(pay_button);
+        submit_order_button.addActionListener(this);
+        right_bottom_buttons.add(submit_order_button);
         cancel_order_button.addActionListener(this);
         right_bottom_buttons.add(cancel_order_button);
 
@@ -319,7 +320,7 @@ public class OrderFrame extends JFrame implements ActionListener {
             System.out.println("GUI: Start order button pressed.");
             customer_id_input.setEnabled(false);
             start_order_button.setEnabled(false);
-            pay_button.setEnabled(true);
+            submit_order_button.setEnabled(true);
             cancel_order_button.setEnabled(true);
             add_item_button.setEnabled(true);
 
@@ -330,7 +331,7 @@ public class OrderFrame extends JFrame implements ActionListener {
         if (e.getSource() == add_item_button) {
             System.out.println("GUI: Add item button pressed.");
             if (order_items.getModel().getSize() > 0) {
-                pay_button.setEnabled(true); remove_item_button.setEnabled(true);}
+                submit_order_button.setEnabled(true); remove_item_button.setEnabled(true);}
 
             //TODO: add selected object to pending order
 
@@ -340,19 +341,19 @@ public class OrderFrame extends JFrame implements ActionListener {
         if (e.getSource() == remove_item_button) {
             System.out.println("GUI: Remove item button pressed.");
             if (order_items.getModel().getSize() == 0) {
-                pay_button.setEnabled(false); remove_item_button.setEnabled(false);}
+                submit_order_button.setEnabled(false); remove_item_button.setEnabled(false);}
 
             //TODO: remove selected object from pending order
 
             System.out.println("ORDER: Item XXX has been removed from current order.");
         }
 
-        if (e.getSource() == pay_button) {
+        if (e.getSource() == submit_order_button) {
             System.out.println("GUI: Pay button pressed.");
             customer_id_input.setText("");
             customer_id_input.setEnabled(true);
             start_order_button.setEnabled(true);
-            pay_button.setEnabled(false);
+            submit_order_button.setEnabled(false);
             cancel_order_button.setEnabled(false);
             remove_item_button.setEnabled(false);
             add_item_button.setEnabled(false);
@@ -360,12 +361,24 @@ public class OrderFrame extends JFrame implements ActionListener {
 
             JFrame billFrame = new JFrame("Bill");
 
+
+            JTextArea bill_content = new JTextArea();
+            bill_content.setMargin(new Insets(10,10,10,10));
+            bill_content.setFont( new Font("monospaced", Font.PLAIN, 12) );
+            bill_content.setEditable(false);
+            bill_content.setLineWrap(false);
+            bill_content.setText("------------------ \nThis is your bill\n------------------");
+            JScrollPane sp = new JScrollPane(bill_content);
+            Border border = BorderFactory.createEmptyBorder(0, 0, 0, 0);
+            sp.setBorder(border);
+
+
             billFrame.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("coffee.png")));
-            billFrame.setPreferredSize(new Dimension(300,900));
+            billFrame.setPreferredSize(new Dimension(400,900));
             billFrame.setResizable(false);
             billFrame.setLocation(this.getX()+this.getWidth(), this.getY());
             //TODO: add string representation of the bill
-            //newFrame.add(report_output);
+            billFrame.add(sp);
             billFrame.pack();
             billFrame.setVisible(true);
 
@@ -380,7 +393,7 @@ public class OrderFrame extends JFrame implements ActionListener {
             customer_id_input.setText("");
             customer_id_input.setEnabled(true);
             start_order_button.setEnabled(true);
-            pay_button.setEnabled(false);
+            submit_order_button.setEnabled(false);
             cancel_order_button.setEnabled(false);
             remove_item_button.setEnabled(false);
             add_item_button.setEnabled(false);
