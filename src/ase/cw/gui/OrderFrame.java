@@ -131,7 +131,6 @@ public class OrderFrame extends JFrame implements ActionListener {
 
         this.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("coffee.png")));
         this.setTitle("Café Register");
-
         this.setPreferredSize(new Dimension(600,900));
         this.setResizable(false);
         this.BuildFrame();
