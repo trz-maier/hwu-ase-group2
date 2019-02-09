@@ -10,7 +10,7 @@ public class OrderItem {
     private Item item;
 
     public OrderItem(Item item) {
-
+        this.item=item;
 
     }
 
@@ -18,4 +18,7 @@ public class OrderItem {
         this.customerId = customerId;
     }
 
+    public Item getItem() {
+        return item;
+    }
 }
