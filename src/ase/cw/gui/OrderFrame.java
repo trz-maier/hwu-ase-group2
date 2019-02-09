@@ -112,6 +112,10 @@ public class OrderFrame extends JFrame implements ActionListener {
         return menu;
     }
 
+    public ArrayList<String> getCart() {
+        return new ArrayList<>();
+    }
+
     public ArrayList<String> getMenuSubset(String string) {
         ArrayList<String> menu = this.getMenu();
         ArrayList<String> menu_subset = new ArrayList<>();
@@ -123,8 +127,6 @@ public class OrderFrame extends JFrame implements ActionListener {
 
         return menu_subset;
     }
-
-
 
 
     // Frame builder
@@ -339,6 +341,7 @@ public class OrderFrame extends JFrame implements ActionListener {
             cancel_order_button.setEnabled(true);
             add_item_button.setEnabled(true);
 
+            order_items.setListData(getCart().toArray());
             //TODO: create a new order object
 
         }
