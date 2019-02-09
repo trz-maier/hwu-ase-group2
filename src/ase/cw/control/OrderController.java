@@ -3,6 +3,7 @@ package ase.cw.control;
 import ase.cw.exceptions.EmptyOrderException;
 import ase.cw.exceptions.InvalidCustomerIdException;
 import ase.cw.exceptions.NoOrderException;
+import ase.cw.gui.OrderFrame;
 import ase.cw.model.Bill;
 import ase.cw.model.Item;
 import ase.cw.model.Order;
@@ -45,6 +46,8 @@ public class OrderController {
     }
 
     public static void main(String[] args) {
-        System.out.println("HELLO WORLD");
+
+        new OrderFrame();
+
     }
 }
