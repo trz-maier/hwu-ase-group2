@@ -29,7 +29,6 @@ public class OrderFrame extends JFrame implements ActionListener {
     private JButton clear_search_button     = new JButton("Clear");
     private JButton add_item_button         = new JButton("Add");
     private JButton remove_item_button      = new JButton("Remove");
-    private JButton exit_button             = new JButton("Exit");
 
     // Labels
     private JLabel enter_customer_id_label  = new JLabel("Enter Customer ID:");
@@ -125,12 +124,17 @@ public class OrderFrame extends JFrame implements ActionListener {
         return menu_subset;
     }
 
+
+
+
     // Frame builder
 
     public OrderFrame() {
 
         this.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("coffee.png")));
         this.setTitle("Café Register");
+        this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        this.addWindowListener(new exit_button_press());
         this.setPreferredSize(new Dimension(600,900));
         this.setResizable(false);
         this.BuildFrame();
@@ -153,6 +157,7 @@ public class OrderFrame extends JFrame implements ActionListener {
         clear_search_button.setEnabled(false);
 
         content.setBackground(Color.white);
+
 
         JPanel top = new JPanel(new GridLayout(1,2, 5, 5));
         //top.setBackground(Color.white);
@@ -212,7 +217,7 @@ public class OrderFrame extends JFrame implements ActionListener {
 
 
 
-        JPanel right_bottom = new JPanel(new GridLayout(9,1, 5, 5));
+        JPanel right_bottom = new JPanel(new GridLayout(8,1, 5, 5));
 
         remove_item_button.addActionListener(this);
         right_bottom.add(remove_item_button);
@@ -233,11 +238,7 @@ public class OrderFrame extends JFrame implements ActionListener {
         right_bottom_buttons.add(submit_order_button);
         cancel_order_button.addActionListener(this);
         right_bottom_buttons.add(cancel_order_button);
-
-
         right_bottom.add(right_bottom_buttons);
-        exit_button.addActionListener(this);
-        right_bottom.add(exit_button);
 
         right.add(right_top, BorderLayout.PAGE_START);
         order_items.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -252,8 +253,22 @@ public class OrderFrame extends JFrame implements ActionListener {
 
     }
 
-
     // Key press and mouse click actions
+
+    public class exit_button_press extends WindowAdapter {
+        public void  windowClosing(WindowEvent evt) {
+            int dialog_box = JOptionPane.showConfirmDialog(null,
+                    "  Are you sure you want to close?  \n  Any open order will be discarded.  ",
+                    "Closing Register", JOptionPane.YES_NO_OPTION);
+
+            if (dialog_box == JOptionPane.YES_OPTION) {
+                cancel_order_button.doClick();
+                System.out.println("GUI: Program closed.");
+                System.exit(0);
+            }
+
+        }
+    }
 
     public class search_enter_press extends KeyAdapter {
         public void keyPressed(KeyEvent evt) {
@@ -290,6 +305,7 @@ public class OrderFrame extends JFrame implements ActionListener {
     //TODO: Add window action listener, i.e. dispose of frame and close program upon clicking windows close button
 
     // Action performed definition
+
 
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -401,18 +417,6 @@ public class OrderFrame extends JFrame implements ActionListener {
 
             System.out.println("ORDER: Order has been cancelled.");
         }
-
-        if (e.getSource() == exit_button) {
-            cancel_order_button.doClick();
-            System.out.println("GUI: Program closed.");
-
-            super.dispose();
-            System.exit(0);
-
-        }
-
-
-
 
     }
 }
