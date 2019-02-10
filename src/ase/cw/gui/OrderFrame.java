@@ -315,7 +315,7 @@ public class OrderFrame extends JFrame implements ActionListener {
 
             menu_items.setListData(getMenuSubset(search_items_input.getText()).toArray());
 
-            //TODO: create a search mechanism by createing a subset of menu items.csv that matches search criteria
+            //TODO: create a search mechanism by createing a subset of menu items that matches search criteria
 
         }
 
@@ -326,7 +326,7 @@ public class OrderFrame extends JFrame implements ActionListener {
 
             menu_items.setListData(getMenu().toArray());
 
-            //TODO: set menu_items back to the full set of items.csv
+            //TODO: set menu_items back to the full set of items
 
         }
 
