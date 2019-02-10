@@ -30,7 +30,7 @@ public class FileReader {
      * @throws InvalidCustomerIdException
      * @throws ParseException
      */
-    public static List<Order> parserOders(String filename) throws IOException, InvalidCustomerIdException, ParseException {
+    public static List<Order> parseOrders(String filename) throws IOException, InvalidCustomerIdException, ParseException {
         File file = parseFileName(filename);
         List<Order> orderList = new ArrayList<Order>();
         BufferedReader br = new BufferedReader(new java.io.FileReader(file));

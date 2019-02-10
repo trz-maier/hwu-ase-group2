@@ -112,9 +112,6 @@ public class OrderFrame extends JFrame implements ActionListener {
         return menu;
     }
 
-    public ArrayList<String> getCart() {
-        return new ArrayList<>();
-    }
 
     public ArrayList<String> getMenuSubset(String string) {
         ArrayList<String> menu = this.getMenu();
@@ -318,7 +315,7 @@ public class OrderFrame extends JFrame implements ActionListener {
 
             menu_items.setListData(getMenuSubset(search_items_input.getText()).toArray());
 
-            //TODO: create a search mechanism by createing a subset of menu items that matches search criteria
+            //TODO: create a search mechanism by createing a subset of menu items.csv that matches search criteria
 
         }
 
@@ -329,7 +326,7 @@ public class OrderFrame extends JFrame implements ActionListener {
 
             menu_items.setListData(getMenu().toArray());
 
-            //TODO: set menu_items back to the full set of items
+            //TODO: set menu_items back to the full set of items.csv
 
         }
 
@@ -341,7 +338,6 @@ public class OrderFrame extends JFrame implements ActionListener {
             cancel_order_button.setEnabled(true);
             add_item_button.setEnabled(true);
 
-            order_items.setListData(getCart().toArray());
             //TODO: create a new order object
 
         }
@@ -367,7 +363,7 @@ public class OrderFrame extends JFrame implements ActionListener {
         }
 
         if (e.getSource() == submit_order_button) {
-            System.out.println("GUI: Pay button pressed.");
+            System.out.println("GUI: Submit order button pressed.");
             customer_id_input.setText("");
             customer_id_input.setEnabled(true);
             start_order_button.setEnabled(true);
@@ -382,10 +378,15 @@ public class OrderFrame extends JFrame implements ActionListener {
 
             JTextArea bill_content = new JTextArea();
             bill_content.setMargin(new Insets(10,10,10,10));
-            bill_content.setFont( new Font("monospaced", Font.PLAIN, 12) );
+            bill_content.setFont( new Font("monospaced", Font.PLAIN, 14) );
             bill_content.setEditable(false);
             bill_content.setLineWrap(false);
-            bill_content.setText("------------------ \nThis is your bill\n------------------");
+            bill_content.setText(
+                    "------------------------- \nBill for order XXXXX\n09/02/2019 12:56\n------------------------" +
+                    "\nItem 1            £1.90\nItem 2            £1.90\nItem 3            £1.90\nItem 4            £1.90\nItem 5            £1.90\n------------------------" +
+                    "\nSubtotal          £9.50\nDiscount          £0.90\n------------------------\nTotal             £8.60\n------------------------\n"
+
+            );
             JScrollPane sp = new JScrollPane(bill_content);
             Border border = BorderFactory.createEmptyBorder(0, 0, 0, 0);
             sp.setBorder(border);
