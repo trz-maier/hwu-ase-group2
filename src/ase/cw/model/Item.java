@@ -10,6 +10,18 @@ public class Item {
     private String name;
     private float price;
 
+    public String getName() {
+        return name;
+    }
+
+    public float getPrice() {
+        return price;
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
     public enum Category {
         FOOD, NO_FOOD, ETC,
     }
@@ -18,6 +30,13 @@ public class Item {
 
 
     public Item(UUID id, Category category, String name, float price) {
+        this.id=id;
+        this.category=category;
+        this.price=price;
+        this.name=name;
 
+    }
+    public Category getCategory(){
+        return category;
     }
 }
