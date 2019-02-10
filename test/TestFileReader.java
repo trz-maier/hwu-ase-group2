@@ -94,7 +94,7 @@ public class TestFileReader {
 
     @Test
     public void parseOrderSuccess() throws IOException, InvalidCustomerIdException, ParseException {
-        List<Order> orders = FileReader.parserOders("OrderSuccess.csv");
+        List<Order> orders = FileReader.parseOrders("OrderSuccess.csv");
         assertEquals(orders.size(),4);
         int i=0;
         for(Order order : orders){
