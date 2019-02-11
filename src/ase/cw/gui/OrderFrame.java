@@ -56,7 +56,11 @@ public class OrderFrame extends JFrame implements ActionListener {
         menu_items.setListData(items);
     }
 
-    public ArrayList<String> getMenu() {
+    public void setOrderItems(Item[] items) {
+        order_items.setListData(items);
+    }
+
+    private ArrayList<String> getMenu() {
 
         ArrayList<String> menu = new ArrayList<>();
         menu.add("Cheese Sandwich (£1.90)");
