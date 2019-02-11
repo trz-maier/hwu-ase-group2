@@ -27,14 +27,14 @@ public class OrderController {
 
     public static void main(String[] args) {
         // Loading stock items
-        try {
+/*         try {
             stockItems = FileReader.parseItems("items.txt");
         } catch (IOException e) {
             e.printStackTrace();
         }
 
         // Loading past orders
-/*        try {
+       try {
             orders = FileReader.parseOrders("filename.txt");
         } catch (IOException e) {
             e.printStackTrace();
@@ -46,7 +46,7 @@ public class OrderController {
 */
         // Starting up GUI
         OrderFrame of = new OrderFrame();
-        of.setStockItems(new ArrayList<>(stockItems.values()));
+ //       of.setStockItems(new ArrayList<>(stockItems.values()));
 
     }
 

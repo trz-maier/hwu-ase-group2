@@ -1,13 +1,15 @@
 package ase.cw.gui;
 
-import ase.cw.control.OrderController;
-import ase.cw.exceptions.InvalidCustomerIdException;
 import ase.cw.model.Item;
-import ase.cw.model.Order;
+
 import javax.swing.*;
 import javax.swing.border.Border;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 
 /**
@@ -204,6 +206,47 @@ public class OrderFrame extends JFrame implements ActionListener {
 
     // Key press and mouse click actions
 
+    private void fileWriter(File file, String content) {
+        try {
+            FileWriter writer = new FileWriter(file);
+            writer.write(content);
+            writer.close();
+            System.out.println("GUI: Report saved as "+file.getAbsolutePath());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void saveReportOnExit(String report) {
+
+        int replace_existing;
+
+        JFileChooser saveAs = new JFileChooser();
+        saveAs.setSelectedFile(new File("report.txt"));
+        saveAs.setFileFilter(new FileNameExtensionFilter(".txt", "txt"));
+        saveAs.setDialogTitle("Save Report As");
+        saveAs.showDialog(OrderFrame.this, "Save");
+        File file = saveAs.getSelectedFile();
+
+        if (saveAs.getSelectedFile().exists()) {
+            replace_existing = JOptionPane.showConfirmDialog(saveAs,
+                    "Do you want to replace existing file?",
+                    "Overwrite Existing File",
+                    JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+
+            if (replace_existing == JOptionPane.YES_OPTION) {
+                fileWriter(file, report);
+            }
+            if (replace_existing == JOptionPane.NO_OPTION) {
+                saveReportOnExit(report);
+            }
+        }
+        else {
+            fileWriter(file, report);
+        }
+    }
+
+
     public class exit_button_press extends WindowAdapter {
         public void  windowClosing(WindowEvent evt) {
             int dialog_box = JOptionPane.showConfirmDialog(null,
@@ -212,12 +255,19 @@ public class OrderFrame extends JFrame implements ActionListener {
 
             if (dialog_box == JOptionPane.YES_OPTION) {
                 cancel_order_button.doClick();
-                System.out.println("GUI: Program closed.");
-                System.exit(0);
+
+                        String report = "This is your final report String";
+                        saveReportOnExit(report);
+
+                        System.out.println("GUI: Program closed.");
+                        System.exit(0);
+
+                    }
+                }
             }
 
-        }
-    }
+
+
 
     public class search_enter_press extends KeyAdapter {
         public void keyPressed(KeyEvent evt) {
