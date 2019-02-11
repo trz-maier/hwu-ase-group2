@@ -50,7 +50,7 @@ public class OrderController {
 
     }
 
-    public Bill createNewOrder(String customerId) throws InvalidCustomerIdException, IllegalStateException {
+    public static Bill createNewOrder(String customerId) throws InvalidCustomerIdException, IllegalStateException {
         int idLength = customerId.length();
         if (idLength != EXPECTED_CUSTOMER_ID_LENGTH) {
             throw new InvalidCustomerIdException(String.format("Customer id is expected to have length %o, found %o",
@@ -60,17 +60,18 @@ public class OrderController {
         if (pendingOrder != null) throw new IllegalStateException("New order added while pending order exists");
 
         pendingOrder = new Order(customerId);
+        System.out.println(pendingOrder);
         return pendingOrder.getBill();
     }
 
-    public OrderItem[] addItemToPendingOrder(Item itemToAdd) throws NoOrderException {
+    public static OrderItem[] addItemToPendingOrder(Item itemToAdd) throws NoOrderException {
         if (pendingOrder == null) throw new NoOrderException("No pending order found");
         pendingOrder.addOrderItem(itemToAdd);
         List<OrderItem> itemsInOrder = pendingOrder.getOrderItems();
         return itemsInOrder.toArray(new OrderItem[itemsInOrder.size()]);
     }
 
-    public OrderItem[] removeItemfromPendingOrder(Item itemToRemove) throws NoOrderException {
+    public static OrderItem[] removeItemfromPendingOrder(Item itemToRemove) throws NoOrderException {
         if (pendingOrder == null) throw new NoOrderException("No pending order found");
         List<OrderItem> itemsInOrder = pendingOrder.getOrderItems();
 
@@ -84,11 +85,11 @@ public class OrderController {
         return itemsInOrder.toArray(new OrderItem[itemsInOrder.size()]);
     }
 
-    public void cancelPendingOrder() {
+    public static void cancelPendingOrder() {
         pendingOrder = null;
     }
 
-    public void finalizePendingOrder() throws NoOrderException, EmptyOrderException, InvalidCustomerIdException {
+    public static void finalizePendingOrder() throws NoOrderException, EmptyOrderException, InvalidCustomerIdException {
         orders.add(pendingOrder);
         pendingOrder = null;
     }

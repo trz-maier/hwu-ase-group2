@@ -1,6 +1,11 @@
 package ase.cw.gui;
 
+import ase.cw.control.OrderController;
+import ase.cw.exceptions.EmptyOrderException;
+import ase.cw.exceptions.InvalidCustomerIdException;
+import ase.cw.exceptions.NoOrderException;
 import ase.cw.model.Item;
+import ase.cw.model.OrderItem;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -86,7 +91,7 @@ public class OrderFrame extends JFrame implements ActionListener {
         this.setTitle("Café Register");
         this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         this.addWindowListener(new exit_button_press());
-        this.setPreferredSize(new Dimension(600,900));
+        this.setPreferredSize(new Dimension(600,800));
         this.setResizable(false);
         this.BuildFrame();
         this.pack();
@@ -302,8 +307,6 @@ public class OrderFrame extends JFrame implements ActionListener {
         }
     }
 
-    //TODO: Add window action listener, i.e. dispose of frame and close program upon clicking windows close button
-
     // Action performed definition
 
 
@@ -313,66 +316,65 @@ public class OrderFrame extends JFrame implements ActionListener {
         if (e.getSource() == item_search_button) {
             System.out.println("GUI: Item search button pressed.");
             clear_search_button.setEnabled(true);
-
             menu_items.setListData(this.getMenuSubset(search_items_input.getText()).toArray());
-
-            //TODO: create a search mechanism by createing a subset of menu items.txt that matches search criteria
-
         }
 
         if (e.getSource() == clear_search_button) {
             System.out.println("GUI: Clear search button pressed.");
             search_items_input.setText("");
             clear_search_button.setEnabled(false);
-
             menu_items.setListData(this.stock_items_list);
-
-            //TODO: set menu_items back to the full set of items.txt
-
         }
 
         if (e.getSource() == start_order_button) {
             System.out.println("GUI: Start order button pressed.");
-            customer_id_input.setEnabled(false);
-            start_order_button.setEnabled(false);
-            submit_order_button.setEnabled(true);
-            cancel_order_button.setEnabled(true);
-            add_item_button.setEnabled(true);
-/*
             try {
                 OrderController.createNewOrder(customer_id_input.getText());
+                customer_id_input.setEnabled(false);
+                start_order_button.setEnabled(false);
+                submit_order_button.setEnabled(true);
+                cancel_order_button.setEnabled(true);
+                add_item_button.setEnabled(true);
             } catch (InvalidCustomerIdException exc) {
                 JOptionPane.showMessageDialog(new JFrame(), "Customer ID has to be 8 digits.", "Error", JOptionPane.ERROR_MESSAGE);
             }
-*/
-
         }
 
         if (e.getSource() == add_item_button) {
             System.out.println("GUI: Add item button pressed.");
             if (order_items.getModel().getSize() > 0) {
                 submit_order_button.setEnabled(true); remove_item_button.setEnabled(true);}
-
-            //subtotal.setText(OrderController.getBill().getSubtotal());
-
-            //TODO: add selected object to pending order
-
-            System.out.println("ORDER: Item added - "+menu_items.getSelectedValue());
+            try {
+                Item item = (Item) menu_items.getSelectedValue();
+                OrderItem[] items = OrderController.addItemToPendingOrder(item);
+                order_items.setListData(items);
+                System.out.println("ORDER: Item "+item.toString()+" has been added to pending order.");
+                //TODO: Update bill fields
+            } catch (NoOrderException exception) {
+                exception.getStackTrace();
+                //TODO: Display appropriate error message
+            }
         }
 
         if (e.getSource() == remove_item_button) {
             System.out.println("GUI: Remove item button pressed.");
             if (order_items.getModel().getSize() == 0) {
                 submit_order_button.setEnabled(false); remove_item_button.setEnabled(false);}
-
-            //TODO: remove selected object from pending order
-
-            System.out.println("ORDER: Item XXX has been removed from current order.");
+            try {
+                Item item = (Item) order_items.getSelectedValue();
+                OrderItem[] items = OrderController.removeItemfromPendingOrder(item);
+                order_items.setListData(items);
+                System.out.println("ORDER: Item "+item.toString()+" has been removed from pending order.");
+                //TODO: Update bill fields
+            } catch (NoOrderException exception) {
+                exception.getStackTrace();
+                //TODO: Display appropriate error message
+            }
         }
 
         if (e.getSource() == submit_order_button) {
             System.out.println("GUI: Submit order button pressed.");
-            customer_id_input.setText("");
+
             customer_id_input.setEnabled(true);
             start_order_button.setEnabled(true);
             submit_order_button.setEnabled(false);
@@ -380,9 +382,8 @@ public class OrderFrame extends JFrame implements ActionListener {
             remove_item_button.setEnabled(false);
             add_item_button.setEnabled(false);
 
-
-            JFrame billFrame = new JFrame("Bill");
-
+            JFrame billFrame = new JFrame("Bill: "+customer_id_input.getText());
+            customer_id_input.setText("");
 
             JTextArea bill_content = new JTextArea();
             bill_content.setMargin(new Insets(10,10,10,10));
@@ -401,16 +402,22 @@ public class OrderFrame extends JFrame implements ActionListener {
 
 
             billFrame.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("coffee.png")));
-            billFrame.setPreferredSize(new Dimension(400,900));
+            billFrame.setPreferredSize(new Dimension(300,800));
             billFrame.setResizable(false);
             billFrame.setLocation(this.getX()+this.getWidth(), this.getY());
             //TODO: add string representation of the bill
             billFrame.add(sp);
             billFrame.pack();
             billFrame.setVisible(true);
-
-
-            //TODO: add pending order to list of orders
+            try {
+                OrderController.finalizePendingOrder();
+            } catch (NoOrderException exception) {
+                exception.getStackTrace();
+            } catch (EmptyOrderException exception) {
+                exception.getStackTrace();
+            } catch (InvalidCustomerIdException exception) {
+                exception.getStackTrace();
+            }
 
             System.out.println("ORDER: Order has been submitted.");
         }
@@ -425,7 +432,7 @@ public class OrderFrame extends JFrame implements ActionListener {
             remove_item_button.setEnabled(false);
             add_item_button.setEnabled(false);
 
-            //TODO: remove order object from memory
+            OrderController.cancelPendingOrder();
 
             System.out.println("ORDER: Order has been cancelled.");
         }
