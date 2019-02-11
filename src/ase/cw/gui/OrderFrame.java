@@ -18,8 +18,8 @@ import java.util.ArrayList;
 public class OrderFrame extends JFrame implements ActionListener {
 
     // Lists
-    private ArrayList<Item> stock_items_list         = new ArrayList<>();
-    private ArrayList<Item> order_items_list         = new ArrayList<>();
+    private Item[] stock_items_list;
+    private Item[] order_items_list;
 
     // Top
     private JPanel content                  = new JPanel(new BorderLayout(10,10));
@@ -58,17 +58,17 @@ public class OrderFrame extends JFrame implements ActionListener {
     private JTextField search_items_input   = new JTextField(1);
 
 
-    public void setStockItems(ArrayList<Item> items) {
+    public void setStockItems(Item[] items) {
         this.stock_items_list  = items;
-        this.menu_items.setListData(stock_items_list.toArray());
+        this.menu_items.setListData(stock_items_list);
     }
 
-    public void setOrderItems(ArrayList<Item> items) {
+    public void setOrderItems(Item[] items) {
         this.order_items_list = items;
-        order_items.setListData(order_items_list.toArray());
+        order_items.setListData(order_items_list);
     }
 
-    public ArrayList<Item> getMenuSubset(String string) {
+    private ArrayList<Item> getMenuSubset(String string) {
         ArrayList<Item> stock_items_subset_list  = new ArrayList<>();
         for (Item s : stock_items_list) {
             if (s.toString().toLowerCase().contains(string.toLowerCase()))
@@ -218,31 +218,32 @@ public class OrderFrame extends JFrame implements ActionListener {
     }
 
     private void saveReportOnExit(String report) {
-
+        // On exit as where to save final report, check if file exists. Cancel to exit.
+        int result;
         int replace_existing;
 
         JFileChooser saveAs = new JFileChooser();
         saveAs.setSelectedFile(new File("report.txt"));
         saveAs.setFileFilter(new FileNameExtensionFilter(".txt", "txt"));
         saveAs.setDialogTitle("Save Report As");
-        saveAs.showDialog(OrderFrame.this, "Save");
+        result = saveAs.showDialog(OrderFrame.this, "Save");
         File file = saveAs.getSelectedFile();
+        if (result == JFileChooser.APPROVE_OPTION) {
+            if (saveAs.getSelectedFile().exists()) {
+                replace_existing = JOptionPane.showConfirmDialog(saveAs,
+                        "Do you want to replace existing file?",
+                        "Overwrite Existing File",
+                        JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
 
-        if (saveAs.getSelectedFile().exists()) {
-            replace_existing = JOptionPane.showConfirmDialog(saveAs,
-                    "Do you want to replace existing file?",
-                    "Overwrite Existing File",
-                    JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-
-            if (replace_existing == JOptionPane.YES_OPTION) {
+                if (replace_existing == JOptionPane.YES_OPTION) {
+                    fileWriter(file, report);
+                }
+                if (replace_existing == JOptionPane.NO_OPTION) {
+                    saveReportOnExit(report);
+                }
+            } else {
                 fileWriter(file, report);
             }
-            if (replace_existing == JOptionPane.NO_OPTION) {
-                saveReportOnExit(report);
-            }
-        }
-        else {
-            fileWriter(file, report);
         }
     }
 
@@ -324,7 +325,7 @@ public class OrderFrame extends JFrame implements ActionListener {
             search_items_input.setText("");
             clear_search_button.setEnabled(false);
 
-            menu_items.setListData(this.stock_items_list.toArray());
+            menu_items.setListData(this.stock_items_list);
 
             //TODO: set menu_items back to the full set of items.txt
 
