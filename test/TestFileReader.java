@@ -65,6 +65,7 @@ public class TestFileReader {
     public void parseEmptyItemsFileSuccess() throws IOException {
         TreeMap<String, Item> map;
         map = FileReader.parseItems("ItemsEmpth.csv");
+        assertEquals(map.size(),0);
     }
 
     @Test
