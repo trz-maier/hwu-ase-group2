@@ -3,10 +3,8 @@ package ase.cw.IO;
 import ase.cw.exceptions.InvalidCustomerIdException;
 import ase.cw.model.Item;
 import ase.cw.model.Order;
-import com.sun.javaws.exceptions.InvalidArgumentException;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.security.InvalidParameterException;
 import java.text.DateFormat;
@@ -14,9 +12,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.io.File;
-import java.util.IllegalFormatException;
 import ase.cw.model.Item.Category;
-import org.omg.CORBA.DynAnyPackage.TypeMismatch;
+import jdk.nashorn.internal.runtime.ParserException;
 
 /**
  * Created by User on 04.02.2019.
@@ -30,7 +27,7 @@ public class FileReader {
      * @throws InvalidCustomerIdException
      * @throws ParseException
      */
-    public static List<Order> parserOders(String filename) throws IOException, InvalidCustomerIdException, ParseException {
+    public static List<Order> parserOders(String filename) throws IOException, NoSuchElementException {
         File file = parseFileName(filename);
         List<Order> orderList = new ArrayList<Order>();
         BufferedReader br = new BufferedReader(new java.io.FileReader(file));
@@ -58,17 +55,21 @@ public class FileReader {
      * @throws InvalidCustomerIdException
      * @throws ParseException
      */
-    private static void parseSingleOrder(Scanner allOrderScanner, List<Order> orderList) throws InvalidCustomerIdException, ParseException {
+    private static void parseSingleOrder(Scanner allOrderScanner, List<Order> orderList) throws NoSuchElementException{
 
         Scanner singleOrderScanner = null;
+        String customerId="";
+        String dateStr = "";
+
         try {
             singleOrderScanner = new Scanner(allOrderScanner.nextLine());
             singleOrderScanner.useDelimiter(",");
             while (singleOrderScanner.hasNext()) {
-                String customerId = singleOrderScanner.next();
-                String dateStr = singleOrderScanner.next();
+                customerId = singleOrderScanner.next();
+                dateStr = singleOrderScanner.next();
                 DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
                 Date date = df.parse(dateStr);
+
                 Order order = new Order(customerId,date);
                 while(singleOrderScanner.hasNext()){
                     String nextLineItem = "";
@@ -80,6 +81,12 @@ public class FileReader {
                 }
                 orderList.add(order);
             }
+        } catch (InvalidCustomerIdException e) {
+            throw new InputMismatchException("Invalid CustomerID="+customerId);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            throw new InputMismatchException("Invalid Date string="+dateStr);
+
         } finally {
             if (singleOrderScanner != null) {
                 singleOrderScanner.close();
@@ -93,7 +100,7 @@ public class FileReader {
      * @return
      * @throws IOException
      */
-    public static TreeMap<String, Item> parserItems(String filename) throws IOException {
+    public static TreeMap<String, Item> parserItems(String filename) throws IOException,NoSuchElementException {
         File file = parseFileName(filename);
         TreeMap<String,Item> items = new TreeMap<String,Item>();
         BufferedReader br = new BufferedReader(new java.io.FileReader(file));
@@ -115,7 +122,7 @@ public class FileReader {
         return items;
     }
 
-    private static Item parseSingleItem(String itemString) {
+    private static Item parseSingleItem(String itemString) throws NoSuchElementException{
         Scanner singleItemScanner = null;
         try {
             singleItemScanner = new Scanner(itemString);
@@ -163,7 +170,7 @@ public class FileReader {
             UUID uuid = UUID.fromString(uuidString);
             return uuid;
         } catch(NoSuchElementException e){
-            throw new NoSuchElementException("No UUID is given");
+            throw new NoSuchElementException("No UUID is given="+scanner.nextLine());
         } catch(IllegalArgumentException e){
             throw new InputMismatchException("The UUID="+uuidString+" is not correctly formatted");
         }
