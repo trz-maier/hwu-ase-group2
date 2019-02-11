@@ -80,7 +80,7 @@ public class FileReader {
                 }
                 orderList.add(order);
             }
-        } catch (InvalidCustomerIdException e) {
+        } catch (InputMismatchException e) {
             throw new InputMismatchException("Invalid CustomerID="+customerId);
         } catch (ParseException e) {
             e.printStackTrace();
