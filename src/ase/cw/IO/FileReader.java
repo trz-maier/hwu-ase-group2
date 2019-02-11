@@ -193,7 +193,7 @@ public class FileReader {
         try {
             file = new File(classLoader.getResource(filename).getFile());
         } catch(NullPointerException e){
-            throw new InvalidParameterException("File="+filename +"does not exist");
+            throw new InvalidParameterException("File="+filename +" does not exist");
         }
         return file;
     }

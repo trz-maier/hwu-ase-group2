@@ -1,16 +1,25 @@
 package ase.cw.gui;
 
 import ase.cw.model.Item;
+
 import javax.swing.*;
 import javax.swing.border.Border;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 
 /**
  * Created by User on 04.02.2019.
  */
 public class OrderFrame extends JFrame implements ActionListener {
+
+    // Lists
+    private Item[] stock_items_list;
+    private Item[] order_items_list;
 
     // Top
     private JPanel content                  = new JPanel(new BorderLayout(10,10));
@@ -49,82 +58,25 @@ public class OrderFrame extends JFrame implements ActionListener {
     private JTextField search_items_input   = new JTextField(1);
 
 
-
-
     public void setStockItems(Item[] items) {
-
+        this.stock_items_list  = items;
+        this.menu_items.setListData(stock_items_list);
     }
 
-    public ArrayList<String> getMenu() {
-
-        ArrayList<String> menu = new ArrayList<>();
-        menu.add("Cheese Sandwich (£1.90)");
-        menu.add("Ham Sandwich (£2.50)");
-        menu.add("Orange Juice (£1.00)");
-        menu.add("Apple Juice (£1.00)");
-        menu.add("Oregano Crisps (£1.20)");
-        menu.add("Cheese Sandwich (£1.90)");
-        menu.add("Ham Sandwich (£2.50)");
-        menu.add("Orange Juice (£1.00)");
-        menu.add("Apple Juice (£1.00)");
-        menu.add("Oregano Crisps (£1.20)");
-        menu.add("Cheese Sandwich (£1.90)");
-        menu.add("Ham Sandwich (£2.50)");
-        menu.add("Orange Juice (£1.00)");
-        menu.add("Apple Juice (£1.00)");
-        menu.add("Oregano Crisps (£1.20)");
-        menu.add("Cheese Sandwich (£1.90)");
-        menu.add("Ham Sandwich (£2.50)");
-        menu.add("Orange Juice (£1.00)");
-        menu.add("Apple Juice (£1.00)");
-        menu.add("Oregano Crisps (£1.20)");
-        menu.add("Cheese Sandwich (£1.90)");
-        menu.add("Ham Sandwich (£2.50)");
-        menu.add("Orange Juice (£1.00)");
-        menu.add("Apple Juice (£1.00)");
-        menu.add("Oregano Crisps (£1.20)");
-        menu.add("Cheese Sandwich (£1.90)");
-        menu.add("Ham Sandwich (£2.50)");
-        menu.add("Orange Juice (£1.00)");
-        menu.add("Apple Juice (£1.00)");
-        menu.add("Oregano Crisps (£1.20)");
-        menu.add("Cheese Sandwich (£1.90)");
-        menu.add("Ham Sandwich (£2.50)");
-        menu.add("Orange Juice (£1.00)");
-        menu.add("Apple Juice (£1.00)");
-        menu.add("Oregano Crisps (£1.20)");
-        menu.add("Cheese Sandwich (£1.90)");
-        menu.add("Ham Sandwich (£2.50)");
-        menu.add("Orange Juice (£1.00)");
-        menu.add("Apple Juice (£1.00)");
-        menu.add("Oregano Crisps (£1.20)");
-        menu.add("Cheese Sandwich (£1.90)");
-        menu.add("Ham Sandwich (£2.50)");
-        menu.add("Orange Juice (£1.00)");
-        menu.add("Apple Juice (£1.00)");
-        menu.add("Oregano Crisps (£1.20)");
-        menu.add("Cheese Sandwich (£1.90)");
-        menu.add("Ham Sandwich (£2.50)");
-        menu.add("Orange Juice (£1.00)");
-        menu.add("Apple Juice (£1.00)");
-        menu.add("Oregano Crisps (£1.20)");
-
-        return menu;
+    public void setOrderItems(Item[] items) {
+        this.order_items_list = items;
+        order_items.setListData(order_items_list);
     }
 
-
-    public ArrayList<String> getMenuSubset(String string) {
-        ArrayList<String> menu = this.getMenu();
-        ArrayList<String> menu_subset = new ArrayList<>();
-
-        for (Object s : menu) {
+    private ArrayList<Item> getMenuSubset(String string) {
+        ArrayList<Item> stock_items_subset_list  = new ArrayList<>();
+        for (Item s : stock_items_list) {
             if (s.toString().toLowerCase().contains(string.toLowerCase()))
-                menu_subset.add(s.toString());
+                stock_items_subset_list.add(s);
         }
 
-        return menu_subset;
+        return stock_items_subset_list;
     }
-
 
     // Frame builder
 
@@ -189,7 +141,7 @@ public class OrderFrame extends JFrame implements ActionListener {
 
         left.add(left_top, BorderLayout.PAGE_START);
 
-        menu_items.setListData(getMenu().toArray());
+        //menu_items.setListData(getMenu().toArray());
         menu_items.addMouseListener(new double_click_to_add());
         menu_items.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         menu_items_scroll.setViewportView(menu_items);
@@ -254,6 +206,48 @@ public class OrderFrame extends JFrame implements ActionListener {
 
     // Key press and mouse click actions
 
+    private void fileWriter(File file, String content) {
+        try {
+            FileWriter writer = new FileWriter(file);
+            writer.write(content);
+            writer.close();
+            System.out.println("GUI: Report saved as "+file.getAbsolutePath());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void saveReportOnExit(String report) {
+        // On exit as where to save final report, check if file exists. Cancel to exit.
+        int result;
+        int replace_existing;
+
+        JFileChooser saveAs = new JFileChooser();
+        saveAs.setSelectedFile(new File("report.txt"));
+        saveAs.setFileFilter(new FileNameExtensionFilter(".txt", "txt"));
+        saveAs.setDialogTitle("Save Report As");
+        result = saveAs.showDialog(OrderFrame.this, "Save");
+        File file = saveAs.getSelectedFile();
+        if (result == JFileChooser.APPROVE_OPTION) {
+            if (saveAs.getSelectedFile().exists()) {
+                replace_existing = JOptionPane.showConfirmDialog(saveAs,
+                        "Do you want to replace existing file?",
+                        "Overwrite Existing File",
+                        JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+
+                if (replace_existing == JOptionPane.YES_OPTION) {
+                    fileWriter(file, report);
+                }
+                if (replace_existing == JOptionPane.NO_OPTION) {
+                    saveReportOnExit(report);
+                }
+            } else {
+                fileWriter(file, report);
+            }
+        }
+    }
+
+
     public class exit_button_press extends WindowAdapter {
         public void  windowClosing(WindowEvent evt) {
             int dialog_box = JOptionPane.showConfirmDialog(null,
@@ -262,12 +256,19 @@ public class OrderFrame extends JFrame implements ActionListener {
 
             if (dialog_box == JOptionPane.YES_OPTION) {
                 cancel_order_button.doClick();
-                System.out.println("GUI: Program closed.");
-                System.exit(0);
+
+                        String report = "This is your final report String";
+                        saveReportOnExit(report);
+
+                        System.out.println("GUI: Program closed.");
+                        System.exit(0);
+
+                    }
+                }
             }
 
-        }
-    }
+
+
 
     public class search_enter_press extends KeyAdapter {
         public void keyPressed(KeyEvent evt) {
@@ -313,9 +314,9 @@ public class OrderFrame extends JFrame implements ActionListener {
             System.out.println("GUI: Item search button pressed.");
             clear_search_button.setEnabled(true);
 
-            menu_items.setListData(getMenuSubset(search_items_input.getText()).toArray());
+            menu_items.setListData(this.getMenuSubset(search_items_input.getText()).toArray());
 
-            //TODO: create a search mechanism by createing a subset of menu items.csv that matches search criteria
+            //TODO: create a search mechanism by createing a subset of menu items.txt that matches search criteria
 
         }
 
@@ -324,9 +325,9 @@ public class OrderFrame extends JFrame implements ActionListener {
             search_items_input.setText("");
             clear_search_button.setEnabled(false);
 
-            menu_items.setListData(getMenu().toArray());
+            menu_items.setListData(this.stock_items_list);
 
-            //TODO: set menu_items back to the full set of items.csv
+            //TODO: set menu_items back to the full set of items.txt
 
         }
 
@@ -337,8 +338,13 @@ public class OrderFrame extends JFrame implements ActionListener {
             submit_order_button.setEnabled(true);
             cancel_order_button.setEnabled(true);
             add_item_button.setEnabled(true);
-
-            //TODO: create a new order object
+/*
+            try {
+                OrderController.createNewOrder(customer_id_input.getText());
+            } catch (InvalidCustomerIdException exc) {
+                JOptionPane.showMessageDialog(new JFrame(), "Customer ID has to be 8 digits.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+*/
 
         }
 
@@ -346,6 +352,8 @@ public class OrderFrame extends JFrame implements ActionListener {
             System.out.println("GUI: Add item button pressed.");
             if (order_items.getModel().getSize() > 0) {
                 submit_order_button.setEnabled(true); remove_item_button.setEnabled(true);}
+
+            //subtotal.setText(OrderController.getBill().getSubtotal());
 
             //TODO: add selected object to pending order
 
