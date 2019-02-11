@@ -1,0 +1,22 @@
+FOOD001,Cheese Sandwich,FOOD,1.9
+FOOD002,Ham Sandwich,FOOD,2.00
+FOOD003,Tuna Sandwich,FOOD,1.85
+FOOD004,Chicken Salad Sandwich,FOOD,2.39
+FOOD005,BLT Sandwich,FOOD,2.39
+FOOD005,Cinnamon Roll,FOOD,0.99
+FOOD006,Chocolate Bar,FOOD,1.99
+FOOD007,Oregano Crisps,FOOD,0.99
+FOOD008,Vanilla Ice Cream,FOOD,1.29
+DRINK001,Orange Juice,DRINK,1.19
+DRINK002,Apple Juice,DRINK,1.19
+DRINK003,Orange Soda,DRINK,0.99
+DRINK004,Sparkling Water,DRINK,0.99
+DRINK005,Still Water,DRINK,0.99
+DRINK006,Americano,DRINK,1.99
+DRINK007,Cappuccino,DRINK,2.19
+DRINK008,Hot Chocolate,DRINK,2.19
+DRINK009,Breakfast Tea,DRINK,1.79
+DRINK009,Green Tea,DRINK,1.79
+MISC001,Paper Cup,0.19
+MISC002,Chocolate Syrup,0.29
+MISC003,Hazelnut Syrup,0.29

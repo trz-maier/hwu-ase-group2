@@ -44,7 +44,8 @@ public class OrderController {
         }
 
         // Starting up GUI
-        new OrderFrame();
+        OrderFrame of = new OrderFrame();
+
     }
 
     public Bill createNewOrder(String customerId) throws InvalidCustomerIdException, IllegalStateException {
