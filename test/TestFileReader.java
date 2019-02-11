@@ -21,7 +21,7 @@ public class TestFileReader {
     @Test
     public void parseItemsSuccess() throws IOException {
         TreeMap<String, Item> map;
-        map = FileReader.parserItems("ItemsSuccess.csv");
+        map = FileReader.parseItems("ItemsSuccess.csv");
         assertEquals(map.size(),4);
         int i=0;
         for(Item item : map.values()){
@@ -40,18 +40,18 @@ public class TestFileReader {
     @Test(expected=InvalidParameterException.class)
     public void parseItemFileIsDictFail() throws IOException {
         TreeMap<String, Item> map;
-        map = FileReader.parserItems("folder");
+        map = FileReader.parseItems("folder");
     }
 
     @Test(expected=InvalidParameterException.class)
     public void parseNullFileFail() throws IOException {
         TreeMap<String, Item> map;
-        map = FileReader.parserItems(null);
+        map = FileReader.parseItems(null);
     }
     @Test(expected=InvalidParameterException.class)
     public void parseZeroLengthFileFail() throws IOException {
         TreeMap<String, Item> map;
-        map = FileReader.parserItems("");
+        map = FileReader.parseItems("");
     }
 
     private void checkItem(Item item, String name, String uuid, double price, Item.Category cat) {
@@ -64,37 +64,38 @@ public class TestFileReader {
     @Test
     public void parseEmptyItemsFileSuccess() throws IOException {
         TreeMap<String, Item> map;
-        map = FileReader.parserItems("ItemsEmpth.csv");
+        map = FileReader.parseItems("ItemsEmpth.csv");
+        assertEquals(map.size(),0);
     }
 
     @Test
     public void parseItemManySeperatorsPass() throws IOException {
-        TreeMap<String, Item> map = FileReader.parserItems("ItemsManySeperators.csv");
+        TreeMap<String, Item> map = FileReader.parseItems("ItemsManySeperators.csv");
         assertEquals(1,map.size());
     }
 
     @Test(expected = InputMismatchException.class)
     public void parseItemWrongCategoryFail() throws IOException {
-        FileReader.parserItems("ItemsWrongCategory.csv");
+        FileReader.parseItems("ItemsWrongCategory.csv");
     }
 
 
     @Test(expected = InputMismatchException.class)
     public void parseItemWrongUUIDFail() throws IOException {
-        FileReader.parserItems("ItemsWrongUUID.csv");
+        FileReader.parseItems("ItemsWrongUUID.csv");
     }
 
 
     @Test(expected = InputMismatchException.class)
     public void parseItemWrongPriceFail() throws IOException {
-        FileReader.parserItems("ItemsWrongPrice.csv");
+        FileReader.parseItems("ItemsWrongPrice.csv");
     }
 
 
 
     @Test
     public void parseOrderSuccess() throws IOException, InvalidCustomerIdException, ParseException {
-        List<Order> orders = FileReader.parserOders("OrderSuccess.csv");
+        List<Order> orders = FileReader.parseOrders("OrderSuccess.csv");
         assertEquals(orders.size(),4);
         int i=0;
         for(Order order : orders){

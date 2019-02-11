@@ -2,18 +2,17 @@ package ase.cw.IO;
 
 import ase.cw.exceptions.InvalidCustomerIdException;
 import ase.cw.model.Item;
+import ase.cw.model.Item.Category;
 import ase.cw.model.Order;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.security.InvalidParameterException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.io.File;
-import ase.cw.model.Item.Category;
-import jdk.nashorn.internal.runtime.ParserException;
 
 /**
  * Created by User on 04.02.2019.
@@ -27,7 +26,7 @@ public class FileReader {
      * @throws InvalidCustomerIdException
      * @throws ParseException
      */
-    public static List<Order> parserOders(String filename) throws IOException, NoSuchElementException {
+    public static List<Order> parseOrders(String filename) throws IOException,NoSuchElementException {
         File file = parseFileName(filename);
         List<Order> orderList = new ArrayList<Order>();
         BufferedReader br = new BufferedReader(new java.io.FileReader(file));
@@ -100,7 +99,7 @@ public class FileReader {
      * @return
      * @throws IOException
      */
-    public static TreeMap<String, Item> parserItems(String filename) throws IOException,NoSuchElementException {
+    public static TreeMap<String, Item> parseItems(String filename) throws IOException,NoSuchElementException {
         File file = parseFileName(filename);
         TreeMap<String,Item> items = new TreeMap<String,Item>();
         BufferedReader br = new BufferedReader(new java.io.FileReader(file));
@@ -197,7 +196,5 @@ public class FileReader {
             throw new InvalidParameterException("File="+filename +"does not exist");
         }
         return file;
-    }
-    public static void main(String[] args) {
     }
 }
