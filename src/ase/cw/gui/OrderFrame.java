@@ -1,6 +1,9 @@
 package ase.cw.gui;
 
+import ase.cw.control.OrderController;
+import ase.cw.exceptions.InvalidCustomerIdException;
 import ase.cw.model.Item;
+import ase.cw.model.Order;
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
@@ -49,10 +52,8 @@ public class OrderFrame extends JFrame implements ActionListener {
     private JTextField search_items_input   = new JTextField(1);
 
 
-
-
     public void setStockItems(Item[] items) {
-
+        menu_items.setListData(items);
     }
 
     public ArrayList<String> getMenu() {
@@ -189,7 +190,7 @@ public class OrderFrame extends JFrame implements ActionListener {
 
         left.add(left_top, BorderLayout.PAGE_START);
 
-        menu_items.setListData(getMenu().toArray());
+        //menu_items.setListData(getMenu().toArray());
         menu_items.addMouseListener(new double_click_to_add());
         menu_items.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         menu_items_scroll.setViewportView(menu_items);
@@ -338,7 +339,12 @@ public class OrderFrame extends JFrame implements ActionListener {
             cancel_order_button.setEnabled(true);
             add_item_button.setEnabled(true);
 
-            //TODO: create a new order object
+            try {
+                OrderController.createNewOrder(customer_id_input.getText());
+            } catch (InvalidCustomerIdException exc) {
+                JOptionPane.showMessageDialog(new JFrame(), "Customer ID has to be 8 digits.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+
 
         }
 
@@ -346,6 +352,8 @@ public class OrderFrame extends JFrame implements ActionListener {
             System.out.println("GUI: Add item button pressed.");
             if (order_items.getModel().getSize() > 0) {
                 submit_order_button.setEnabled(true); remove_item_button.setEnabled(true);}
+
+            //subtotal.setText(OrderController.getBill().getSubtotal());
 
             //TODO: add selected object to pending order
 
