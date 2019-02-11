@@ -17,6 +17,6 @@ DRINK007,Cappuccino,DRINK,2.19
 DRINK008,Hot Chocolate,DRINK,2.19
 DRINK009,Breakfast Tea,DRINK,1.79
 DRINK009,Green Tea,DRINK,1.79
-MISC001,Paper Cup,0.19
-MISC002,Chocolate Syrup,0.29
-MISC003,Hazelnut Syrup,0.29
+MISC001,Paper Cup,OTHER,0.19
+MISC002,Chocolate Syrup,OTHER,0.29
+MISC003,Hazelnut Syrup,OTHER,0.29

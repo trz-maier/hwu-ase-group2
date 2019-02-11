@@ -12,6 +12,7 @@ import ase.cw.model.OrderItem;
 
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeMap;
 
@@ -27,13 +28,13 @@ public class OrderController {
     public static void main(String[] args) {
         // Loading stock items
         try {
-            stockItems = FileReader.parseItems("somefilename.txt");
+            stockItems = FileReader.parseItems("items.txt");
         } catch (IOException e) {
             e.printStackTrace();
         }
 
         // Loading past orders
-        try {
+/*        try {
             orders = FileReader.parseOrders("filename.txt");
         } catch (IOException e) {
             e.printStackTrace();
@@ -42,9 +43,10 @@ public class OrderController {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-
+*/
         // Starting up GUI
         OrderFrame of = new OrderFrame();
+        of.setStockItems(new ArrayList<>(stockItems.values()));
 
     }
 
