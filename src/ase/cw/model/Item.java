@@ -1,42 +1,57 @@
+/**
+ * 
+ */
 package ase.cw.model;
 
 import java.util.UUID;
 
+
 /**
- * Created by User on 04.02.2019.
+ * @author Ram
+ *
  */
 public class Item {
-    private UUID id;
-    private String name;
-    private float price;
+	private UUID id;
+	private Category category;
+	private String name;
+	private float price;
+	
+	public enum Category {FOOD, BEVERAGE}
 
-    public String getName() {
-        return name;
-    }
+	public Item(UUID id, Category category, String name, float price) {
+        this.id = id;
+        this.category = category;
+        this.name = name;
+        this.price = price;
 
-    public float getPrice() {
-        return price;
-    }
+	}
 
-    public UUID getId() {
-        return id;
-    }
+	/**
+	 * @return the id
+	 */
+	public UUID getId() {
+		return id;
+	}
 
-    public enum Category {
-        FOOD, NO_FOOD, ETC,
-    }
+	/**
+	 * @return the category
+	 */
+	public Category getCategory() {
+		return category;
+	}
 
-    private Category category;
+	/**
+	 * @return the name
+	 */
+	public String getName() {
+		return name;
+	}
 
-
-    public Item(UUID id, Category category, String name, float price) {
-        this.id=id;
-        this.category=category;
-        this.price=price;
-        this.name=name;
-
-    }
-    public Category getCategory(){
-        return category;
-    }
+	/**
+	 * @return the price
+	 */
+	public float getPrice() {
+		return price;
+	}
+	
 }
