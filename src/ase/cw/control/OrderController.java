@@ -1,18 +1,14 @@
 package ase.cw.control;
 
-import ase.cw.IO.FileReader;
 import ase.cw.exceptions.EmptyOrderException;
 import ase.cw.exceptions.InvalidCustomerIdException;
 import ase.cw.exceptions.NoOrderException;
-import ase.cw.gui.OrderFrame;
+import ase.cw.gui.orderFrame;
 import ase.cw.model.Bill;
 import ase.cw.model.Item;
 import ase.cw.model.Order;
 import ase.cw.model.OrderItem;
 
-import java.io.IOException;
-import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeMap;
 
@@ -45,8 +41,8 @@ public class OrderController {
         }
 */
         // Starting up GUI
-        OrderFrame of = new OrderFrame();
- //       of.setStockItems(new ArrayList<>(stockItems.values()));
+        orderFrame of = new orderFrame();
+        //of.setStockItems(menu_items);
 
     }
 
@@ -60,7 +56,6 @@ public class OrderController {
         if (pendingOrder != null) throw new IllegalStateException("New order added while pending order exists");
 
         pendingOrder = new Order(customerId);
-        System.out.println(pendingOrder);
         return pendingOrder.getBill();
     }
 
