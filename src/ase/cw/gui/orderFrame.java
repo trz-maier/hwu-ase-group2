@@ -26,10 +26,10 @@ public class orderFrame extends JFrame implements ActionListener {
     private JPanel Content              = new JPanel(new BorderLayout(10,10));
 
     // Lists
-    private JScrollPane MenuItemScroll  = new JScrollPane();
+    private JScrollPane StockItemsScroll = new JScrollPane();
     private JScrollPane OrderItemScroll = new JScrollPane();
-    private JList<Item> MenuItems       = new JList<>();
-    private JList<Item> MenuItemsSubset = new JList<>();
+    private JList<Item> StockItems = new JList<>();
+    private JList<Item> StockItemsSubset = new JList<>();
     private JList<OrderItem> OrderItems = new JList<>();
 
     // Buttons
@@ -76,29 +76,29 @@ public class orderFrame extends JFrame implements ActionListener {
         System.out.println("GUI: Program opened.");
     }
 
-    public JList setStockItems(Item[] items) {
-        MenuItems.setListData(items);
-        return MenuItems;
+    public void setStockItems(Item[] items) {
+        StockItems.setListData(items);
+        StockItemsScroll.setViewportView(StockItems);
     }
 
-    public JList setOrderItems(OrderItem[] orderItems) {
+    public void setOrderItems(OrderItem[] orderItems) {
         OrderItems.setListData(orderItems);
-        return OrderItems;
+        OrderItemScroll.setViewportView(OrderItems);
     }
 
-    private void setMenuSubset(Item[] items) {
-        MenuItemsSubset.setListData(items);
-
+    private void setStockItemsSubset(Item[] items) {
+        StockItemsSubset.setListData(items);
+        StockItemsScroll.setViewportView(StockItemsSubset);
     }
 
     private void searchMenu(String string) {
         ArrayList<Item> stock_items_subset_list  = new ArrayList<>();
-        for (int i = 0; i < MenuItems.getModel().getSize(); i++) {
-            Item item = MenuItems.getModel().getElementAt(i);
+        for (int i = 0; i < StockItems.getModel().getSize(); i++) {
+            Item item = StockItems.getModel().getElementAt(i);
             if (item.toString().toLowerCase().contains(string.toLowerCase()))
                 stock_items_subset_list.add(item);
         }
-        setMenuSubset((Item[])stock_items_subset_list.toArray());
+        setStockItemsSubset((Item[])stock_items_subset_list.toArray());
     }
 
 
@@ -138,10 +138,10 @@ public class orderFrame extends JFrame implements ActionListener {
         AddItemButton.addActionListener(this);
         left_bottom.add(AddItemButton);
         left.add(left_top, BorderLayout.PAGE_START);
-        MenuItems.addMouseListener(new doubleClickToAdd());
-        MenuItems.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        MenuItemScroll.setViewportView(MenuItems);
-        left.add(MenuItemScroll, BorderLayout.CENTER);
+        StockItems.addMouseListener(new doubleClickToAdd());
+        StockItems.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        StockItemsScroll.setViewportView(StockItems);
+        left.add(StockItemsScroll, BorderLayout.CENTER);
         left.add(left_bottom, BorderLayout.PAGE_END);
 
         top.add(left);
@@ -293,14 +293,13 @@ public class orderFrame extends JFrame implements ActionListener {
             System.out.println("GUI: Item search button pressed.");
             ClearSearchButton.setEnabled(true);
             searchMenu(SearchItemInput.getText());
-            MenuItemScroll.setViewportView(MenuItemsSubset);
         }
 
         if (e.getSource() == ClearSearchButton) {
             System.out.println("GUI: Clear search button pressed.");
             SearchItemInput.setText("");
             ClearSearchButton.setEnabled(false);
-            MenuItemScroll.setViewportView(MenuItems);
+            StockItemsScroll.setViewportView(StockItems);
         }
 
         if (e.getSource() == StartOrderButton) {
@@ -322,7 +321,7 @@ public class orderFrame extends JFrame implements ActionListener {
             if (OrderItems.getModel().getSize() > 0) {
                 SubmitOrderButton.setEnabled(true); RemoveItemButton.setEnabled(true);}
             try {
-                Item item = (Item) MenuItems.getSelectedValue();
+                Item item = (Item) StockItems.getSelectedValue();
                 OrderItem[] items = OrderController.addItemToPendingOrder(item);
                 OrderItems.setListData(items);
                 OrderItems.setSelectedIndex(OrderItems.getModel().getSize()-1);
@@ -413,9 +412,7 @@ public class orderFrame extends JFrame implements ActionListener {
             AddItemButton.setEnabled(false);
 
             OrderController.cancelPendingOrder();
-            //TODO: Update list of order items to display
             //TODO: Update bill values to display
-           //OrderItems.setListData();
 
             System.out.println("ORDER: Order has been cancelled.");
         }
