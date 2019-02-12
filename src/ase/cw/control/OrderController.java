@@ -3,7 +3,7 @@ package ase.cw.control;
 import ase.cw.exceptions.EmptyOrderException;
 import ase.cw.exceptions.InvalidCustomerIdException;
 import ase.cw.exceptions.NoOrderException;
-import ase.cw.gui.orderFrame;
+import ase.cw.gui.OrderFrame;
 import ase.cw.model.Bill;
 import ase.cw.model.Item;
 import ase.cw.model.Order;
@@ -20,6 +20,7 @@ public class OrderController {
     private static TreeMap<String, Item> stockItems;
     private static List<Order> orders;
     private static Order pendingOrder;
+    private static OrderFrame of = new OrderFrame();
 
     public static void main(String[] args) {
         // Loading stock items
@@ -40,10 +41,6 @@ public class OrderController {
             e.printStackTrace();
         }
 */
-        // Starting up GUI
-        orderFrame of = new orderFrame();
-        //of.setStockItems(menu_items);
-
     }
 
     public static Bill createNewOrder(String customerId) throws InvalidCustomerIdException, IllegalStateException {
@@ -54,7 +51,7 @@ public class OrderController {
         }
 
         if (pendingOrder != null) throw new IllegalStateException("New order added while pending order exists");
-
+        of.setOrderTotals((float) 0.0, (float) 0.0, (float) 0.0);
         pendingOrder = new Order(customerId);
         return pendingOrder.getBill();
     }
@@ -63,6 +60,8 @@ public class OrderController {
         if (pendingOrder == null) throw new NoOrderException("No pending order found");
         pendingOrder.addOrderItem(itemToAdd);
         List<OrderItem> itemsInOrder = pendingOrder.getOrderItems();
+        //of.setOrderItems();
+        //of.setOrderTotals();
         return itemsInOrder.toArray(new OrderItem[itemsInOrder.size()]);
     }
 
@@ -76,15 +75,21 @@ public class OrderController {
                 break;
             }
         }
-
+        //of.setOrderItems();
+        //of.setOrderTotals();
         return itemsInOrder.toArray(new OrderItem[itemsInOrder.size()]);
     }
 
     public static void cancelPendingOrder() {
+        of.setOrderItems(new OrderItem[] {});
+        //of.setOrderTotals();
         pendingOrder = null;
     }
 
     public static void finalizePendingOrder() throws NoOrderException, EmptyOrderException, InvalidCustomerIdException {
+        of.setOrderItems(new OrderItem[] {});
+        of.setOrderTotals((float) 0.0, (float) 0.0, (float) 0.0);
+        //of.setBillString();
         orders.add(pendingOrder);
         pendingOrder = null;
     }

@@ -20,17 +20,19 @@ import java.util.ArrayList;
 /**
  * Created by User on 04.02.2019.
  */
-public class orderFrame extends JFrame implements ActionListener {
+public class OrderFrame extends JFrame implements ActionListener {
 
     // Top
-    private JPanel Content              = new JPanel(new BorderLayout(10,10));
+    private JPanel Content = new JPanel(new BorderLayout(10,10));
 
     // Lists
-    private JScrollPane StockItemsScroll = new JScrollPane();
-    private JScrollPane OrderItemScroll = new JScrollPane();
     private JList<Item> StockItems = new JList<>();
     private JList<Item> StockItemsSubset = new JList<>();
     private JList<OrderItem> OrderItems = new JList<>();
+
+    // Scroll panels
+    private JScrollPane StockItemsScroll = new JScrollPane();
+    private JScrollPane OrderItemScroll = new JScrollPane();
 
     // Buttons
     private JButton StartOrderButton    = new JButton("Start Order");
@@ -54,13 +56,14 @@ public class orderFrame extends JFrame implements ActionListener {
     private JTextArea Subtotal          = new JTextArea("£ 0.00");
     private JTextArea Discount          = new JTextArea("£ 0.00");
     private JTextArea Total             = new JTextArea("£ 0.00");
+    private JTextArea BillString        = new JTextArea();
 
     // Text input areas
     private JTextField CustomerIdInput  = new JTextField(1);
     private JTextField SearchItemInput  = new JTextField(1);
 
     // Frame builder
-    public orderFrame() {
+    public OrderFrame() {
 
         this.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("coffee.png")));
         this.setTitle("Café Register");
@@ -84,6 +87,16 @@ public class orderFrame extends JFrame implements ActionListener {
     public void setOrderItems(OrderItem[] orderItems) {
         OrderItems.setListData(orderItems);
         OrderItemScroll.setViewportView(OrderItems);
+    }
+
+    public void setOrderTotals(Float subtotal, Float discount, Float total) {
+        Subtotal.setText("£"+subtotal.toString());
+        Discount.setText("£"+discount.toString());
+        Total.setText("£"+total.toString());
+    }
+
+    public void setBillString(String billString) {
+        BillString.setText(billString);
     }
 
     private void setStockItemsSubset(Item[] items) {
@@ -206,7 +219,7 @@ public class orderFrame extends JFrame implements ActionListener {
     }
 
     private void saveReportOnExit(String report) {
-        // On exit as where to save final report, check if file exists. Cancel to exit.
+
         int result;
         int replace_existing;
 
@@ -214,8 +227,9 @@ public class orderFrame extends JFrame implements ActionListener {
         saveAs.setSelectedFile(new File("report.txt"));
         saveAs.setFileFilter(new FileNameExtensionFilter(".txt", "txt"));
         saveAs.setDialogTitle("Save Report As");
-        result = saveAs.showDialog(orderFrame.this, "Save");
+        result = saveAs.showDialog(OrderFrame.this, "Save");
         File file = saveAs.getSelectedFile();
+
         if (result == JFileChooser.APPROVE_OPTION) {
             if (saveAs.getSelectedFile().exists()) {
                 replace_existing = JOptionPane.showConfirmDialog(saveAs,
@@ -235,7 +249,7 @@ public class orderFrame extends JFrame implements ActionListener {
         }
     }
 
-    public class exitButtonPress extends WindowAdapter {
+    private class exitButtonPress extends WindowAdapter {
         public void  windowClosing(WindowEvent evt) {
             int dialog_box = JOptionPane.showConfirmDialog(null,
                     "  Are you sure you want to close?  \n  Any open order will be discarded.  ",
@@ -254,7 +268,7 @@ public class orderFrame extends JFrame implements ActionListener {
                 }
             }
 
-    public class searchEnterPress extends KeyAdapter {
+    private class searchEnterPress extends KeyAdapter {
         public void keyPressed(KeyEvent evt) {
             if (evt.getKeyChar() == KeyEvent.VK_ENTER) {
                 ItemSearchButton.doClick();
@@ -262,7 +276,7 @@ public class orderFrame extends JFrame implements ActionListener {
         }
     }
 
-    public class startOrderEnterPress extends KeyAdapter {
+    private class startOrderEnterPress extends KeyAdapter {
         public void keyPressed(KeyEvent evt) {
             if (evt.getKeyChar() == KeyEvent.VK_ENTER) {
                 StartOrderButton.doClick();
@@ -270,7 +284,7 @@ public class orderFrame extends JFrame implements ActionListener {
         }
     }
 
-    public class doubleClickToAdd extends MouseAdapter {
+    private class doubleClickToAdd extends MouseAdapter {
         public void mouseClicked(MouseEvent evt) {
             if (evt.getClickCount() == 2) {
                 AddItemButton.doClick();
@@ -278,7 +292,7 @@ public class orderFrame extends JFrame implements ActionListener {
         }
     }
 
-    public class doubleClickToRemove extends MouseAdapter {
+    private class doubleClickToRemove extends MouseAdapter {
         public void mouseClicked(MouseEvent evt) {
             if (evt.getClickCount() == 2) {
                 RemoveItemButton.doClick();
@@ -312,7 +326,7 @@ public class orderFrame extends JFrame implements ActionListener {
                 CancelOrderButton.setEnabled(true);
                 AddItemButton.setEnabled(true);
             } catch (InvalidCustomerIdException exc) {
-                JOptionPane.showMessageDialog(new JFrame(), "Customer ID has to be 8 characters.", "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(new JFrame(), "Customer ID has to be 8 characters", "Error", JOptionPane.ERROR_MESSAGE);
             }
         }
 
@@ -327,10 +341,9 @@ public class orderFrame extends JFrame implements ActionListener {
                 OrderItems.setSelectedIndex(OrderItems.getModel().getSize()-1);
                 OrderItems.ensureIndexIsVisible(OrderItems.getModel().getSize()-1);
                 System.out.println("ORDER: Item "+item.toString()+" has been added to pending order.");
-                //TODO: Update bill fields
             } catch (NoOrderException exception) {
                 exception.getStackTrace();
-                //TODO: Display appropriate error message
+                JOptionPane.showMessageDialog(new JFrame(), "Error adding item", "Error", JOptionPane.ERROR_MESSAGE);
             }
         }
 
@@ -343,62 +356,56 @@ public class orderFrame extends JFrame implements ActionListener {
                 OrderItem[] items = OrderController.removeItemfromPendingOrder(orderitem.getItem());
                 OrderItems.setListData(items);
                 System.out.println("ORDER: Item "+orderitem.toString()+" has been removed from pending order.");
-                //TODO: Update bill fields
             } catch (NoOrderException exception) {
                 exception.getStackTrace();
-                //TODO: Display appropriate error message
+                JOptionPane.showMessageDialog(new JFrame(), "Error removing item", "Error", JOptionPane.ERROR_MESSAGE);
             }
         }
 
         if (e.getSource() == SubmitOrderButton) {
             System.out.println("GUI: Submit order button pressed.");
 
-            CustomerIdInput.setEnabled(true);
-            StartOrderButton.setEnabled(true);
-            SubmitOrderButton.setEnabled(false);
-            CancelOrderButton.setEnabled(false);
-            RemoveItemButton.setEnabled(false);
-            AddItemButton.setEnabled(false);
-
-            JFrame billFrame = new JFrame("Bill: "+ CustomerIdInput.getText());
-            CustomerIdInput.setText("");
-
-            JTextArea bill_content = new JTextArea();
-            bill_content.setMargin(new Insets(10,10,10,10));
-            bill_content.setFont( new Font("monospaced", Font.PLAIN, 14) );
-            bill_content.setEditable(false);
-            bill_content.setLineWrap(false);
-            //TODO: add string representation of the bill
-            //bill_content.setText(OrderController.getBillString());
-            bill_content.setText(
-                    "------------------------- \nBill for order XXXXX\n09/02/2019 12:56\n------------------------" +
-                    "\nItem 1            £1.90\nItem 2            £1.90\nItem 3            £1.90\nItem 4            £1.90\nItem 5            £1.90\n------------------------" +
-                    "\nSubtotal          £9.50\nDiscount          £0.90\n------------------------\nTotal             £8.60\n------------------------\n"
-
-            );
-            JScrollPane sp = new JScrollPane(bill_content);
-            Border border = BorderFactory.createEmptyBorder(0, 0, 0, 0);
-            sp.setBorder(border);
-
-
-            billFrame.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("coffee.png")));
-            billFrame.setPreferredSize(new Dimension(300,800));
-            billFrame.setResizable(false);
-            billFrame.setLocation(this.getX()+this.getWidth(), this.getY());
-            billFrame.add(sp);
-            billFrame.pack();
-            billFrame.setVisible(true);
             try {
                 OrderController.finalizePendingOrder();
+
+                JFrame billFrame = new JFrame("Customer: "+ CustomerIdInput.getText());
+
+                BillString.setMargin(new Insets(10,10,10,10));
+                BillString.setFont( new Font("monospaced", Font.PLAIN, 14) );
+                BillString.setEditable(false);
+                BillString.setLineWrap(false);
+
+
+                JScrollPane sp = new JScrollPane(BillString);
+                Border border = BorderFactory.createEmptyBorder(0, 0, 0, 0);
+                sp.setBorder(border);
+
+                billFrame.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("coffee.png")));
+                billFrame.setPreferredSize(new Dimension(300,800));
+                billFrame.setResizable(false);
+                billFrame.setLocation(this.getX()+this.getWidth(), this.getY());
+                billFrame.add(sp);
+                billFrame.pack();
+                billFrame.setVisible(true);
+
+                CustomerIdInput.setText("");
+                CustomerIdInput.setEnabled(true);
+                StartOrderButton.setEnabled(true);
+                SubmitOrderButton.setEnabled(false);
+                CancelOrderButton.setEnabled(false);
+                RemoveItemButton.setEnabled(false);
+                AddItemButton.setEnabled(false);
+
             } catch (NoOrderException exception) {
                 exception.getStackTrace();
+                JOptionPane.showMessageDialog(new JFrame(), "Error submitting order", "Error", JOptionPane.ERROR_MESSAGE);
             } catch (EmptyOrderException exception) {
                 exception.getStackTrace();
+                JOptionPane.showMessageDialog(new JFrame(), "Error submitting order", "Error", JOptionPane.ERROR_MESSAGE);
             } catch (InvalidCustomerIdException exception) {
                 exception.getStackTrace();
+                JOptionPane.showMessageDialog(new JFrame(), "Error submitting order", "Error", JOptionPane.ERROR_MESSAGE);
             }
-
-            System.out.println("ORDER: Order has been submitted.");
         }
 
         if (e.getSource() == CancelOrderButton) {
@@ -410,11 +417,7 @@ public class orderFrame extends JFrame implements ActionListener {
             CancelOrderButton.setEnabled(false);
             RemoveItemButton.setEnabled(false);
             AddItemButton.setEnabled(false);
-
             OrderController.cancelPendingOrder();
-            //TODO: Update bill values to display
-
-            System.out.println("ORDER: Order has been cancelled.");
         }
     }
 }
