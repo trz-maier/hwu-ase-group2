@@ -1,6 +1,7 @@
 package ase.cw.gui;
 
 import ase.cw.model.Item;
+
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;

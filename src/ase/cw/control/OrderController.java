@@ -27,19 +27,19 @@ public class OrderController {
     public static void main(String[] args) {
         // Loading stock items
         try {
-            stockItems = FileReader.parseItems("somefilename.txt");
+            stockItems = FileReader.parseItems("Items.csv");
         } catch (IOException e) {
             e.printStackTrace();
         }
 
         // Loading past orders
         try {
-            orders = FileReader.parseOrders("filename.txt");
+            orders = FileReader.parseOrders("Orders.csv");
         } catch (IOException e) {
             e.printStackTrace();
-        } catch (InvalidCustomerIdException e) {
-            e.printStackTrace();
         } catch (ParseException e) {
+            e.printStackTrace();
+        } catch (InvalidCustomerIdException e) {
             e.printStackTrace();
         }
 

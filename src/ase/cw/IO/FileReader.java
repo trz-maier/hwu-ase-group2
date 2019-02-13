@@ -7,6 +7,7 @@ import ase.cw.model.Order;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.security.InvalidParameterException;
 import java.text.DateFormat;
@@ -15,18 +16,21 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
- * Created by User on 04.02.2019.
+ * Created by Thomas on 04.02.2019.
  */
 public class FileReader {
     /**
-     * Read the file and create a new List with all Orders.
-     * @param filename
-     * @return
-     * @throws IOException
-     * @throws InvalidCustomerIdException
-     * @throws ParseException
+     *
+     * @param filename the filename inside the res path.
+     * @return a list of all parsed orders
+     * @throws IOException if the filename is not correct
+     * @throws NoSuchElementException if a parameter for a Item is missing
+     * @throws InvalidCustomerIdException if a customerId is not correct
+     * @throws ParseException if the Date is not correctly formatted
+     * @throws NumberFormatException if the price is not correctly formatted
+     * @throws IllegalArgumentException if UUID,Category is not correctly formatted
      */
-    public static List<Order> parseOrders(String filename) throws IOException,NoSuchElementException {
+    public static List<Order> parseOrders(String filename) throws IOException, InvalidCustomerIdException, ParseException,NumberFormatException ,NoSuchElementException,IllegalArgumentException{
         File file = parseFileName(filename);
         List<Order> orderList = new ArrayList<Order>();
         BufferedReader br = new BufferedReader(new java.io.FileReader(file));
@@ -47,14 +51,10 @@ public class FileReader {
         return orderList;
     }
 
-    /**
+    /*
      * Create a single order object and add it to orderList
-     * @param allOrderScanner
-     * @param orderList
-     * @throws InvalidCustomerIdException
-     * @throws ParseException
      */
-    private static void parseSingleOrder(Scanner allOrderScanner, List<Order> orderList) throws NoSuchElementException{
+    private static void parseSingleOrder(Scanner allOrderScanner, List<Order> orderList) throws InvalidCustomerIdException,ParseException,IllegalArgumentException,NumberFormatException{
 
         Scanner singleOrderScanner = null;
         String customerId="";
@@ -64,6 +64,9 @@ public class FileReader {
             singleOrderScanner = new Scanner(allOrderScanner.nextLine());
             singleOrderScanner.useDelimiter(",");
             while (singleOrderScanner.hasNext()) {
+                //A Order is saved in the following format: CustomerId,date,Item1,Item2,...ItemN
+                //Where evey item has the following format: UUID,NAME,CATEGORY,Price
+
                 customerId = singleOrderScanner.next();
                 dateStr = singleOrderScanner.next();
                 DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
@@ -80,13 +83,7 @@ public class FileReader {
                 }
                 orderList.add(order);
             }
-        } catch (InvalidCustomerIdException e) {
-            throw new InputMismatchException("Invalid CustomerID="+customerId);
-        } catch (ParseException e) {
-            e.printStackTrace();
-            throw new InputMismatchException("Invalid Date string="+dateStr);
-
-        } finally {
+        }  finally {
             if (singleOrderScanner != null) {
                 singleOrderScanner.close();
             }
@@ -94,12 +91,15 @@ public class FileReader {
     }
 
     /**
-     * Read the file and create a new TreeMap with all Items.
-     * @param filename
-     * @return
-     * @throws IOException
+     *
+     * @param filename the filename inside the res path.
+     * @return a list of all items
+     * @throws IOException if the filename is not correct
+     * @throws NoSuchElementException if a parameter for a Item is missing
+     * @throws NumberFormatException if the price is not correctly formatted
+     * @throws IllegalArgumentException if UUID,Category is not correctly formatted
      */
-    public static TreeMap<String, Item> parseItems(String filename) throws IOException,NoSuchElementException {
+    public static TreeMap<String, Item> parseItems(String filename) throws IOException,NoSuchElementException,NumberFormatException,IllegalArgumentException {
         File file = parseFileName(filename);
         TreeMap<String,Item> items = new TreeMap<String,Item>();
         BufferedReader br = new BufferedReader(new java.io.FileReader(file));
@@ -110,8 +110,11 @@ public class FileReader {
             //add every order to map
 
             while(allItemsScanner.hasNextLine()) {
-                Item item = parseSingleItem(allItemsScanner.next());
-                items.put(item.getName(),item);
+                String itemString = allItemsScanner.nextLine();
+                Item item = parseSingleItem(itemString);
+                if(item!=null) {
+                    items.put(item.getName(), item);
+                }
             }
         } finally {
             if(allItemsScanner!=null) {
@@ -121,11 +124,13 @@ public class FileReader {
         return items;
     }
 
-    private static Item parseSingleItem(String itemString) throws NoSuchElementException{
+    private static Item parseSingleItem(String itemString) throws NumberFormatException,IllegalArgumentException{
+        if(itemString==null || itemString.equals(""))return null;
         Scanner singleItemScanner = null;
         try {
             singleItemScanner = new Scanner(itemString);
             singleItemScanner.useDelimiter(",");
+             //A Item is saved in the following format: UUID,NAME,CATEGORY,Price
                 UUID uuid = parseUUID(singleItemScanner);
                 String name = singleItemScanner.next();
                 Category category = parseCategory(singleItemScanner);
@@ -139,39 +144,34 @@ public class FileReader {
         }
     }
 
-    private static float parsePrice(Scanner singleItemScanner) throws NoSuchElementException {
+    private static float parsePrice(Scanner singleItemScanner) throws NumberFormatException {
         //Parse the Category via the scanner
         String next = singleItemScanner.next();
-        try {
-            return Float.parseFloat(next);
-        } catch(NumberFormatException e){
-            throw new InputMismatchException();
-        }
+        return Float.parseFloat(next);
     }
 
-    private static Category parseCategory(Scanner scanner) {
+    private static Category parseCategory(Scanner scanner) throws IllegalArgumentException{
         //Parse the Category via the scanner
-        Category category;
+        Category category;             //A Item is saved in the following format: UUID,NAME,CATEGORY,Price
+
         String categoryString = scanner.next();
         try{
             category = Category.valueOf(categoryString);
             return category;
         } catch(IllegalArgumentException illegalArgumentException){
-            throw new InputMismatchException("The category="+categoryString+" does not exist");
+            throw new IllegalArgumentException("The category="+categoryString+" does not exist",illegalArgumentException);
         }
     }
 
-    private static UUID parseUUID(Scanner scanner) {
+    private static UUID parseUUID(Scanner scanner) throws IllegalArgumentException,NoSuchElementException{
         //Parse the UUID via the scanner
         String uuidString="";
         try {
             uuidString = scanner.next();
             UUID uuid = UUID.fromString(uuidString);
             return uuid;
-        } catch(NoSuchElementException e){
-            throw new NoSuchElementException("No UUID is given="+scanner.nextLine());
         } catch(IllegalArgumentException e){
-            throw new InputMismatchException("The UUID="+uuidString+" is not correctly formatted");
+            throw new IllegalArgumentException("The UUID="+uuidString+" is not correctly formatted",e);
         }
     }
 
@@ -180,21 +180,13 @@ public class FileReader {
      * @return the new created file Object
      * @throws InvalidParameterException if filename is not valid
      */
-    private static File parseFileName(String filename) throws InvalidParameterException{
-        if(filename ==null){
-            throw new InvalidParameterException("File is null");
-        }
-        if(filename.equals("")){
-            throw new InvalidParameterException("Empthy string");
-        }
+    private static File parseFileName(String filename) throws IllegalArgumentException, IOException {
         //Get file from resources folder
         ClassLoader classLoader = FileReader.class.getClassLoader();
         File file=null;
-        try {
-            file = new File(classLoader.getResource(filename).getFile());
-        } catch(NullPointerException e){
-            throw new InvalidParameterException("File="+filename +"does not exist");
-        }
+        java.net.URL url =classLoader.getResource(filename);
+        if(url ==null)throw new FileNotFoundException("File="+filename+" does not exist");
+        file = new File(classLoader.getResource(filename).getFile());
         return file;
     }
 }
