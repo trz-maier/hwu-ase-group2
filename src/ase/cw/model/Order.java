@@ -1,49 +1,84 @@
+/**
+ * 
+ */
 package ase.cw.model;
 
-import ase.cw.exceptions.InvalidCustomerIdException;
-
+//import java.time.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 /**
- * Created by User on 04.02.2019.
+ * @author Ram
+ *
  */
 public class Order {
-    private String customerId;
-    private Date timestamp;
-    private List<OrderItem> orderItems = new ArrayList<>();
-    private Bill bill;
+	private String customerId;
+	private Date timestamp;
+	private List<OrderItem> orderItems;
+	private Bill bill;
 
-    public Order(String customerId) throws InvalidCustomerIdException {
-        this.customerId=customerId;
-    }
+	/**
+	 * 
+	 */
+	public Order(String customerId) {
+		this(customerId, new Date());
+	}
 
-    public Order(String customerId, Date timestamp) throws InvalidCustomerIdException {
-        this.customerId=customerId;
-        this.timestamp=timestamp;
+	public Order(String customerId, Date timestamp) {
+		this.customerId = customerId;
+		this.timestamp = timestamp;
+		this.orderItems = new ArrayList<OrderItem>();
+	}
 
-    }
+	public void addOrderItem(Item item) {
+		this.orderItems.add(new OrderItem (item));
+	}
 
-    public void addOrderItem(Item item) {
-        OrderItem orderItem = new OrderItem(item);
-        orderItem.setCustomerId(customerId);
-        orderItems.add(orderItem);
-    }
+	public void removeOrderItem(Item item) {
+//		this.orderItems.remove(orderItem);
+		for (OrderItem oitem : orderItems) {
+			if (oitem.getItem() == item) {
+				this.orderItems.remove(oitem);
+				break;
+			}
+		}
+	}
 
-    public String getCustomerId() {
-        return customerId;
-    }
+	/**
+	 * @return the customerId
+	 */
+	public String getCustomerId() {
+		return customerId;
+	}
 
-    public Date getTimestamp() {
-        return timestamp;
-    }
+	/**
+	 * @param customerId the customerId to set
+	 */
+	public void setCustomerId(String customerId) {
+		this.customerId = customerId;
+	}
 
-    public List<OrderItem> getOrderItems() {
-        return orderItems;
-    }
+	/**
+	 * @return the timestamp
+	 */
+	public Date getTimestamp() {
+		return timestamp;
+	}
 
-    public Bill getBill() {
-        return bill;
-    }
+	/**
+	 * @return the orderItems
+	 */
+	public List<OrderItem> getOrderItems() {
+		return orderItems;
+	}
+
+	/**
+	 * @return the bill
+	 */
+	public Bill getBill() {
+		return new Bill (this);
+	}
+
+
 }

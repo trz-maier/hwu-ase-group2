@@ -1,17 +1,14 @@
 package ase.cw.control;
 
-import ase.cw.IO.FileReader;
 import ase.cw.exceptions.EmptyOrderException;
 import ase.cw.exceptions.InvalidCustomerIdException;
 import ase.cw.exceptions.NoOrderException;
-import ase.cw.gui.OrderFrame;
+import ase.cw.gui.orderFrame;
 import ase.cw.model.Bill;
 import ase.cw.model.Item;
 import ase.cw.model.Order;
 import ase.cw.model.OrderItem;
 
-import java.io.IOException;
-import java.text.ParseException;
 import java.util.List;
 import java.util.TreeMap;
 
@@ -26,28 +23,30 @@ public class OrderController {
 
     public static void main(String[] args) {
         // Loading stock items
-        try {
-            stockItems = FileReader.parseItems("Items.csv");
+/*         try {
+            stockItems = FileReader.parseItems("items.txt");
         } catch (IOException e) {
             e.printStackTrace();
         }
 
         // Loading past orders
-        try {
-            orders = FileReader.parseOrders("Orders.csv");
+       try {
+            orders = FileReader.parseOrders("filename.txt");
         } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ParseException e) {
             e.printStackTrace();
         } catch (InvalidCustomerIdException e) {
             e.printStackTrace();
+        } catch (ParseException e) {
+            e.printStackTrace();
         }
-
+*/
         // Starting up GUI
-        new OrderFrame();
+        orderFrame of = new orderFrame();
+        //of.setStockItems(menu_items);
+
     }
 
-    public Bill createNewOrder(String customerId) throws InvalidCustomerIdException, IllegalStateException {
+    public static Bill createNewOrder(String customerId) throws InvalidCustomerIdException, IllegalStateException {
         int idLength = customerId.length();
         if (idLength != EXPECTED_CUSTOMER_ID_LENGTH) {
             throw new InvalidCustomerIdException(String.format("Customer id is expected to have length %o, found %o",
@@ -60,14 +59,14 @@ public class OrderController {
         return pendingOrder.getBill();
     }
 
-    public OrderItem[] addItemToPendingOrder(Item itemToAdd) throws NoOrderException {
+    public static OrderItem[] addItemToPendingOrder(Item itemToAdd) throws NoOrderException {
         if (pendingOrder == null) throw new NoOrderException("No pending order found");
         pendingOrder.addOrderItem(itemToAdd);
         List<OrderItem> itemsInOrder = pendingOrder.getOrderItems();
         return itemsInOrder.toArray(new OrderItem[itemsInOrder.size()]);
     }
 
-    public OrderItem[] removeItemfromPendingOrder(Item itemToRemove) throws NoOrderException {
+    public static OrderItem[] removeItemfromPendingOrder(Item itemToRemove) throws NoOrderException {
         if (pendingOrder == null) throw new NoOrderException("No pending order found");
         List<OrderItem> itemsInOrder = pendingOrder.getOrderItems();
 
@@ -81,11 +80,11 @@ public class OrderController {
         return itemsInOrder.toArray(new OrderItem[itemsInOrder.size()]);
     }
 
-    public void cancelPendingOrder() {
+    public static void cancelPendingOrder() {
         pendingOrder = null;
     }
 
-    public void finalizePendingOrder() throws NoOrderException, EmptyOrderException, InvalidCustomerIdException {
+    public static void finalizePendingOrder() throws NoOrderException, EmptyOrderException, InvalidCustomerIdException {
         orders.add(pendingOrder);
         pendingOrder = null;
     }
