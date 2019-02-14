@@ -24,6 +24,8 @@ public class OrderItem {
 		return item;
 	}
 
-
+	public String toString() {
+		return item.toString();
+	}
 
 }

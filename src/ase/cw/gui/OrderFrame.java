@@ -331,6 +331,7 @@ public class OrderFrame extends JFrame implements ActionListener {
                 SubmitOrderButton.setEnabled(true);
                 CancelOrderButton.setEnabled(true);
                 AddItemButton.setEnabled(true);
+                System.out.println(OrderItems);
             } catch (InvalidCustomerIdException exc) {
                 JOptionPane.showMessageDialog(new JFrame(), "Customer ID has to be 8 characters", "Error", JOptionPane.ERROR_MESSAGE);
             }
@@ -338,39 +339,36 @@ public class OrderFrame extends JFrame implements ActionListener {
 
         if (e.getSource() == AddItemButton) {
             System.out.println("GUI: Add item button pressed.");
-            if (OrderItems.getModel().getSize() > 0) {
-                SubmitOrderButton.setEnabled(true); RemoveItemButton.setEnabled(true);}
+            Item item = StockItems.getSelectedValue();
             try {
-                Item item = (Item) StockItems.getSelectedValue();
-                OrderItem[] items = orderController.addItemToPendingOrder(item);
-                OrderItems.setListData(items);
-                OrderItems.setSelectedIndex(OrderItems.getModel().getSize()-1);
-                OrderItems.ensureIndexIsVisible(OrderItems.getModel().getSize()-1);
+                orderController.addItemToPendingOrder(item);
+                //OrderItems.setSelectedIndex(OrderItems.getModel().getSize()-1);
+                //OrderItems.ensureIndexIsVisible(OrderItems.getModel().getSize()-1);
                 System.out.println("ORDER: Item "+item.toString()+" has been added to pending order.");
             } catch (NoOrderException exception) {
                 exception.getStackTrace();
                 JOptionPane.showMessageDialog(new JFrame(), "Error adding item", "Error", JOptionPane.ERROR_MESSAGE);
             }
+            if (OrderItems.getModel().getSize() > 0) {
+                SubmitOrderButton.setEnabled(true); RemoveItemButton.setEnabled(true);}
         }
 
         if (e.getSource() == RemoveItemButton) {
             System.out.println("GUI: Remove item button pressed.");
-            if (OrderItems.getModel().getSize() == 0) {
-                SubmitOrderButton.setEnabled(false); RemoveItemButton.setEnabled(false);}
+            OrderItem item = OrderItems.getSelectedValue();
             try {
-                OrderItem orderitem = OrderItems.getSelectedValue();
-                OrderItem[] items = orderController.removeItemfromPendingOrder(orderitem.getItem());
-                OrderItems.setListData(items);
-                System.out.println("ORDER: Item "+orderitem.toString()+" has been removed from pending order.");
+                orderController.removeItemFromPendingOrder(item);
+                System.out.println("ORDER: Item "+item.toString()+" has been removed from pending order.");
             } catch (NoOrderException exception) {
                 exception.getStackTrace();
                 JOptionPane.showMessageDialog(new JFrame(), "Error removing item", "Error", JOptionPane.ERROR_MESSAGE);
             }
+            if (OrderItems.getModel().getSize() == 0) {
+                SubmitOrderButton.setEnabled(false); RemoveItemButton.setEnabled(false);}
         }
 
         if (e.getSource() == SubmitOrderButton) {
             System.out.println("GUI: Submit order button pressed.");
-
             try {
                 orderController.finalizePendingOrder();
 
