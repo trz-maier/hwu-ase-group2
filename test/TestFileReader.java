@@ -4,6 +4,7 @@ import ase.cw.model.Item;
 import ase.cw.model.Order;
 import org.junit.Test;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.security.InvalidParameterException;
 import java.text.DateFormat;
@@ -37,21 +38,18 @@ public class TestFileReader {
     }
 
 
-    @Test(expected=InvalidParameterException.class)
+    @Test(expected=FileNotFoundException.class)
     public void parseItemFileIsDictFail() throws IOException {
-        TreeMap<String, Item> map;
-        map = FileReader.parseItems("folder");
+        FileReader.parseItems("folder");
     }
 
-    @Test(expected=InvalidParameterException.class)
+    @Test(expected=NullPointerException.class)
     public void parseNullFileFail() throws IOException {
-        TreeMap<String, Item> map;
-        map = FileReader.parseItems(null);
+        FileReader.parseItems(null);
     }
-    @Test(expected=InvalidParameterException.class)
+    @Test(expected= FileNotFoundException.class)
     public void parseZeroLengthFileFail() throws IOException {
-        TreeMap<String, Item> map;
-        map = FileReader.parseItems("");
+        FileReader.parseItems("");
     }
 
     private void checkItem(Item item, String name, String uuid, double price, Item.Category cat) {
@@ -74,19 +72,19 @@ public class TestFileReader {
         assertEquals(1,map.size());
     }
 
-    @Test(expected = InputMismatchException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void parseItemWrongCategoryFail() throws IOException {
         FileReader.parseItems("ItemsWrongCategory.csv");
     }
 
 
-    @Test(expected = InputMismatchException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void parseItemWrongUUIDFail() throws IOException {
         FileReader.parseItems("ItemsWrongUUID.csv");
     }
 
 
-    @Test(expected = InputMismatchException.class)
+    @Test(expected = NumberFormatException.class)
     public void parseItemWrongPriceFail() throws IOException {
         FileReader.parseItems("ItemsWrongPrice.csv");
     }
