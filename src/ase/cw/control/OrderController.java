@@ -20,30 +20,20 @@ public class OrderController {
     private static TreeMap<String, Item> stockItems;
     private static List<Order> orders;
     private static Order pendingOrder;
-    private static OrderFrame of = new OrderFrame();
 
-    public static void main(String[] args) {
-        // Loading stock items
-/*         try {
-            stockItems = FileReader.parseItems("items.txt");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        // Loading past orders
-       try {
-            orders = FileReader.parseOrders("filename.txt");
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (InvalidCustomerIdException e) {
-            e.printStackTrace();
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-*/
+    private OrderFrame orderFrame;
+    public OrderController() {
+        orderFrame = new OrderFrame();
+        orderFrame.setOrderController(this);
     }
 
-    public static Bill createNewOrder(String customerId) throws InvalidCustomerIdException, IllegalStateException {
+    public static void main(String[] args) {
+        new OrderController();
+    }
+
+
+
+    public Bill createNewOrder(String customerId) throws InvalidCustomerIdException, IllegalStateException {
         int idLength = customerId.length();
         if (idLength != EXPECTED_CUSTOMER_ID_LENGTH) {
             throw new InvalidCustomerIdException(String.format("Customer id is expected to have length %o, found %o",
@@ -51,21 +41,21 @@ public class OrderController {
         }
 
         if (pendingOrder != null) throw new IllegalStateException("New order added while pending order exists");
-        of.setOrderTotals((float) 0.0, (float) 0.0, (float) 0.0);
+        orderFrame.setOrderTotals((float) 0.0, (float) 0.0, (float) 0.0);
         pendingOrder = new Order(customerId);
         return pendingOrder.getBill();
     }
 
-    public static OrderItem[] addItemToPendingOrder(Item itemToAdd) throws NoOrderException {
+    public OrderItem[] addItemToPendingOrder(Item itemToAdd) throws NoOrderException {
         if (pendingOrder == null) throw new NoOrderException("No pending order found");
         pendingOrder.addOrderItem(itemToAdd);
         List<OrderItem> itemsInOrder = pendingOrder.getOrderItems();
-        //of.setOrderItems();
-        //of.setOrderTotals();
+        //orderFrame.setOrderItems();
+        //orderFrame.setOrderTotals();
         return itemsInOrder.toArray(new OrderItem[itemsInOrder.size()]);
     }
 
-    public static OrderItem[] removeItemfromPendingOrder(Item itemToRemove) throws NoOrderException {
+    public OrderItem[] removeItemfromPendingOrder(Item itemToRemove) throws NoOrderException {
         if (pendingOrder == null) throw new NoOrderException("No pending order found");
         List<OrderItem> itemsInOrder = pendingOrder.getOrderItems();
 
@@ -80,16 +70,17 @@ public class OrderController {
         return itemsInOrder.toArray(new OrderItem[itemsInOrder.size()]);
     }
 
-    public static void cancelPendingOrder() {
-        of.setOrderItems(new OrderItem[] {});
-        //of.setOrderTotals();
+    public void cancelPendingOrder() {
+        orderFrame.setOrderItems(new OrderItem[] {});
+        orderFrame.setOrderTotals((float) 0.0, (float) 0.0, (float) 0.0);
+        //orderFrame.setOrderTotals();
         pendingOrder = null;
     }
 
-    public static void finalizePendingOrder() throws NoOrderException, EmptyOrderException, InvalidCustomerIdException {
-        of.setOrderItems(new OrderItem[] {});
-        of.setOrderTotals((float) 0.0, (float) 0.0, (float) 0.0);
-        //of.setBillString();
+    public void finalizePendingOrder() throws NoOrderException, EmptyOrderException, InvalidCustomerIdException {
+        orderFrame.setOrderItems(new OrderItem[] {});
+        orderFrame.setOrderTotals((float) 0.0, (float) 0.0, (float) 0.0);
+        //orderFrame.setBillString();
         orders.add(pendingOrder);
         pendingOrder = null;
     }

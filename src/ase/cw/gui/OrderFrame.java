@@ -62,6 +62,8 @@ public class OrderFrame extends JFrame implements ActionListener {
     private JTextField CustomerIdInput  = new JTextField(1);
     private JTextField SearchItemInput  = new JTextField(1);
 
+    private OrderController orderController;
+
     // Frame builder
     public OrderFrame() {
 
@@ -77,6 +79,10 @@ public class OrderFrame extends JFrame implements ActionListener {
         this.setVisible(true);
 
         System.out.println("GUI: Program opened.");
+    }
+
+    public void setOrderController(OrderController orderController) {
+        this.orderController = orderController;
     }
 
     public void setStockItems(Item[] items) {
@@ -319,7 +325,7 @@ public class OrderFrame extends JFrame implements ActionListener {
         if (e.getSource() == StartOrderButton) {
             System.out.println("GUI: Start order button pressed.");
             try {
-                OrderController.createNewOrder(CustomerIdInput.getText());
+                orderController.createNewOrder(CustomerIdInput.getText());
                 CustomerIdInput.setEnabled(false);
                 StartOrderButton.setEnabled(false);
                 SubmitOrderButton.setEnabled(true);
@@ -336,7 +342,7 @@ public class OrderFrame extends JFrame implements ActionListener {
                 SubmitOrderButton.setEnabled(true); RemoveItemButton.setEnabled(true);}
             try {
                 Item item = (Item) StockItems.getSelectedValue();
-                OrderItem[] items = OrderController.addItemToPendingOrder(item);
+                OrderItem[] items = orderController.addItemToPendingOrder(item);
                 OrderItems.setListData(items);
                 OrderItems.setSelectedIndex(OrderItems.getModel().getSize()-1);
                 OrderItems.ensureIndexIsVisible(OrderItems.getModel().getSize()-1);
@@ -353,7 +359,7 @@ public class OrderFrame extends JFrame implements ActionListener {
                 SubmitOrderButton.setEnabled(false); RemoveItemButton.setEnabled(false);}
             try {
                 OrderItem orderitem = OrderItems.getSelectedValue();
-                OrderItem[] items = OrderController.removeItemfromPendingOrder(orderitem.getItem());
+                OrderItem[] items = orderController.removeItemfromPendingOrder(orderitem.getItem());
                 OrderItems.setListData(items);
                 System.out.println("ORDER: Item "+orderitem.toString()+" has been removed from pending order.");
             } catch (NoOrderException exception) {
@@ -366,7 +372,7 @@ public class OrderFrame extends JFrame implements ActionListener {
             System.out.println("GUI: Submit order button pressed.");
 
             try {
-                OrderController.finalizePendingOrder();
+                orderController.finalizePendingOrder();
 
                 JFrame billFrame = new JFrame("Customer: "+ CustomerIdInput.getText());
 
@@ -417,7 +423,7 @@ public class OrderFrame extends JFrame implements ActionListener {
             CancelOrderButton.setEnabled(false);
             RemoveItemButton.setEnabled(false);
             AddItemButton.setEnabled(false);
-            OrderController.cancelPendingOrder();
+            orderController.cancelPendingOrder();
         }
     }
 }
