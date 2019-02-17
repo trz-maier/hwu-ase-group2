@@ -10,7 +10,11 @@ import ase.cw.model.Item;
 import ase.cw.model.Order;
 import ase.cw.model.OrderItem;
 
+import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.text.ParseException;
 import java.util.List;
 import java.util.TreeMap;
 
@@ -27,11 +31,15 @@ public class OrderController {
 
     private OrderController() {
         try {
-            this.stockItems = FileReader.parseItems("items.txt");
+            this.stockItems = FileReader.parseItems("Items.csv");
+            this.orders = FileReader.parseOrders("Orders.csv");
         } catch (IOException e) {
             e.printStackTrace();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        } catch (InvalidCustomerIdException e) {
+            e.printStackTrace();
         }
-//        orders = FileReader.parseOrders("orders.txt");
 
         this.orderFrame = new OrderFrame();
         this.orderFrame.setOrderController(this);
