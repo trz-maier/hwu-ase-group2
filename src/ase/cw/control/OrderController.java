@@ -1,5 +1,6 @@
 package ase.cw.control;
 
+import ase.cw.IO.FileReader;
 import ase.cw.exceptions.EmptyOrderException;
 import ase.cw.exceptions.InvalidCustomerIdException;
 import ase.cw.exceptions.NoOrderException;
@@ -9,6 +10,7 @@ import ase.cw.model.Item;
 import ase.cw.model.Order;
 import ase.cw.model.OrderItem;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.TreeMap;
 
@@ -17,14 +19,23 @@ import java.util.TreeMap;
  */
 public class OrderController {
     private static final int EXPECTED_CUSTOMER_ID_LENGTH = 8;
-    private static TreeMap<String, Item> stockItems;
-    private static List<Order> orders;
-    private static Order pendingOrder;
+    private TreeMap<String, Item> stockItems;
+    private List<Order> orders;
+    private Order pendingOrder;
 
     private OrderFrame orderFrame;
-    public OrderController() {
-        orderFrame = new OrderFrame();
-        orderFrame.setOrderController(this);
+
+    private OrderController() {
+        try {
+            this.stockItems = FileReader.parseItems("items.txt");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+//        orders = FileReader.parseOrders("orders.txt");
+
+        this.orderFrame = new OrderFrame();
+        this.orderFrame.setOrderController(this);
+        this.orderFrame.setStockItems(stockItems.values().toArray(new Item[stockItems.size()]));
     }
 
     public static void main(String[] args) {
@@ -32,8 +43,7 @@ public class OrderController {
     }
 
 
-
-    public Bill createNewOrder(String customerId) throws InvalidCustomerIdException, IllegalStateException {
+    public void createNewOrder(String customerId) throws InvalidCustomerIdException, IllegalStateException {
         int idLength = customerId.length();
         if (idLength != EXPECTED_CUSTOMER_ID_LENGTH) {
             throw new InvalidCustomerIdException(String.format("Customer id is expected to have length %o, found %o",
@@ -41,44 +51,52 @@ public class OrderController {
         }
 
         if (pendingOrder != null) throw new IllegalStateException("New order added while pending order exists");
-        orderFrame.setOrderTotals((float) 0.0, (float) 0.0, (float) 0.0);
         pendingOrder = new Order(customerId);
-        return pendingOrder.getBill();
+
+        this.updateOrderFrameBill();
     }
 
-    public OrderItem[] addItemToPendingOrder(Item itemToAdd) throws NoOrderException {
+    private void updateOrderFrameOrderItems() {
+        List<OrderItem> itemsInOrder = pendingOrder.getOrderItems();
+        this.orderFrame.setOrderItems(itemsInOrder.toArray(new OrderItem[itemsInOrder.size()]));
+    }
+
+    private void updateOrderFrameBill() {
+        Bill bill = pendingOrder.getBill();
+        orderFrame.setOrderTotals(bill.getSubtotal(), bill.getDiscount(), bill.getTotal());
+    }
+
+    public void addItemToPendingOrder(Item itemToAdd) throws NoOrderException {
         if (pendingOrder == null) throw new NoOrderException("No pending order found");
         pendingOrder.addOrderItem(itemToAdd);
-        List<OrderItem> itemsInOrder = pendingOrder.getOrderItems();
-        //orderFrame.setOrderItems();
-        //orderFrame.setOrderTotals();
-        return itemsInOrder.toArray(new OrderItem[itemsInOrder.size()]);
+
+        this.updateOrderFrameOrderItems();
+        this.updateOrderFrameBill();
     }
 
-    public OrderItem[] removeItemfromPendingOrder(Item itemToRemove) throws NoOrderException {
+    public void removeItemFromPendingOrder(Item itemToRemove) throws NoOrderException {
         if (pendingOrder == null) throw new NoOrderException("No pending order found");
         List<OrderItem> itemsInOrder = pendingOrder.getOrderItems();
 
-        for(OrderItem item : itemsInOrder) {
+        for (OrderItem item : itemsInOrder) {
             if (item.getItem().getId() == itemToRemove.getId()) {
                 itemsInOrder.remove(item);
                 break;
             }
         }
-        //of.setOrderItems();
-        //of.setOrderTotals();
-        return itemsInOrder.toArray(new OrderItem[itemsInOrder.size()]);
+
+        this.updateOrderFrameOrderItems();
+        this.updateOrderFrameBill();
     }
 
     public void cancelPendingOrder() {
-        orderFrame.setOrderItems(new OrderItem[] {});
-        orderFrame.setOrderTotals((float) 0.0, (float) 0.0, (float) 0.0);
-        //orderFrame.setOrderTotals();
         pendingOrder = null;
+        this.orderFrame.setOrderItems(new OrderItem[]{});
+        this.orderFrame.setOrderTotals((float) 0.0, (float) 0.0, (float) 0.0);
     }
 
     public void finalizePendingOrder() throws NoOrderException, EmptyOrderException, InvalidCustomerIdException {
-        orderFrame.setOrderItems(new OrderItem[] {});
+        orderFrame.setOrderItems(new OrderItem[]{});
         orderFrame.setOrderTotals((float) 0.0, (float) 0.0, (float) 0.0);
         //orderFrame.setBillString();
         orders.add(pendingOrder);
