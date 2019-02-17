@@ -342,8 +342,7 @@ public class OrderFrame extends JFrame implements ActionListener {
                 SubmitOrderButton.setEnabled(true); RemoveItemButton.setEnabled(true);}
             try {
                 Item item = (Item) StockItems.getSelectedValue();
-                OrderItem[] items = orderController.addItemToPendingOrder(item);
-                OrderItems.setListData(items);
+                orderController.addItemToPendingOrder(item);
                 OrderItems.setSelectedIndex(OrderItems.getModel().getSize()-1);
                 OrderItems.ensureIndexIsVisible(OrderItems.getModel().getSize()-1);
                 System.out.println("ORDER: Item "+item.toString()+" has been added to pending order.");
@@ -359,8 +358,7 @@ public class OrderFrame extends JFrame implements ActionListener {
                 SubmitOrderButton.setEnabled(false); RemoveItemButton.setEnabled(false);}
             try {
                 OrderItem orderitem = OrderItems.getSelectedValue();
-                OrderItem[] items = orderController.removeItemfromPendingOrder(orderitem.getItem());
-                OrderItems.setListData(items);
+                orderController.removeItemFromPendingOrder(orderitem.getItem());
                 System.out.println("ORDER: Item "+orderitem.toString()+" has been removed from pending order.");
             } catch (NoOrderException exception) {
                 exception.getStackTrace();
