@@ -84,7 +84,9 @@ public class OrderController {
 
     public void removeItemFromPendingOrder(OrderItem itemToRemove) throws NoOrderException {
         if (pendingOrder == null) throw new NoOrderException("No pending order found");
+
         List<OrderItem> itemsInOrder = pendingOrder.getOrderItems();
+        if (itemsInOrder.size() < 1) throw new IllegalStateException("Pending order doesn't have any items");
 
         for (OrderItem item : itemsInOrder) {
             if (item == itemToRemove) {
