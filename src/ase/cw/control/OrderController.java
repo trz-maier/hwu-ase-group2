@@ -10,10 +10,7 @@ import ase.cw.model.Item;
 import ase.cw.model.Order;
 import ase.cw.model.OrderItem;
 
-import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.text.ParseException;
 import java.util.List;
 import java.util.TreeMap;
@@ -76,6 +73,7 @@ public class OrderController {
 
     public void addItemToPendingOrder(Item itemToAdd) throws NoOrderException {
         if (pendingOrder == null) throw new NoOrderException("No pending order found");
+        if (itemToAdd == null) throw new IllegalArgumentException("Null item added to order");
         pendingOrder.addOrderItem(itemToAdd);
 
         this.updateOrderFrameOrderItems();
@@ -84,6 +82,7 @@ public class OrderController {
 
     public void removeItemFromPendingOrder(OrderItem itemToRemove) throws NoOrderException {
         if (pendingOrder == null) throw new NoOrderException("No pending order found");
+        if (itemToRemove == null) throw new IllegalArgumentException("Removing null item from order");
 
         List<OrderItem> itemsInOrder = pendingOrder.getOrderItems();
         if (itemsInOrder.size() < 1) throw new IllegalStateException("Pending order doesn't have any items");
