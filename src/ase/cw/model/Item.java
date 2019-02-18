@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package ase.cw.model;
 
@@ -15,14 +15,14 @@ public class Item {
 	private Category category;
 	private String name;
 	private float price;
-	
+
 	public enum Category {FOOD, BEVERAGE}
 
 	public Item(UUID id, Category category, String name, float price) {
-        this.id = id;
-        this.category = category;
-        this.name = name;
-        this.price = price;
+		this.id = id;
+		this.category = category;
+		this.name = name;
+		this.price = price;
 
 	}
 
@@ -54,8 +54,4 @@ public class Item {
 		return price;
 	}
 
-	public String toString() {
-		return String.format("%s (£%.2f)", name, price);
-	}
-	
 }

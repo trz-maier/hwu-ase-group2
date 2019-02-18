@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package ase.cw.model;
 
@@ -11,7 +11,7 @@ public class OrderItem {
 	private Item item;
 
 	/**
-	 * 
+	 *
 	 */
 	public OrderItem(Item item) {
 		this.item = item;
@@ -24,8 +24,6 @@ public class OrderItem {
 		return item;
 	}
 
-	public String toString() {
-		return item.toString();
-	}
+
 
 }
