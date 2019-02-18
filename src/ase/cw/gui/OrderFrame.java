@@ -331,7 +331,6 @@ public class OrderFrame extends JFrame implements ActionListener {
                 SubmitOrderButton.setEnabled(true);
                 CancelOrderButton.setEnabled(true);
                 AddItemButton.setEnabled(true);
-                System.out.println(OrderItems);
             } catch (InvalidCustomerIdException exc) {
                 JOptionPane.showMessageDialog(new JFrame(), "Customer ID has to be 8 characters", "Error", JOptionPane.ERROR_MESSAGE);
             }
@@ -342,9 +341,8 @@ public class OrderFrame extends JFrame implements ActionListener {
             Item item = StockItems.getSelectedValue();
             try {
                 orderController.addItemToPendingOrder(item);
-                //OrderItems.setSelectedIndex(OrderItems.getModel().getSize()-1);
-                //OrderItems.ensureIndexIsVisible(OrderItems.getModel().getSize()-1);
-                System.out.println("ORDER: Item "+item.toString()+" has been added to pending order.");
+                OrderItems.setSelectedIndex(OrderItems.getModel().getSize()-1);
+                OrderItems.ensureIndexIsVisible(OrderItems.getModel().getSize()-1);
             } catch (NoOrderException exception) {
                 exception.getStackTrace();
                 JOptionPane.showMessageDialog(new JFrame(), "Error adding item", "Error", JOptionPane.ERROR_MESSAGE);
@@ -356,15 +354,22 @@ public class OrderFrame extends JFrame implements ActionListener {
         if (e.getSource() == RemoveItemButton) {
             System.out.println("GUI: Remove item button pressed.");
             OrderItem item = OrderItems.getSelectedValue();
+            int idx = OrderItems.getSelectedIndex();
             try {
                 orderController.removeItemFromPendingOrder(item);
-                System.out.println("ORDER: Item "+item.toString()+" has been removed from pending order.");
+                if (idx == OrderItems.getModel().getSize()) {
+                    OrderItems.setSelectedIndex(OrderItems.getModel().getSize()-1);
+                }
+                else
+                    OrderItems.setSelectedIndex(idx);
+
             } catch (NoOrderException exception) {
                 exception.getStackTrace();
                 JOptionPane.showMessageDialog(new JFrame(), "Error removing item", "Error", JOptionPane.ERROR_MESSAGE);
             }
-            if (OrderItems.getModel().getSize() == 0) {
-                SubmitOrderButton.setEnabled(false); RemoveItemButton.setEnabled(false);}
+            if (OrderItems.getModel().getSize()==0) {
+                SubmitOrderButton.setEnabled(false);RemoveItemButton.setEnabled(false);
+            }
         }
 
         if (e.getSource() == SubmitOrderButton) {

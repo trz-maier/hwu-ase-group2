@@ -82,12 +82,12 @@ public class OrderController {
         this.updateOrderFrameBill();
     }
 
-    public void removeItemFromPendingOrder(Item itemToRemove) throws NoOrderException {
+    public void removeItemFromPendingOrder(OrderItem itemToRemove) throws NoOrderException {
         if (pendingOrder == null) throw new NoOrderException("No pending order found");
         List<OrderItem> itemsInOrder = pendingOrder.getOrderItems();
 
         for (OrderItem item : itemsInOrder) {
-            if (item.getItem().getId() == itemToRemove.getId()) {
+            if (item == itemToRemove) {
                 itemsInOrder.remove(item);
                 break;
             }
