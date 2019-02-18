@@ -23,51 +23,51 @@ import java.util.ArrayList;
 public class OrderFrame extends JFrame implements ActionListener {
 
     // Top
-    private JPanel Content = new JPanel(new BorderLayout(10,10));
+    private JPanel content = new JPanel(new BorderLayout(10,10));
 
     // Lists
-    private JList<Item> StockItems = new JList<>();
-    private JList<Item> StockItemsSubset = new JList<>();
-    private JList<OrderItem> OrderItems = new JList<>();
+    private JList<Item> stockItems = new JList<>();
+    private JList<Item> stockItemsSubset = new JList<>();
+    private JList<OrderItem> orderItems = new JList<>();
 
     // Scroll panels
-    private JScrollPane StockItemsScroll = new JScrollPane();
-    private JScrollPane OrderItemScroll = new JScrollPane();
+    private JScrollPane stockItemsScroll = new JScrollPane();
+    private JScrollPane orderItemScroll = new JScrollPane();
 
     // Buttons
-    private JButton StartOrderButton    = new JButton("Start Order");
-    private JButton SubmitOrderButton   = new JButton("Submit");
-    private JButton CancelOrderButton   = new JButton("Cancel");
-    private JButton ItemSearchButton    = new JButton("Search");
-    private JButton ClearSearchButton   = new JButton("Clear");
-    private JButton AddItemButton       = new JButton("Add");
-    private JButton RemoveItemButton    = new JButton("Remove");
+    private JButton startOrderButton = new JButton("Start Order");
+    private JButton submitOrderButton = new JButton("Submit");
+    private JButton cancelOrderButton = new JButton("Cancel");
+    private JButton itemSearchButton = new JButton("Search");
+    private JButton clearSearchButton = new JButton("Clear");
+    private JButton addItemButton = new JButton("Add");
+    private JButton removeItemButton = new JButton("Remove");
 
     // Labels
-    private JLabel EnterCustomerIdLabel = new JLabel("Enter Customer ID:");
-    private JLabel SearchItemLabel      = new JLabel("Search items by name:");
-    private JLabel CurrentOrderLabel    = new JLabel("Current order:");
-    private JLabel SelectItemLabel      = new JLabel("Select item from product list:");
-    private JLabel SubtotalLabel        = new JLabel("Subtotal");
-    private JLabel DiscountLabel        = new JLabel("Discount");
-    private JLabel TotalLabel           = new JLabel("Total");
+    private JLabel enterCustomerIdLabel = new JLabel("Enter Customer ID:");
+    private JLabel searchItemLabel = new JLabel("Search items by name:");
+    private JLabel currentOrderLabel = new JLabel("Current order:");
+    private JLabel selectItemLabel = new JLabel("Select item from product list:");
+    private JLabel subtotalLabel = new JLabel("Subtotal");
+    private JLabel discountLabel = new JLabel("Discount");
+    private JLabel totalLabel = new JLabel("Total");
 
     // Text output areas
-    private JTextArea Subtotal          = new JTextArea("£ 0.00");
-    private JTextArea Discount          = new JTextArea("£ 0.00");
-    private JTextArea Total             = new JTextArea("£ 0.00");
-    private JTextArea BillString        = new JTextArea();
+    private JTextArea subtotal = new JTextArea("£ 0.00");
+    private JTextArea discount = new JTextArea("£ 0.00");
+    private JTextArea total = new JTextArea("£ 0.00");
+    private JTextArea billString = new JTextArea();
 
     // Text input areas
-    private JTextField CustomerIdInput  = new JTextField(1);
-    private JTextField SearchItemInput  = new JTextField(1);
+    private JTextField customerIdInput = new JTextField(1);
+    private JTextField searchItemInput = new JTextField(1);
 
     private OrderController orderController;
 
     // Frame builder
     public OrderFrame() {
 
-        this.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("coffee.png")));
+        this.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("coffee.png")));
         this.setTitle("Café Register");
         this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         this.addWindowListener(new exitButtonPress());
@@ -86,34 +86,34 @@ public class OrderFrame extends JFrame implements ActionListener {
     }
 
     public void setStockItems(Item[] items) {
-        StockItems.setListData(items);
-        StockItemsScroll.setViewportView(StockItems);
+        stockItems.setListData(items);
+        stockItemsScroll.setViewportView(stockItems);
     }
 
     public void setOrderItems(OrderItem[] orderItems) {
-        OrderItems.setListData(orderItems);
-        OrderItemScroll.setViewportView(OrderItems);
+        this.orderItems.setListData(orderItems);
+        orderItemScroll.setViewportView(this.orderItems);
     }
 
     public void setOrderTotals(Float subtotal, Float discount, Float total) {
-        Subtotal.setText("£"+subtotal.toString());
-        Discount.setText("£"+discount.toString());
-        Total.setText("£"+total.toString());
+        this.subtotal.setText("£"+subtotal.toString());
+        this.discount.setText("£"+discount.toString());
+        this.total.setText("£"+total.toString());
     }
 
     public void setBillString(String billString) {
-        BillString.setText(billString);
+        this.billString.setText(billString);
     }
 
     private void setStockItemsSubset(Item[] items) {
-        StockItemsSubset.setListData(items);
-        StockItemsScroll.setViewportView(StockItemsSubset);
+        stockItemsSubset.setListData(items);
+        stockItemsScroll.setViewportView(stockItemsSubset);
     }
 
     private void searchMenu(String string) {
         ArrayList<Item> stock_items_subset_list  = new ArrayList<>();
-        for (int i = 0; i < StockItems.getModel().getSize(); i++) {
-            Item item = StockItems.getModel().getElementAt(i);
+        for (int i = 0; i < stockItems.getModel().getSize(); i++) {
+            Item item = stockItems.getModel().getElementAt(i);
             if (item.toString().toLowerCase().contains(string.toLowerCase()))
                 stock_items_subset_list.add(item);
         }
@@ -125,13 +125,13 @@ public class OrderFrame extends JFrame implements ActionListener {
 
     private void buildFrame() {
 
-        StartOrderButton.setEnabled(true);
-        SubmitOrderButton.setEnabled(false);
-        CancelOrderButton.setEnabled(false);
-        RemoveItemButton.setEnabled(false);
-        AddItemButton.setEnabled(false);
-        ClearSearchButton.setEnabled(false);
-        Content.setBackground(Color.white);
+        startOrderButton.setEnabled(true);
+        submitOrderButton.setEnabled(false);
+        cancelOrderButton.setEnabled(false);
+        removeItemButton.setEnabled(false);
+        addItemButton.setEnabled(false);
+        clearSearchButton.setEnabled(false);
+        content.setBackground(Color.white);
 
         JPanel top = new JPanel(new GridLayout(1,2, 5, 5));
 
@@ -139,28 +139,28 @@ public class OrderFrame extends JFrame implements ActionListener {
         JPanel left = new JPanel(new BorderLayout(5, 5));
         left.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         JPanel left_top = new JPanel(new GridLayout(4,1, 5, 5));
-        left_top.add(SearchItemLabel);
-        SearchItemInput.addKeyListener(new searchEnterPress());
-        left_top.add(SearchItemInput);
+        left_top.add(searchItemLabel);
+        searchItemInput.addKeyListener(new searchEnterPress());
+        left_top.add(searchItemInput);
 
         JPanel left_top_nav = new JPanel(new GridLayout(1,2, 5, 5));
-        SearchItemInput.addActionListener(this);
-        ItemSearchButton.addActionListener(this);
-        left_top_nav.add(ItemSearchButton);
-        ClearSearchButton.addActionListener(this);
-        left_top_nav.add(ClearSearchButton);
+        searchItemInput.addActionListener(this);
+        itemSearchButton.addActionListener(this);
+        left_top_nav.add(itemSearchButton);
+        clearSearchButton.addActionListener(this);
+        left_top_nav.add(clearSearchButton);
         left_top.add(left_top_nav);
-        left_top.add(SelectItemLabel);
+        left_top.add(selectItemLabel);
 
         JPanel left_bottom = new JPanel(new GridLayout(1,1, 5, 5));
         left_bottom.setBackground(Color.white);
-        AddItemButton.addActionListener(this);
-        left_bottom.add(AddItemButton);
+        addItemButton.addActionListener(this);
+        left_bottom.add(addItemButton);
         left.add(left_top, BorderLayout.PAGE_START);
-        StockItems.addMouseListener(new doubleClickToAdd());
-        StockItems.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        StockItemsScroll.setViewportView(StockItems);
-        left.add(StockItemsScroll, BorderLayout.CENTER);
+        stockItems.addMouseListener(new doubleClickToAdd());
+        stockItems.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        stockItemsScroll.setViewportView(stockItems);
+        left.add(stockItemsScroll, BorderLayout.CENTER);
         left.add(left_bottom, BorderLayout.PAGE_END);
 
         top.add(left);
@@ -170,38 +170,38 @@ public class OrderFrame extends JFrame implements ActionListener {
         right.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         JPanel right_top = new JPanel(new GridLayout(4,1, 5, 5));
-        right_top.add(EnterCustomerIdLabel);
-        CustomerIdInput.addActionListener(this);
-        CustomerIdInput.addKeyListener(new startOrderEnterPress());
-        right_top.add(CustomerIdInput);
-        StartOrderButton.addActionListener(this);
-        right_top.add(StartOrderButton);
-        right_top.add(CurrentOrderLabel);
+        right_top.add(enterCustomerIdLabel);
+        customerIdInput.addActionListener(this);
+        customerIdInput.addKeyListener(new startOrderEnterPress());
+        right_top.add(customerIdInput);
+        startOrderButton.addActionListener(this);
+        right_top.add(startOrderButton);
+        right_top.add(currentOrderLabel);
 
         JPanel right_bottom = new JPanel(new GridLayout(8,1, 5, 5));
-        RemoveItemButton.addActionListener(this);
-        right_bottom.add(RemoveItemButton);
-        right_bottom.add(SubtotalLabel);
-        Subtotal.setOpaque(false);
-        right_bottom.add(Subtotal);
-        right_bottom.add(DiscountLabel);
-        Discount.setOpaque(false);
-        right_bottom.add(Discount);
-        right_bottom.add(TotalLabel);
-        Total.setOpaque(false);
-        right_bottom.add(Total);
+        removeItemButton.addActionListener(this);
+        right_bottom.add(removeItemButton);
+        right_bottom.add(subtotalLabel);
+        subtotal.setOpaque(false);
+        right_bottom.add(subtotal);
+        right_bottom.add(discountLabel);
+        discount.setOpaque(false);
+        right_bottom.add(discount);
+        right_bottom.add(totalLabel);
+        total.setOpaque(false);
+        right_bottom.add(total);
 
         JPanel right_bottom_buttons = new JPanel(new GridLayout(1,2, 5, 5));
-        SubmitOrderButton.addActionListener(this);
-        right_bottom_buttons.add(SubmitOrderButton);
-        CancelOrderButton.addActionListener(this);
-        right_bottom_buttons.add(CancelOrderButton);
+        submitOrderButton.addActionListener(this);
+        right_bottom_buttons.add(submitOrderButton);
+        cancelOrderButton.addActionListener(this);
+        right_bottom_buttons.add(cancelOrderButton);
         right_bottom.add(right_bottom_buttons);
         right.add(right_top, BorderLayout.PAGE_START);
-        OrderItems.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        OrderItems.addMouseListener(new doubleClickToRemove());
-        OrderItemScroll.setViewportView(OrderItems);
-        right.add(OrderItemScroll, BorderLayout.CENTER);
+        orderItems.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        orderItems.addMouseListener(new doubleClickToRemove());
+        orderItemScroll.setViewportView(orderItems);
+        right.add(orderItemScroll, BorderLayout.CENTER);
         right.add(right_bottom, BorderLayout.PAGE_END);
 
         top.add(right);
@@ -258,11 +258,11 @@ public class OrderFrame extends JFrame implements ActionListener {
     private class exitButtonPress extends WindowAdapter {
         public void  windowClosing(WindowEvent evt) {
             int dialog_box = JOptionPane.showConfirmDialog(null,
-                    "  Are you sure you want to close?  \n  Any open order will be discarded.  ",
+                    "Are you sure you want to close?\nAny pending order will be discarded.",
                     "Closing Register", JOptionPane.YES_NO_OPTION);
 
             if (dialog_box == JOptionPane.YES_OPTION) {
-                CancelOrderButton.doClick();
+                cancelOrderButton.doClick();
 
                         String report = "This is your final report String";
                         saveReportOnExit(report);
@@ -277,7 +277,7 @@ public class OrderFrame extends JFrame implements ActionListener {
     private class searchEnterPress extends KeyAdapter {
         public void keyPressed(KeyEvent evt) {
             if (evt.getKeyChar() == KeyEvent.VK_ENTER) {
-                ItemSearchButton.doClick();
+                itemSearchButton.doClick();
             }
         }
     }
@@ -285,7 +285,7 @@ public class OrderFrame extends JFrame implements ActionListener {
     private class startOrderEnterPress extends KeyAdapter {
         public void keyPressed(KeyEvent evt) {
             if (evt.getKeyChar() == KeyEvent.VK_ENTER) {
-                StartOrderButton.doClick();
+                startOrderButton.doClick();
             }
         }
     }
@@ -293,7 +293,7 @@ public class OrderFrame extends JFrame implements ActionListener {
     private class doubleClickToAdd extends MouseAdapter {
         public void mouseClicked(MouseEvent evt) {
             if (evt.getClickCount() == 2) {
-                AddItemButton.doClick();
+                addItemButton.doClick();
             }
         }
     }
@@ -301,7 +301,7 @@ public class OrderFrame extends JFrame implements ActionListener {
     private class doubleClickToRemove extends MouseAdapter {
         public void mouseClicked(MouseEvent evt) {
             if (evt.getClickCount() == 2) {
-                RemoveItemButton.doClick();
+                removeItemButton.doClick();
             }
         }
     }
@@ -309,83 +309,86 @@ public class OrderFrame extends JFrame implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
 
-        if (e.getSource() == ItemSearchButton) {
+        if (e.getSource() == itemSearchButton) {
             System.out.println("GUI: Item search button pressed.");
-            ClearSearchButton.setEnabled(true);
-            searchMenu(SearchItemInput.getText());
+            clearSearchButton.setEnabled(true);
+            searchMenu(searchItemInput.getText());
         }
 
-        if (e.getSource() == ClearSearchButton) {
+        if (e.getSource() == clearSearchButton) {
             System.out.println("GUI: Clear search button pressed.");
-            SearchItemInput.setText("");
-            ClearSearchButton.setEnabled(false);
-            StockItemsScroll.setViewportView(StockItems);
+            searchItemInput.setText("");
+            clearSearchButton.setEnabled(false);
+            stockItemsScroll.setViewportView(stockItems);
         }
 
-        if (e.getSource() == StartOrderButton) {
+        if (e.getSource() == startOrderButton) {
             System.out.println("GUI: Start order button pressed.");
             try {
-                orderController.createNewOrder(CustomerIdInput.getText());
-                CustomerIdInput.setEnabled(false);
-                StartOrderButton.setEnabled(false);
-                SubmitOrderButton.setEnabled(true);
-                CancelOrderButton.setEnabled(true);
-                AddItemButton.setEnabled(true);
+                orderController.createNewOrder(customerIdInput.getText());
+                customerIdInput.setEnabled(false);
+                startOrderButton.setEnabled(false);
+                submitOrderButton.setEnabled(true);
+                cancelOrderButton.setEnabled(true);
+                addItemButton.setEnabled(true);
             } catch (InvalidCustomerIdException exc) {
-                JOptionPane.showMessageDialog(new JFrame(), "Customer ID has to be 8 characters", "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(new JFrame(), "Error creating new order:\nCustomer ID has to be 8 characters", "Error", JOptionPane.ERROR_MESSAGE);
             }
         }
 
-        if (e.getSource() == AddItemButton) {
+        if (e.getSource() == addItemButton) {
             System.out.println("GUI: Add item button pressed.");
-            Item item = StockItems.getSelectedValue();
+            Item item = stockItems.getSelectedValue();
             try {
                 orderController.addItemToPendingOrder(item);
-                OrderItems.setSelectedIndex(OrderItems.getModel().getSize()-1);
-                OrderItems.ensureIndexIsVisible(OrderItems.getModel().getSize()-1);
+                orderItems.setSelectedIndex(orderItems.getModel().getSize()-1);
+                orderItems.ensureIndexIsVisible(orderItems.getModel().getSize()-1);
             } catch (NoOrderException exception) {
-                exception.getStackTrace();
-                JOptionPane.showMessageDialog(new JFrame(), "Error adding item", "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(new JFrame(), "Error adding item:\nInvalid order", "Error", JOptionPane.ERROR_MESSAGE);
+            } catch (IllegalArgumentException exception) {
+                JOptionPane.showMessageDialog(new JFrame(), "Select item to add", "Error", JOptionPane.ERROR_MESSAGE);
             }
-            if (OrderItems.getModel().getSize() > 0) {
-                SubmitOrderButton.setEnabled(true); RemoveItemButton.setEnabled(true);}
+            if (orderItems.getModel().getSize() > 0) {
+                submitOrderButton.setEnabled(true); removeItemButton.setEnabled(true);}
         }
 
-        if (e.getSource() == RemoveItemButton) {
+        if (e.getSource() == removeItemButton) {
             System.out.println("GUI: Remove item button pressed.");
-            OrderItem item = OrderItems.getSelectedValue();
-            int idx = OrderItems.getSelectedIndex();
+            OrderItem item = orderItems.getSelectedValue();
+            int idx = orderItems.getSelectedIndex();
             try {
                 orderController.removeItemFromPendingOrder(item);
-                if (idx == OrderItems.getModel().getSize()) {
-                    OrderItems.setSelectedIndex(OrderItems.getModel().getSize()-1);
+                if (idx == orderItems.getModel().getSize()) {
+                    orderItems.setSelectedIndex(orderItems.getModel().getSize()-1);
                 }
                 else
-                    OrderItems.setSelectedIndex(idx);
+                    orderItems.setSelectedIndex(idx);
 
             } catch (NoOrderException exception) {
-                exception.getStackTrace();
-                JOptionPane.showMessageDialog(new JFrame(), "Error removing item", "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(new JFrame(), "Error removing item:\nInvalid order", "Error", JOptionPane.ERROR_MESSAGE);
+            } catch (IllegalArgumentException exception) {
+                JOptionPane.showMessageDialog(new JFrame(), "Select item to remove", "Error", JOptionPane.ERROR_MESSAGE);
             }
-            if (OrderItems.getModel().getSize()==0) {
-                SubmitOrderButton.setEnabled(false);RemoveItemButton.setEnabled(false);
+            if (orderItems.getModel().getSize()==0) {
+                submitOrderButton.setEnabled(false);
+                removeItemButton.setEnabled(false);
             }
         }
 
-        if (e.getSource() == SubmitOrderButton) {
+        if (e.getSource() == submitOrderButton) {
             System.out.println("GUI: Submit order button pressed.");
             try {
                 orderController.finalizePendingOrder();
 
-                JFrame billFrame = new JFrame("Customer: "+ CustomerIdInput.getText());
+                JFrame billFrame = new JFrame("Customer: "+ customerIdInput.getText());
 
-                BillString.setMargin(new Insets(10,10,10,10));
-                BillString.setFont( new Font("monospaced", Font.PLAIN, 14) );
-                BillString.setEditable(false);
-                BillString.setLineWrap(false);
+                billString.setMargin(new Insets(10,10,10,10));
+                billString.setFont( new Font("monospaced", Font.PLAIN, 14) );
+                billString.setEditable(false);
+                billString.setLineWrap(false);
 
 
-                JScrollPane sp = new JScrollPane(BillString);
+                JScrollPane sp = new JScrollPane(billString);
                 Border border = BorderFactory.createEmptyBorder(0, 0, 0, 0);
                 sp.setBorder(border);
 
@@ -397,36 +400,44 @@ public class OrderFrame extends JFrame implements ActionListener {
                 billFrame.pack();
                 billFrame.setVisible(true);
 
-                CustomerIdInput.setText("");
-                CustomerIdInput.setEnabled(true);
-                StartOrderButton.setEnabled(true);
-                SubmitOrderButton.setEnabled(false);
-                CancelOrderButton.setEnabled(false);
-                RemoveItemButton.setEnabled(false);
-                AddItemButton.setEnabled(false);
+                customerIdInput.setText("");
+                customerIdInput.setEnabled(true);
+                startOrderButton.setEnabled(true);
+                submitOrderButton.setEnabled(false);
+                cancelOrderButton.setEnabled(false);
+                removeItemButton.setEnabled(false);
+                addItemButton.setEnabled(false);
 
             } catch (NoOrderException exception) {
                 exception.getStackTrace();
-                JOptionPane.showMessageDialog(new JFrame(), "Error submitting order", "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(new JFrame(), "Error submitting order:\nInvalid order", "Error", JOptionPane.ERROR_MESSAGE);
             } catch (EmptyOrderException exception) {
                 exception.getStackTrace();
-                JOptionPane.showMessageDialog(new JFrame(), "Error submitting order", "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(new JFrame(), "Error submitting order:\nEmpty order can't be submitted", "Error", JOptionPane.ERROR_MESSAGE);
             } catch (InvalidCustomerIdException exception) {
                 exception.getStackTrace();
-                JOptionPane.showMessageDialog(new JFrame(), "Error submitting order", "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(new JFrame(), "Error submitting order\ninvalid customer ID", "Error", JOptionPane.ERROR_MESSAGE);
             }
         }
 
-        if (e.getSource() == CancelOrderButton) {
+        if (e.getSource() == cancelOrderButton) {
             System.out.println("GUI: Cancel order button pressed.");
-            CustomerIdInput.setText("");
-            CustomerIdInput.setEnabled(true);
-            StartOrderButton.setEnabled(true);
-            SubmitOrderButton.setEnabled(false);
-            CancelOrderButton.setEnabled(false);
-            RemoveItemButton.setEnabled(false);
-            AddItemButton.setEnabled(false);
-            orderController.cancelPendingOrder();
+
+            int dialog_box = JOptionPane.showConfirmDialog(null,
+                    "Are you sure you want to cancel pending order?",
+                    "Cancelling", JOptionPane.YES_NO_OPTION);
+
+            if (dialog_box == JOptionPane.YES_OPTION) {
+                customerIdInput.setText("");
+                customerIdInput.setEnabled(true);
+                startOrderButton.setEnabled(true);
+                submitOrderButton.setEnabled(false);
+                cancelOrderButton.setEnabled(false);
+                removeItemButton.setEnabled(false);
+                addItemButton.setEnabled(false);
+                orderController.cancelPendingOrder();
+
+            }
         }
     }
 }
