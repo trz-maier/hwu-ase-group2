@@ -6,7 +6,6 @@ import ase.cw.exceptions.InvalidCustomerIdException;
 import ase.cw.exceptions.NoOrderException;
 import ase.cw.model.Item;
 import ase.cw.model.OrderItem;
-
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -18,7 +17,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 /**
- * Created by User on 04.02.2019.
+ * Created by Bartosz on 04.02.2019.
  */
 public class OrderFrame extends JFrame implements ActionListener {
 
@@ -27,7 +26,7 @@ public class OrderFrame extends JFrame implements ActionListener {
 
     // Lists
     private JList<Item> stockItems = new JList<>();
-    private JList<Item> stockItemsSubset = new JList<>();
+    private JList<Item> stockItemsSubset = new JList<>(); private int useStockItemsSubset = 0;
     private JList<OrderItem> orderItems = new JList<>();
 
     // Scroll panels
@@ -64,14 +63,16 @@ public class OrderFrame extends JFrame implements ActionListener {
 
     private OrderController orderController;
 
+
     // Frame builder
+
     public OrderFrame() {
 
         this.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("coffee.png")));
         this.setTitle("Café Register");
         this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         this.addWindowListener(new exitButtonPress());
-        this.setPreferredSize(new Dimension(600,800));
+        this.setPreferredSize(new Dimension(600,700));
         this.setResizable(false);
         this.buildFrame();
         this.pack();
@@ -80,6 +81,8 @@ public class OrderFrame extends JFrame implements ActionListener {
 
         System.out.println("GUI: Program opened.");
     }
+
+    // Frame setters
 
     public void setOrderController(OrderController orderController) {
         this.orderController = orderController;
@@ -113,11 +116,10 @@ public class OrderFrame extends JFrame implements ActionListener {
     private void searchMenu(String string) {
         ArrayList<Item> stock_items_subset_list  = new ArrayList<>();
         for (int i = 0; i < stockItems.getModel().getSize(); i++) {
-            Item item = stockItems.getModel().getElementAt(i);
-            if (item.toString().toLowerCase().contains(string.toLowerCase()))
-                stock_items_subset_list.add(item);
+            if (stockItems.getModel().getElementAt(i).getName().toLowerCase().contains(string.toLowerCase()))
+                stock_items_subset_list.add(stockItems.getModel().getElementAt(i));
         }
-        setStockItemsSubset((Item[])stock_items_subset_list.toArray());
+        setStockItemsSubset(stock_items_subset_list.toArray(new Item[0]));
     }
 
 
@@ -157,7 +159,6 @@ public class OrderFrame extends JFrame implements ActionListener {
         addItemButton.addActionListener(this);
         left_bottom.add(addItemButton);
         left.add(left_top, BorderLayout.PAGE_START);
-        stockItems.addMouseListener(new doubleClickToAdd());
         stockItems.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         stockItemsScroll.setViewportView(stockItems);
         left.add(stockItemsScroll, BorderLayout.CENTER);
@@ -199,7 +200,6 @@ public class OrderFrame extends JFrame implements ActionListener {
         right_bottom.add(right_bottom_buttons);
         right.add(right_top, BorderLayout.PAGE_START);
         orderItems.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        orderItems.addMouseListener(new doubleClickToRemove());
         orderItemScroll.setViewportView(orderItems);
         right.add(orderItemScroll, BorderLayout.CENTER);
         right.add(right_bottom, BorderLayout.PAGE_END);
@@ -257,22 +257,13 @@ public class OrderFrame extends JFrame implements ActionListener {
 
     private class exitButtonPress extends WindowAdapter {
         public void  windowClosing(WindowEvent evt) {
-            int dialog_box = JOptionPane.showConfirmDialog(null,
-                    "Are you sure you want to close?\nAny pending order will be discarded.",
-                    "Closing Register", JOptionPane.YES_NO_OPTION);
-
-            if (dialog_box == JOptionPane.YES_OPTION) {
-                cancelOrderButton.doClick();
-
-                        String report = "This is your final report String";
-                        saveReportOnExit(report);
-
-                        System.out.println("GUI: Program closed.");
-                        System.exit(0);
-
-                    }
-                }
-            }
+            cancelOrderButton.doClick();
+            String report = "This is your final report String";
+            saveReportOnExit(report);
+            System.out.println("GUI: Program closed.");
+            System.exit(0);
+        }
+    }
 
     private class searchEnterPress extends KeyAdapter {
         public void keyPressed(KeyEvent evt) {
@@ -290,22 +281,6 @@ public class OrderFrame extends JFrame implements ActionListener {
         }
     }
 
-    private class doubleClickToAdd extends MouseAdapter {
-        public void mouseClicked(MouseEvent evt) {
-            if (evt.getClickCount() == 2) {
-                addItemButton.doClick();
-            }
-        }
-    }
-
-    private class doubleClickToRemove extends MouseAdapter {
-        public void mouseClicked(MouseEvent evt) {
-            if (evt.getClickCount() == 2) {
-                removeItemButton.doClick();
-            }
-        }
-    }
-
     @Override
     public void actionPerformed(ActionEvent e) {
 
@@ -313,6 +288,7 @@ public class OrderFrame extends JFrame implements ActionListener {
             System.out.println("GUI: Item search button pressed.");
             clearSearchButton.setEnabled(true);
             searchMenu(searchItemInput.getText());
+            useStockItemsSubset = 1;
         }
 
         if (e.getSource() == clearSearchButton) {
@@ -320,6 +296,7 @@ public class OrderFrame extends JFrame implements ActionListener {
             searchItemInput.setText("");
             clearSearchButton.setEnabled(false);
             stockItemsScroll.setViewportView(stockItems);
+            useStockItemsSubset = 0;
         }
 
         if (e.getSource() == startOrderButton) {
@@ -338,7 +315,9 @@ public class OrderFrame extends JFrame implements ActionListener {
 
         if (e.getSource() == addItemButton) {
             System.out.println("GUI: Add item button pressed.");
-            Item item = stockItems.getSelectedValue();
+            Item item;
+            if (useStockItemsSubset==0) {item = stockItems.getSelectedValue();}
+            else {item = stockItemsSubset.getSelectedValue();}
             try {
                 orderController.addItemToPendingOrder(item);
                 orderItems.setSelectedIndex(orderItems.getModel().getSize()-1);
@@ -380,10 +359,10 @@ public class OrderFrame extends JFrame implements ActionListener {
             try {
                 orderController.finalizePendingOrder();
 
-                JFrame billFrame = new JFrame("Customer: "+ customerIdInput.getText());
+                JFrame billFrame = new JFrame(customerIdInput.getText());
 
                 billString.setMargin(new Insets(10,10,10,10));
-                billString.setFont( new Font("monospaced", Font.PLAIN, 14) );
+                billString.setFont( new Font("monospaced", Font.PLAIN, 12) );
                 billString.setEditable(false);
                 billString.setLineWrap(false);
 
@@ -393,8 +372,8 @@ public class OrderFrame extends JFrame implements ActionListener {
                 sp.setBorder(border);
 
                 billFrame.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("coffee.png")));
-                billFrame.setPreferredSize(new Dimension(330,800));
-                billFrame.setResizable(false);
+                billFrame.setPreferredSize(new Dimension(280,700));
+                billFrame.setResizable(true);
                 billFrame.setLocation(this.getX()+this.getWidth(), this.getY());
                 billFrame.add(sp);
                 billFrame.pack();
