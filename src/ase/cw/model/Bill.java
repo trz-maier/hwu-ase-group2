@@ -14,10 +14,16 @@ public class Bill {
     private float subtotal;
     private float discount;
 
+
+
+    private String billString;
+
     public Bill(Order order) {
         subtotal = calculateSubtotal(order);
         discount = calculateDiscount(order);
         total = subtotal - discount;
+        billString = showBill(order);
+
     }
 
     private float calculateSubtotal(Order order) {
@@ -26,6 +32,8 @@ public class Bill {
         for (OrderItem temp : order.getOrderItems()) {
             this.subtotal += temp.getItem().getPrice();
         }
+
+        subtotal = Math.round(subtotal*100)/100;
         return subtotal;
     }
 
@@ -47,13 +55,30 @@ public class Bill {
         if (countFood > 1 && countBeverage > 0) {
             discount = (float) (subtotal * 0.2);
         }
+        discount = Math.round(discount*100)/100;
         return discount;
     }
 
-    private String showBill() {
-        String stringBill;
-        stringBill = String.format("SUBTOTAL: %.3g \n DISCOUNT: %.3g \n TOTAL: %.3g \n", this.subtotal, this.discount, this.total);
-        return stringBill;
+    public String showBill(Order order) {
+        billString = "==================================\n\n";
+        billString += String.format("Customer: %s \nDate: %tc\n\n", order.getCustomerId(), order.getTimestamp());
+        billString += "==================================\n\n";
+
+        for (OrderItem temp : order.getOrderItems()) {
+            billString += String.format("%-28s", temp.toString());
+            billString += String.format("£%5.2f\n", temp.getItem().getPrice());
+        }
+
+        billString += "----------------------------------\n\n";
+        billString += String.format("%-28s", "SUBTOTAL");
+        billString += String.format("£%5.2f\n", this.subtotal);
+        billString += String.format("%-28s", "DISCOUNT");
+        billString += String.format("£%5.2f\n\n", this.discount);
+        billString += "==================================\n";
+        billString += String.format("%-28s", "TOTAL");
+        billString += String.format("£%5.2f\n", this.total);
+        billString += "==================================\n";
+        return billString;
     }
 
     /**
@@ -77,5 +102,7 @@ public class Bill {
         return discount;
     }
 
-
+    public String getBillString() {
+        return billString;
+    }
 }

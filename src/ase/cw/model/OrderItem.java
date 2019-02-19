@@ -17,6 +17,9 @@ public class OrderItem {
 		this.item = item;
 	}
 
+	public String toString(){
+		return this.getItem().getName();
+	}
 	/**
 	 * @return the item
 	 */

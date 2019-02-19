@@ -393,7 +393,7 @@ public class OrderFrame extends JFrame implements ActionListener {
                 sp.setBorder(border);
 
                 billFrame.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("coffee.png")));
-                billFrame.setPreferredSize(new Dimension(300,800));
+                billFrame.setPreferredSize(new Dimension(330,800));
                 billFrame.setResizable(false);
                 billFrame.setLocation(this.getX()+this.getWidth(), this.getY());
                 billFrame.add(sp);
