@@ -392,7 +392,7 @@ public class OrderFrame extends JFrame implements ActionListener {
                 Border border = BorderFactory.createEmptyBorder(0, 0, 0, 0);
                 sp.setBorder(border);
 
-                billFrame.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("coffee.png")));
+                billFrame.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("coffee.png")));
                 billFrame.setPreferredSize(new Dimension(300,800));
                 billFrame.setResizable(false);
                 billFrame.setLocation(this.getX()+this.getWidth(), this.getY());
