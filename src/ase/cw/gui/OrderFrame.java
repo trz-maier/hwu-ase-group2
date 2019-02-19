@@ -18,7 +18,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 /**
- * Created by User on 04.02.2019.
+ * Created by Bartosz on 04.02.2019.
  */
 public class OrderFrame extends JFrame implements ActionListener {
 
@@ -373,7 +373,7 @@ public class OrderFrame extends JFrame implements ActionListener {
             try {
                 orderController.finalizePendingOrder();
 
-                JFrame billFrame = new JFrame("Customer: "+ customerIdInput.getText());
+                JFrame billFrame = new JFrame(customerIdInput.getText());
 
                 billString.setMargin(new Insets(10,10,10,10));
                 billString.setFont( new Font("monospaced", Font.PLAIN, 12) );
