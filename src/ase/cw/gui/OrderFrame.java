@@ -6,7 +6,6 @@ import ase.cw.exceptions.InvalidCustomerIdException;
 import ase.cw.exceptions.NoOrderException;
 import ase.cw.model.Item;
 import ase.cw.model.OrderItem;
-
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -64,7 +63,9 @@ public class OrderFrame extends JFrame implements ActionListener {
 
     private OrderController orderController;
 
+
     // Frame builder
+
     public OrderFrame() {
 
         this.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("coffee.png")));
@@ -256,22 +257,13 @@ public class OrderFrame extends JFrame implements ActionListener {
 
     private class exitButtonPress extends WindowAdapter {
         public void  windowClosing(WindowEvent evt) {
-            int dialog_box = JOptionPane.showConfirmDialog(null,
-                    "Are you sure you want to close?\nAny pending order will be discarded.",
-                    "Closing Register", JOptionPane.YES_NO_OPTION);
-
-            if (dialog_box == JOptionPane.YES_OPTION) {
-                cancelOrderButton.doClick();
-
-                        String report = "This is your final report String";
-                        saveReportOnExit(report);
-
-                        System.out.println("GUI: Program closed.");
-                        System.exit(0);
-
-                    }
-                }
-            }
+            cancelOrderButton.doClick();
+            String report = "This is your final report String";
+            saveReportOnExit(report);
+            System.out.println("GUI: Program closed.");
+            System.exit(0);
+        }
+    }
 
     private class searchEnterPress extends KeyAdapter {
         public void keyPressed(KeyEvent evt) {
@@ -288,8 +280,6 @@ public class OrderFrame extends JFrame implements ActionListener {
             }
         }
     }
-
-
 
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -326,12 +316,8 @@ public class OrderFrame extends JFrame implements ActionListener {
         if (e.getSource() == addItemButton) {
             System.out.println("GUI: Add item button pressed.");
             Item item;
-            if (useStockItemsSubset==0) {
-                item = stockItems.getSelectedValue();
-            }
-            else {
-                item = stockItemsSubset.getSelectedValue();
-            }
+            if (useStockItemsSubset==0) {item = stockItems.getSelectedValue();}
+            else {item = stockItemsSubset.getSelectedValue();}
             try {
                 orderController.addItemToPendingOrder(item);
                 orderItems.setSelectedIndex(orderItems.getModel().getSize()-1);
