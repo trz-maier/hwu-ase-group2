@@ -107,7 +107,7 @@ public class OrderController {
     public void finalizePendingOrder() throws NoOrderException, EmptyOrderException, InvalidCustomerIdException {
         orderFrame.setOrderItems(new OrderItem[]{});
         orderFrame.setOrderTotals((float) 0.0, (float) 0.0, (float) 0.0);
-        //orderFrame.setBillString();
+        orderFrame.setBillString(pendingOrder.getBill().getBillString());
         orders.add(pendingOrder);
         pendingOrder = null;
     }
