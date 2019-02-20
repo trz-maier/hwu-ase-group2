@@ -18,7 +18,7 @@ public class OrderItem {
 	}
 
 	public String toString(){
-		return this.getItem().getName();
+		return this.getItem().getName() + String.format(" (£%.2f)",this.getItem().getPrice());
 	}
 	/**
 	 * @return the item
