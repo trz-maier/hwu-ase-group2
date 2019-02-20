@@ -257,11 +257,18 @@ public class OrderFrame extends JFrame implements ActionListener {
 
     private class exitButtonPress extends WindowAdapter {
         public void  windowClosing(WindowEvent evt) {
-            cancelOrderButton.doClick();
-            String report = "This is your final report String";
-            saveReportOnExit(report);
-            System.out.println("GUI: Program closed.");
-            System.exit(0);
+            if (!customerIdInput.isEnabled()) {
+                int dialog_box = JOptionPane.showConfirmDialog(null,
+                        "Are you sure you want to cancel pending order?",
+                        "Cancelling", JOptionPane.YES_NO_OPTION);
+                if (dialog_box == JOptionPane.YES_OPTION) {
+                    orderController.cancelPendingOrder();
+                    saveReportOnExit(orderController.generateReport());
+                    System.out.println("GUI: Program closed.");
+                    System.exit(0);
+                }
+            }
+
         }
     }
 

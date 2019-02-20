@@ -127,7 +127,7 @@ public class OrderController {
         pendingOrder = null;
     }
 
-    public void generateReport() {
+    public String generateReport() {
         throw new UnsupportedOperationException("Not implemented");
     }
 }
