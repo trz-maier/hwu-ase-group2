@@ -1,32 +1,22 @@
 cdd15ee0-a560-4aa2-be61-fe5ec82ab3b0,Cheese Sandwich,FOOD,2.5
 24220701-917a-462c-9f92-2abce1b95d44,Orange Juice ,FOOD,1
 000b1c12-4606-4728-be39-a2ecb256a698,Oregano Crisps ,FOOD,1.2
-8ee08df3-e299-427c-b097-e60066ef2c56,Pineapple,FOOD,1.9
-cdd15ee4-a560-4aa2-be61-fe5ec82ab3b0,Cheese Sandwich,FOOD,2.5
-24220705-917a-462c-9f92-2abce1b95d44,Orange Juice ,FOOD,1
-000b1c16-4606-4728-be39-a2ecb256a698,Oregano Crisps ,FOOD,1.2
-8ee08df7-e299-427c-b097-e60066ef2c56,Pineapple,FOOD,1.9
-cdd15ee8-a560-4aa2-be61-fe5ec82ab3b0,Cheese Sandwich,FOOD,2.5
-24220709-917a-462c-9f92-2abce1b95d44,Orange Juice ,FOOD,1
-000b1c06-4606-4728-be39-a2ecb256a698,Oregano Crisps ,FOOD,1.2
-8ee08d1c-e299-427c-b097-e60066ef2c56,Pineapple,FOOD,1.9
-cdd15e25-a560-4aa2-be61-fe5ec82ab3b0,Cheese Sandwich,FOOD,2.5
-24220737-917a-462c-9f92-2abce1b95d44,Orange Juice ,FOOD,1
-000b1c46-4606-4728-be39-a2ecb256a698,Oregano Crisps ,FOOD,1.2
-8ee08d5c-e299-427c-b097-e60066ef2c56,Pineapple,FOOD,1.9
-cdd15e65-a560-4aa2-be61-fe5ec82ab3b0,Cheese Sandwich,FOOD,2.5
-24220777-917a-462c-9f92-2abce1b95d44,Orange Juice ,FOOD,1
-000b1c86-4606-4728-be39-a2ecb256a698,Oregano Crisps ,FOOD,1.2
-8ee08d9c-e299-427c-b097-e60066ef2c56,Pineapple,FOOD,1.9
-cdd15195-a560-4aa2-be61-fe5ec82ab3b0,Cheese Sandwich,FOOD,2.5
-24220207-917a-462c-9f92-2abce1b95d44,Orange Juice ,FOOD,1
-000b1316-4606-4728-be39-a2ecb256a698,Oregano Crisps ,FOOD,1.2
-8ee084fc-e299-427c-b097-e60066ef2c56,Pineapple,FOOD,1.9
-cdd155e5-a560-4aa2-be61-fe5ec82ab3b0,Cheese Sandwich,FOOD,2.5
-24220607-917a-462c-9f92-2abce1b95d44,Orange Juice ,FOOD,1
-000b1716-4606-4728-be39-a2ecb256a698,Oregano Crisps ,FOOD,1.2
-8ee088fc-e299-427c-b097-e60066ef2c56,Pineapple,FOOD,1.9
-cdd159e5-a560-4aa2-be61-fe5ec82ab3b0,Cheese Sandwich,FOOD,2.5
-24220707-917a-462c-9f92-2abce1b95d44,Orange Juice ,FOOD,1
-8e001dfc-e299-427c-b097-e60066ef2c56,Pineapple,FOOD,1.9
-000b2c16-4606-4728-be39-a2ecb256a698,Oregano Crisps ,FOOD,1.2
+8ee08df3-e299-427c-b097-e60066ef2c56,Coffee,BEVERAGE,1.9
+cdd15ee4-a560-4aa2-be61-fe5ec82ab3b0,Cappuccino,BEVERAGE,2.5
+24220705-917a-462c-9f92-2abce1b95d44,Avocado,FOOD,1
+000b1c16-4606-4728-be39-a2ecb256a698,Banana Crisps,FOOD,1.2
+8ee08df7-e299-427c-b097-e60066ef2c56,Pear,FOOD,1.9
+cdd15ee8-a560-4aa2-be61-fe5ec82ab3b0,Ham Sandwich,FOOD,2.5
+24220709-917a-462c-9f92-2abce1b95d44,Peanut,FOOD,1
+000b1c06-4606-4728-be39-a2ecb256a698,Raspberry,FOOD,1.2
+8ee08d1c-e299-427c-b097-e60066ef2c56,Cherry,FOOD,1.9
+cdd15e25-a560-4aa2-be61-fe5ec82ab3b0,Sandwich menu,FOOD,7
+24220737-917a-462c-9f92-2abce1b95d44,Coconuts,FOOD,1
+000b1c46-4606-4728-be39-a2ecb256a698,Water,BEVERAGE,1.2
+8ee08d5c-e299-427c-b097-e60066ef2c56,Cola,BEVERAGE,1.9
+cdd15e65-a560-4aa2-be61-fe5ec82ab3b0,Tomato,FOOD,2.5
+24220777-917a-462c-9f92-2abce1b95d44,Salad,FOOD,5
+000b1c86-4606-4728-be39-a2ecb256a698,BLT sandwich,FOOD,1.2
+8ee08d9c-e299-427c-b097-e60066ef2c56,Fish sandwich,FOOD,1.9
+cdd15195-a560-4aa2-be61-fe5ec82ab3b0,Jam sandwich,FOOD,2.5
+ddd15195-a560-4aa2-be61-fe5ec82ab3b0,Newspaper,OTHER,2.5
