@@ -52,9 +52,9 @@ public class OrderFrame extends JFrame implements ActionListener {
     private JLabel totalLabel = new JLabel("Total");
 
     // Text output areas
-    private JTextArea subtotal = new JTextArea("£ 0.00");
-    private JTextArea discount = new JTextArea("£ 0.00");
-    private JTextArea total = new JTextArea("£ 0.00");
+    private JTextArea subtotal = new JTextArea(String.format("£ %.2f", (float) 0.0));
+    private JTextArea discount = new JTextArea(String.format("£ %.2f", (float) 0.0));
+    private JTextArea total = new JTextArea(String.format("£ %.2f", (float) 0.0));
     private JTextArea billString = new JTextArea();
 
     // Text input areas
@@ -99,9 +99,9 @@ public class OrderFrame extends JFrame implements ActionListener {
     }
 
     public void setOrderTotals(Float subtotal, Float discount, Float total) {
-        this.subtotal.setText("£"+subtotal.toString());
-        this.discount.setText("£"+discount.toString());
-        this.total.setText("£"+total.toString());
+        this.subtotal.setText(String.format("£ %.2f", subtotal));
+        this.discount.setText(String.format("£ %.2f", discount));
+        this.total.setText(String.format("£ %.2f", total));
     }
 
     public void setBillString(String billString) {
