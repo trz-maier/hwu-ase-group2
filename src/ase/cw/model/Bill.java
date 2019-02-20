@@ -60,24 +60,24 @@ public class Bill {
     }
 
     public String showBill(Order order) {
-        billString = "==================================\n\n";
-        billString += String.format("Customer: %s \nDate: %tc\n\n", order.getCustomerId(), order.getTimestamp());
-        billString += "==================================\n\n";
+        billString = "================================\n\n";
+        billString += String.format("Customer: %s \n%tc\n\n", order.getCustomerId(), order.getTimestamp());
+        billString += "================================\n\n";
 
         for (OrderItem temp : order.getOrderItems()) {
-            billString += String.format("%-28.28s", temp.getItem().getName());
+            billString += String.format("%-25.25s", temp.getItem().getName());
             billString += String.format("£%5.2f\n", temp.getItem().getPrice());
         }
 
-        billString += "----------------------------------\n\n";
-        billString += String.format("%-28.28s", "SUBTOTAL");
+        billString += "--------------------------------\n\n";
+        billString += String.format("%-25.25s", "SUBTOTAL");
         billString += String.format("£%5.2f\n", this.subtotal);
-        billString += String.format("%-28.28s", "DISCOUNT");
+        billString += String.format("%-25.25s", "DISCOUNT");
         billString += String.format("£%5.2f\n\n", this.discount);
-        billString += "==================================\n";
-        billString += String.format("%-28.28s", "TOTAL");
+        billString += "================================\n";
+        billString += String.format("%-25.25s", "TOTAL");
         billString += String.format("£%5.2f\n", this.total);
-        billString += "==================================\n";
+        billString += "================================\n";
         return billString;
     }
 
