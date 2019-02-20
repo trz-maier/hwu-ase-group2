@@ -104,7 +104,10 @@ public class OrderController {
         this.orderFrame.setOrderTotals((float) 0.0, (float) 0.0, (float) 0.0);
     }
 
-    public void finalizePendingOrder() throws NoOrderException, EmptyOrderException, InvalidCustomerIdException {
+    public void finalizePendingOrder() throws NoOrderException, EmptyOrderException {
+        if (this.pendingOrder == null ) throw new NoOrderException("There is no pending order to submit");
+        if (this.pendingOrder.getOrderItems().size() < 1) throw new EmptyOrderException("Cannot submit empty order");
+
         orderFrame.setOrderItems(new OrderItem[]{});
         orderFrame.setOrderTotals((float) 0.0, (float) 0.0, (float) 0.0);
         orderFrame.setBillString(pendingOrder.getBill().getBillString());
