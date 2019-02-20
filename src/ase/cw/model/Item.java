@@ -16,7 +16,7 @@ public class Item {
 	private String name;
 	private float price;
 
-	public enum Category {FOOD, BEVERAGE}
+	public enum Category {FOOD, BEVERAGE, OTHER}
 
 	public Item(UUID id, Category category, String name, float price) {
 		this.id = id;
@@ -27,7 +27,7 @@ public class Item {
 	}
 
 	public String toString(){
-		return this.name;
+		return this.name + String.format(" (£%.2f)", this.getPrice());
 	}
 
 	/**
