@@ -309,7 +309,7 @@ public class OrderFrame extends JFrame implements ActionListener {
                 cancelOrderButton.setEnabled(true);
                 addItemButton.setEnabled(true);
             } catch (InvalidCustomerIdException exc) {
-                JOptionPane.showMessageDialog(new JFrame(), "Error creating new order:\nCustomer ID has to be 8 characters", "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(new JFrame(), exc.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }
         }
 
@@ -393,9 +393,6 @@ public class OrderFrame extends JFrame implements ActionListener {
             } catch (EmptyOrderException exception) {
                 exception.getStackTrace();
                 JOptionPane.showMessageDialog(new JFrame(), "Error submitting order:\nEmpty order can't be submitted", "Error", JOptionPane.ERROR_MESSAGE);
-            } catch (InvalidCustomerIdException exception) {
-                exception.getStackTrace();
-                JOptionPane.showMessageDialog(new JFrame(), "Error submitting order\ninvalid customer ID", "Error", JOptionPane.ERROR_MESSAGE);
             }
         }
 
