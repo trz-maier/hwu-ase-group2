@@ -16,7 +16,6 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
-import java.util.ArrayList;
 
 /**
  * Created by Bartosz on 04.02.2019.
@@ -31,7 +30,7 @@ public class OrderFrame extends JFrame implements ActionListener {
     private JList<Item> stockItemsSubsetJList = new JList<>();
     private JList<OrderItem> orderItemsJList = new JList<>();
 
-    private ArrayList<Item> stockItemsArrayList = new ArrayList<>();
+    private List<Item> stockItemsList;
 
     // Scroll panels
     private JScrollPane stockItemsScroll = new JScrollPane();
@@ -104,7 +103,7 @@ public class OrderFrame extends JFrame implements ActionListener {
      * @param items set list of items to display
      */
     public void setStockItems(Item[] items) {
-        stockItemsArrayList = new ArrayList<>(Arrays.asList(items));
+        stockItemsList = Arrays.asList(items);
         stockItemsJList.setListData(items);
         stockItemsScroll.setViewportView(stockItemsJList);
     }
@@ -152,7 +151,7 @@ public class OrderFrame extends JFrame implements ActionListener {
             stockItemsScroll.setViewportView(stockItemsJList);
         }
         else {
-            List<Item> result = stockItemsArrayList.stream()
+            List<Item> result = stockItemsList.stream()
                     .filter(i -> i.getName().toLowerCase().contains(searchString.toLowerCase().trim()))
                     .collect(Collectors.toList());
 
