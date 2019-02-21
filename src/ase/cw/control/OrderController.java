@@ -155,17 +155,17 @@ public class OrderController {
                 }
             }
         }
-        String leftHeader = "------------ Item ------------";
+        String leftHeader = "----------- Item -----------";
         String separator = " | ";
-        String rightHeader = "------ Quantities Sold ------";
+        String rightHeader = "--- Quantities Sold ---";
         builder.append(leftHeader).append(separator).append(rightHeader).append("\n");
 
         this.stockItems.forEach((itemId, item) -> {
             Integer itemSoldQuantity = itemSoldQuantities.containsKey(item) ? itemSoldQuantities.get(item) : 0;
             builder.append(this.padString(item.getName(), leftHeader.length())).append(separator).append(itemSoldQuantity.toString()).append("\n");
         });
-        builder.append("\n\n").append("Total Sales w/o discounts: ").append(sumSubtotal).append("Total Sales with " +
-                "discounts: ").append(sumTotal);
+        builder.append("\n\n").append("Total Sales w/o discounts: ").append(sumSubtotal)
+                .append("\nTotal Sales with discounts: ").append(sumTotal);
 
         return builder.toString();
     }
