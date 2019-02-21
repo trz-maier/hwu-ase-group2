@@ -385,13 +385,16 @@ public class OrderFrame extends JFrame implements ActionListener {
             if (!customerIdInput.isEnabled()) {
                 int dialog_box = JOptionPane.showConfirmDialog(null, "Are you sure you want to cancel pending order?"
                         , "Cancelling", JOptionPane.YES_NO_OPTION);
+                if (dialog_box == JOptionPane.NO_OPTION) {
+                    return;
+                }
                 if (dialog_box == JOptionPane.YES_OPTION) {
                     orderController.cancelPendingOrder();
-                    saveReportOnExit();
-                    System.out.println("GUI: Program closed.");
-                    System.exit(0);
                 }
             }
+            saveReportOnExit();
+            System.out.println("GUI: Program closed.");
+            System.exit(0);
 
         }
     }
