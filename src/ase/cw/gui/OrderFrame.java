@@ -153,7 +153,7 @@ public class OrderFrame extends JFrame implements ActionListener {
         }
         else {
             List<Item> result = stockItemsArrayList.stream()
-                    .filter(i -> i.getName().toLowerCase().contains(searchString.toLowerCase()))
+                    .filter(i -> i.getName().toLowerCase().contains(searchString.toLowerCase().trim()))
                     .collect(Collectors.toList());
 
             stockItemsSubsetJList.setListData(result.toArray(new Item[0]));
