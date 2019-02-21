@@ -5,6 +5,10 @@ package ase.cw.model;
 
 import ase.cw.model.Item.Category;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 /**
  * @author Ram
  *
@@ -41,20 +45,38 @@ public class Bill {
 
     private float calculateDiscount(Order order) {
         this.discount = 0;
-        int countFood = 0;
-        int countBeverage = 0;
+        List<OrderItem> foodItems = new ArrayList<OrderItem>();
+        List<OrderItem> beverageItems = new ArrayList<OrderItem>();
+        int comboCount = 0;
+        int i = 0;
 
         for (OrderItem temp : order.getOrderItems()) {
             if (temp.getItem().getCategory() == categoryFood) {
-                countFood++;
-            } else {
-                countBeverage++;
+                foodItems.add(temp);
+            }
+            else if (temp.getItem().getCategory() == categoryBeverage) {
+                beverageItems.add(temp);
             }
         }
+        Collections.sort(foodItems);
+        Collections.sort(beverageItems);
 
-        if (countFood > 1 && countBeverage > 0) {
-            discount = (float) (subtotal * 0.2);
+        comboCount = Math.min(foodItems.size(),beverageItems.size() );
+
+        for( OrderItem temp : foodItems){
+            if (i < comboCount){
+                discount += (float) (temp.getItem().getPrice()*0.2);
+            }
+            i++;
         }
+        i =0;
+        for( OrderItem temp : beverageItems){
+            if (i < comboCount){
+                discount += (float) (temp.getItem().getPrice()*0.2);
+            }
+            i++;
+        }
+
         discount = (float)(Math.round(discount*100))/100;
         return discount;
     }
