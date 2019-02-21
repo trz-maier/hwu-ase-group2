@@ -13,7 +13,6 @@ import ase.cw.model.OrderItem;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.text.ParseException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,7 +28,7 @@ public class OrderController {
     private Order pendingOrder;
     private OrderFrame orderFrame;
 
-    private OrderController() {
+    public OrderController() {
         try {
             this.stockItems = FileReader.parseItems("Items.csv");
             this.orders = FileReader.parseOrders("Orders.csv");
@@ -181,7 +180,6 @@ public class OrderController {
     public void generateReportTo(File filename) {
         try (FileWriter writer = new FileWriter(filename)) {
             writer.write(this.createReport());
-//            System.out.println(this.createReport());
         } catch (IOException e) {
             e.printStackTrace();
         }
