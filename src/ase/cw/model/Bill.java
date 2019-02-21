@@ -84,7 +84,6 @@ public class Bill {
                         discount +=  (ot.getItem().getPrice());
                         break;
                     }
-                    break;
                 }
                 break;
             }
