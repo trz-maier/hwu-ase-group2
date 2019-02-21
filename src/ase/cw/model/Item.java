@@ -3,6 +3,7 @@
  */
 package ase.cw.model;
 
+import java.util.Objects;
 import java.util.UUID;
 
 
@@ -58,16 +59,16 @@ public class Item {
 		return price;
 	}
 
-
-	public void setCategory(Category category) {
-		this.category = category;
+	@Override
+	public boolean equals(Object other) {
+		if (this == other) return true;
+		if (!(other instanceof Item)) return false;
+		Item otherItem = (Item) other;
+		return this.id.equals(otherItem.id);
 	}
 
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public void setPrice(float price) {
-		this.price = price;
+	@Override
+	public int hashCode() {
+		return Objects.hash(id);
 	}
 }
