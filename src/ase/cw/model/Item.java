@@ -3,6 +3,7 @@
  */
 package ase.cw.model;
 
+import java.util.Objects;
 import java.util.UUID;
 
 
@@ -58,4 +59,16 @@ public class Item {
 		return price;
 	}
 
+	@Override
+	public boolean equals(Object other) {
+		if (this == other) return true;
+		if (!(other instanceof Item)) return false;
+		Item otherItem = (Item) other;
+		return this.id.equals(otherItem.id);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id);
+	}
 }
