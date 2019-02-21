@@ -102,7 +102,7 @@ public class TestFileReader {
         int i=0;
         for(Order order : orders){
             if(i==0){
-                assertEquals(order.getCustomerId(),"00001");
+                assertEquals(order.getCustomerId(),"00000001");
                 assertEquals(order.getOrderItems().size(),3);
 
                 //01/01/2000 15:15:15
@@ -112,7 +112,7 @@ public class TestFileReader {
                 checkItem(order.getOrderItems().get(i).getItem(),"Apple","cdd15ee5-a560-4aa2-be61-fe5ec82ab3b0",5.5,Item.Category.FOOD);
             }
             if(i==3){
-                assertEquals(order.getCustomerId(),"00004");
+                assertEquals(order.getCustomerId(),"00000004");
                 assertEquals(order.getOrderItems().size(),3);
 
                 //01/01/2000 15:15:15
