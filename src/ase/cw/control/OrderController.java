@@ -22,6 +22,7 @@ import java.util.Map;
  */
 public class OrderController {
     private static final int EXPECTED_CUSTOMER_ID_LENGTH = 8;
+    private static String ENDLINE = System.lineSeparator();
 
     private Map<String, Item> stockItems;
     private List<Order> orders;
@@ -125,6 +126,11 @@ public class OrderController {
         pendingOrder = null;
     }
 
+    /**
+     * Generates the total report to be outputted in String format
+     *
+     * @return String representation of the report text body
+     */
     private String createReport() {
         // all items in menu ✓
         // number of times each item sold ✓
@@ -153,14 +159,15 @@ public class OrderController {
         String leftHeader = "----------- Item -----------";
         String separator = " | ";
         String rightHeader = "--- Quantities Sold ---";
-        builder.append(leftHeader).append(separator).append(rightHeader).append("\n");
+        builder.append(leftHeader).append(separator).append(rightHeader).append(ENDLINE);
 
         this.stockItems.forEach((itemId, item) -> {
             Integer itemSoldQuantity = itemSoldQuantities.containsKey(item) ? itemSoldQuantities.get(item) : 0;
-            builder.append(this.padString(item.getName(), leftHeader.length())).append(separator).append(itemSoldQuantity.toString()).append("\n");
+            builder.append(this.padString(item.getName(), leftHeader.length())).append(separator).append(itemSoldQuantity.toString()).append(ENDLINE);
         });
-        builder.append("\n\n").append("Total Sales w/o discounts: ").append(sumSubtotal)
-                .append("\nTotal Sales with discounts: ").append(sumTotal);
+        builder.append(ENDLINE).append(ENDLINE).append("Total Sales w/o discounts: ").append(String.format("%.2f",
+                sumSubtotal)).append(ENDLINE).append("Total Sales with discounts: ").append(String.format("%.2f",
+                sumTotal));
 
         return builder.toString();
     }
