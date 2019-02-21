@@ -20,10 +20,10 @@ import java.util.TreeMap;
  */
 public class OrderController {
     private static final int EXPECTED_CUSTOMER_ID_LENGTH = 8;
+
     private TreeMap<String, Item> stockItems;
     private List<Order> orders;
     private Order pendingOrder;
-
     private OrderFrame orderFrame;
 
     private OrderController() {
@@ -43,13 +43,30 @@ public class OrderController {
         new OrderController();
     }
 
+    /**
+     * Checks whether a customer's ID is properly formatted, consisting of 8 alphanumeric characters.
+     *
+     * @param customerId the customer ID to validate in String format
+     * @throws InvalidCustomerIdException when the customer ID is invalid
+     */
+    public static void validateCustomerId(String customerId) throws InvalidCustomerIdException {
+        if (customerId == null) throw new InvalidCustomerIdException("Customer ID is null");
+        if (customerId.length() != EXPECTED_CUSTOMER_ID_LENGTH)
+            throw new InvalidCustomerIdException(String.format("Customer ID \"%s\" should have a length of %d, found " +
+                    "%d", customerId, EXPECTED_CUSTOMER_ID_LENGTH, customerId.length()));
+
+        for (char character : customerId.toCharArray()) {
+            if (character >= '0' && character <= '9') continue;
+            if (character >= 'a' && character <= 'z') continue;
+            if (character >= 'A' && character <= 'Z') continue;
+            throw new InvalidCustomerIdException(String.format("Customer ID \"%s\" contains invalid character '%s'",
+                    customerId, character));
+        }
+        return;
+    }
 
     public void createNewOrder(String customerId) throws InvalidCustomerIdException, IllegalStateException {
-        int idLength = customerId.length();
-        if (idLength != EXPECTED_CUSTOMER_ID_LENGTH) {
-            throw new InvalidCustomerIdException(String.format("Customer id is expected to have length %o, found %o",
-                    EXPECTED_CUSTOMER_ID_LENGTH, idLength));
-        }
+        validateCustomerId(customerId);
 
         if (pendingOrder != null) throw new IllegalStateException("New order added while pending order exists");
         pendingOrder = new Order(customerId);
@@ -83,12 +100,7 @@ public class OrderController {
         List<OrderItem> itemsInOrder = pendingOrder.getOrderItems();
         if (itemsInOrder.size() < 1) throw new IllegalStateException("Pending order doesn't have any items");
 
-        for (OrderItem item : itemsInOrder) {
-            if (item == itemToRemove) {
-                itemsInOrder.remove(item);
-                break;
-            }
-        }
+        this.pendingOrder.removeOrderItem(itemToRemove.getItem());
 
         this.updateOrderFrameOrderItems();
         this.updateOrderFrameBill();
@@ -101,7 +113,7 @@ public class OrderController {
     }
 
     public void finalizePendingOrder() throws NoOrderException, EmptyOrderException {
-        if (this.pendingOrder == null ) throw new NoOrderException("There is no pending order to submit");
+        if (this.pendingOrder == null) throw new NoOrderException("There is no pending order to submit");
         if (this.pendingOrder.getOrderItems().size() < 1) throw new EmptyOrderException("Cannot submit empty order");
 
         orderFrame.setOrderItems(new OrderItem[]{});
@@ -111,7 +123,7 @@ public class OrderController {
         pendingOrder = null;
     }
 
-    public void generateReport() {
+    public String generateReport() {
         throw new UnsupportedOperationException("Not implemented");
     }
 }
