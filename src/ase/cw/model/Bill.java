@@ -82,8 +82,11 @@ public class Bill {
                 for (OrderItem ot : order.getOrderItems()){
                     if ( ot.getItem().getName().equals("Newspaper")){
                         discount +=  (ot.getItem().getPrice());
+                        break;
                     }
+                    break;
                 }
+                break;
             }
         }
 
