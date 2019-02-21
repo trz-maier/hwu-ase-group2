@@ -1,4 +1,23 @@
-cdd15ee5-a560-4aa2-be61-fe5ec82ab3b0,Apple,FOOD,5.5
-24220707-917a-462c-9f92-2abce1b95d44,Banana,FOOD,-545665465.0E10
-000b1c16-4606-4728-be39-a2ecb256a698,Nectarine,FOOD,2.0
-8ee08dfc-e299-427c-b097-e60066ef2c56,Pineapple,FOOD,NaN
+cdd15ee5-a560-4aa2-be61-fe5ec82ab3b0,Apple,FOOD,5.50
+cdd15ee0-a560-4aa2-be61-fe5ec82ab3b0,Cheese Sandwich,FOOD,2.49
+24220701-917a-462c-9f92-2abce1b95d44,Orange Juice,FOOD,1.09
+000b1c12-4606-4728-be39-a2ecb256a698,Oregano Crisps,FOOD,1.29
+8ee08df3-e299-427c-b097-e60066ef2c56,Coffee,BEVERAGE,1.99
+cdd15ee4-a560-4aa2-be61-fe5ec82ab3b0,Cappuccino,BEVERAGE,2.45
+24220705-917a-462c-9f92-2abce1b95d44,Avocado Bagel,FOOD,2.19
+000b1c16-4606-4728-be39-a2ecb256a698,Banana Crisps,FOOD,1.19
+8ee08df7-e299-427c-b097-e60066ef2c56,Pear,FOOD,0.99
+cdd15ee8-a560-4aa2-be61-fe5ec82ab3b0,Ham Sandwich,FOOD,2.45
+24220709-917a-462c-9f92-2abce1b95d44,Peanut Butter Bagel,FOOD,1.79
+000b1c06-4606-4728-be39-a2ecb256a698,Raspberry Pie,FOOD,1.99
+8ee08d1c-e299-427c-b097-e60066ef2c56,Cherry Pie,FOOD,1.99
+cdd15e25-a560-4aa2-be61-fe5ec82ab3b0,Jam Doughnut,FOOD,1.39
+24220737-917a-462c-9f92-2abce1b95d44,Coconut Water,BEVERAGE,2.79
+000b1c46-4606-4728-be39-a2ecb256a698,Water,BEVERAGE,1.29
+8ee08d5c-e299-427c-b097-e60066ef2c56,Cola,BEVERAGE,1.39
+cdd15e65-a560-4aa2-be61-fe5ec82ab3b0,Tomato Salad,FOOD,2.59
+24220777-917a-462c-9f92-2abce1b95d44,Ceasar Salad,FOOD,5.99
+000b1c86-4606-4728-be39-a2ecb256a698,BLT Sandwich,FOOD,3.29
+8ee08d9c-e299-427c-b097-e60066ef2c56,Fish Sandwich,FOOD,2.99
+cdd15195-a560-4aa2-be61-fe5ec82ab3b0,Jam Sandwich,FOOD,2.29
+ddd15195-a560-4aa2-be61-fe5ec82ab3b0,Newspaper,OTHER,2.50

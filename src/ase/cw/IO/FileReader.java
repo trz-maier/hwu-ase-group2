@@ -19,8 +19,11 @@ import java.util.*;
  * Created by Thomas on 04.02.2019.
  */
 public class FileReader {
+
+    private static HashMap<UUID,Item> itemMap = new HashMap<>();
     /**
-     *
+     * Create a orderlist out of a file.
+     * If a order in the file is invalid, it is ignored.
      * @param filename the filename inside the res path.
      * @return a list of all parsed orders
      * @throws IOException if the filename is not correct
@@ -35,10 +38,13 @@ public class FileReader {
 
             //add every order in list
             while(allOrderScanner.hasNextLine()) {
+                String nextOrder = "";
                 try {
-                    parseSingleOrder(allOrderScanner, orderList);
+                    nextOrder = allOrderScanner.nextLine();
+                    parseSingleOrder(nextOrder, orderList);
                 } catch (Exception e){
-                    e.printStackTrace();
+                    if(!"".equals(nextOrder) && !nextOrder.startsWith("//"))
+                        System.out.println("Invaild Order="+nextOrder+" skip order");
                 }
             }
         } finally {
@@ -56,21 +62,21 @@ public class FileReader {
 
     /**
      *
-     * @param allOrderScanner
-     * @param orderList
-     * @throws InvalidCustomerIdException
-     * @throws ParseException
+     * @param orderString a String which represents a order
+     * @param orderList the list where the new order should be added
+     * @throws InvalidCustomerIdException if customerID is wrong
+     * @throws NumberFormatException    if price is wrong
+     * @throws ParseException   if the orderString has to many/few items
      * @throws IllegalArgumentException
-     * @throws NumberFormatException
      */
-    private static void parseSingleOrder(Scanner allOrderScanner, List<Order> orderList) throws InvalidCustomerIdException,ParseException,IllegalArgumentException{
+    private static void parseSingleOrder(String orderString, List<Order> orderList) throws InvalidCustomerIdException,ParseException,IllegalArgumentException{
 
         Scanner singleOrderScanner = null;
         String customerId="";
         String dateStr = "";
 
         try {
-            singleOrderScanner = new Scanner(allOrderScanner.nextLine());
+            singleOrderScanner = new Scanner(orderString);
             singleOrderScanner.useDelimiter(",");
             while (singleOrderScanner.hasNext()) {
                 //A Order is saved in the following format: CustomerId,date,Item1,Item2,...ItemN
@@ -80,17 +86,20 @@ public class FileReader {
                 dateStr = singleOrderScanner.next();
                 DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
                 Date date = df.parse(dateStr);
-
+                UUID uuid = parseUUID(singleOrderScanner);
+                Item item = getItemById(uuid);
                 Order order = new Order(customerId,date);
-                while(singleOrderScanner.hasNext()){
-                    String nextLineItem = "";
-                    nextLineItem = nextLineItem + singleOrderScanner.next()+",";
-                    nextLineItem = nextLineItem + singleOrderScanner.next()+",";
-                    nextLineItem = nextLineItem + singleOrderScanner.next()+",";
-                    nextLineItem = nextLineItem + singleOrderScanner.next()+",";
-                    order.addOrderItem(parseSingleItem(nextLineItem));
+
+                //If we already created this specific order, add the Item to the existing order.
+                //Else create a new order and add the item to the new order.
+                if(orderList.contains(order)){
+                    int index = orderList.indexOf(order);
+                    Order currentOrder = orderList.get(index);
+                    currentOrder.addOrderItem(item);
+                } else {
+                    order.addOrderItem(item);
+                    orderList.add(order);
                 }
-                orderList.add(order);
             }
         }  finally {
             if (singleOrderScanner != null) {
@@ -99,8 +108,22 @@ public class FileReader {
         }
     }
 
+    private static Item getItemById(UUID uuid) {
+        Item item;
+        //Check if we already created a item with the given UUID
+        if(itemMap.containsKey(uuid)){
+            item = itemMap.get(uuid);
+        } else {
+
+            item = new Item(uuid,Category.OTHER ,"",0);
+            itemMap.put(uuid,item);
+        }
+        return item;
+    }
+
     /**
-     *
+     * Create a treemap of Items out of a file.
+     * If a item in the file is invalid, it is ignored.
      * @param filename the filename inside the res path.
      * @return a list of all items
      * @throws IOException if the filename is not correct
@@ -119,14 +142,17 @@ public class FileReader {
             //add every order to map
 
             while(allItemsScanner.hasNextLine()) {
+                String itemString="";
                 try {
-                    String itemString = allItemsScanner.nextLine();
+                    itemString = allItemsScanner.nextLine();
                     Item item = parseSingleItem(itemString);
                     if (item != null) {
-                        items.put(item.getName(), item);
+                        items.put(item.getName()+item.getId().toString(), item);
                     }
                 } catch (Exception e){
-                    e.printStackTrace();
+                    //Skip invalid Items
+                    if(!"".equals(itemString))
+                        System.out.println("Invalid Item="+itemString+ " skip item");
                 }
             }
         } finally {
@@ -148,7 +174,10 @@ public class FileReader {
                 String name = singleItemScanner.next();
                 Category category = parseCategory(singleItemScanner);
                 float price = parsePrice(singleItemScanner);
-                 Item item = new Item(uuid, category, name, price);
+                Item item = getItemById(uuid);
+                item.setName(name);
+                item.setCategory(category);
+                item.setPrice(price);
                 return item;
         } finally {
             if (singleItemScanner != null) {
@@ -165,7 +194,7 @@ public class FileReader {
 
     private static Category parseCategory(Scanner scanner) throws IllegalArgumentException{
         //Parse the Category via the scanner
-        Category category;             //A Item is saved in the following format: UUID,NAME,CATEGORY,Price
+        Category category;
 
         String categoryString = scanner.next();
         try{

@@ -84,4 +84,21 @@ public class Order {
     }
 
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Order order = (Order) o;
+
+        if (customerId != null ? !customerId.equals(order.customerId) : order.customerId != null) return false;
+        return timestamp != null ? timestamp.equals(order.timestamp) : order.timestamp == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = customerId != null ? customerId.hashCode() : 0;
+        result = 31 * result + (timestamp != null ? timestamp.hashCode() : 0);
+        return result;
+    }
 }

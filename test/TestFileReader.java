@@ -23,17 +23,8 @@ public class TestFileReader {
     public void parseItemsSuccess() throws IOException {
         TreeMap<String, Item> map;
         map = FileReader.parseItems("ItemsSuccess.csv");
-        assertEquals(map.size(),4);
-        int i=0;
-        for(Item item : map.values()){
-            if(i==0){
-                checkItem(item,"Apple","cdd15ee5-a560-4aa2-be61-fe5ec82ab3b0",5.5,Item.Category.FOOD);
-            }
-            if(i==3){
-                checkItem(item,"Pineapple","8ee08dfc-e299-427c-b097-e60066ef2c56",Float.NaN,Item.Category.FOOD);
-            }
-            i++;
-        }
+        assertEquals(map.size(),23);
+        map.containsKey("cdd15ee5-a560-4aa2-be61-fe5ec82ab3b0");
 
     }
 
@@ -98,11 +89,12 @@ public class TestFileReader {
     @Test
     public void parseOrderSuccess() throws IOException, InvalidCustomerIdException, ParseException {
         List<Order> orders = FileReader.parseOrders("OrderSuccess.csv");
-        assertEquals(orders.size(),4);
+        assertEquals(orders.size(),5);
+        FileReader.parseItems("ItemsSuccess.csv");
         int i=0;
         for(Order order : orders){
             if(i==0){
-                assertEquals(order.getCustomerId(),"00000001");
+                assertEquals(order.getCustomerId(),"abc00001");
                 assertEquals(order.getOrderItems().size(),3);
 
                 //01/01/2000 15:15:15
@@ -112,14 +104,14 @@ public class TestFileReader {
                 checkItem(order.getOrderItems().get(i).getItem(),"Apple","cdd15ee5-a560-4aa2-be61-fe5ec82ab3b0",5.5,Item.Category.FOOD);
             }
             if(i==3){
-                assertEquals(order.getCustomerId(),"00000004");
-                assertEquals(order.getOrderItems().size(),3);
+                assertEquals(order.getCustomerId(),"abc00002");
+                assertEquals(order.getOrderItems().size(),1);
 
                 //01/01/2000 15:15:15
                 DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
-                Date date = df.parse("01/01/2000 15:15:15");
+                Date date = df.parse("12/01/2000 20:15:15");
                 assertEquals(date,order.getTimestamp());
-                checkItem(order.getOrderItems().get(1).getItem(),"Banana","cdd15ee5-a560-4aa2-be61-fe5ec82ab3b0",5.5,Item.Category.FOOD);
+                checkItem(order.getOrderItems().get(0).getItem(),"Apple","cdd15ee5-a560-4aa2-be61-fe5ec82ab3b0",5.5,Item.Category.FOOD);
 
             }
 
