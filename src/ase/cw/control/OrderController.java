@@ -32,10 +32,6 @@ public class OrderController {
             this.orders = FileReader.parseOrders("Orders.csv");
         } catch (IOException e) {
             e.printStackTrace();
-        } catch (ParseException e) {
-            e.printStackTrace();
-        } catch (InvalidCustomerIdException e) {
-            e.printStackTrace();
         }
 
         this.orderFrame = new OrderFrame();

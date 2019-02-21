@@ -24,13 +24,8 @@ public class FileReader {
      * @param filename the filename inside the res path.
      * @return a list of all parsed orders
      * @throws IOException if the filename is not correct
-     * @throws NoSuchElementException if a parameter for a Item is missing
-     * @throws InvalidCustomerIdException if a customerId is not correct
-     * @throws ParseException if the Date is not correctly formatted
-     * @throws NumberFormatException if the price is not correctly formatted
-     * @throws IllegalArgumentException if UUID,Category is not correctly formatted
      */
-    public static List<Order> parseOrders(String filename) throws IOException, InvalidCustomerIdException, ParseException,NumberFormatException ,NoSuchElementException,IllegalArgumentException{
+    public static List<Order> parseOrders(String filename) throws IOException{
         File file = parseFileName(filename);
         List<Order> orderList = new ArrayList<Order>();
         BufferedReader br = new BufferedReader(new java.io.FileReader(file));
@@ -40,7 +35,11 @@ public class FileReader {
 
             //add every order in list
             while(allOrderScanner.hasNextLine()) {
-                parseSingleOrder(allOrderScanner, orderList);
+                try {
+                    parseSingleOrder(allOrderScanner, orderList);
+                } catch (Exception e){
+                    e.printStackTrace();
+                }
             }
         } finally {
             if(allOrderScanner!=null) {
@@ -54,7 +53,17 @@ public class FileReader {
     /*
      * Create a single order object and add it to orderList
      */
-    private static void parseSingleOrder(Scanner allOrderScanner, List<Order> orderList) throws InvalidCustomerIdException,ParseException,IllegalArgumentException,NumberFormatException{
+
+    /**
+     *
+     * @param allOrderScanner
+     * @param orderList
+     * @throws InvalidCustomerIdException
+     * @throws ParseException
+     * @throws IllegalArgumentException
+     * @throws NumberFormatException
+     */
+    private static void parseSingleOrder(Scanner allOrderScanner, List<Order> orderList) throws InvalidCustomerIdException,ParseException,IllegalArgumentException{
 
         Scanner singleOrderScanner = null;
         String customerId="";
@@ -99,7 +108,7 @@ public class FileReader {
      * @throws NumberFormatException if the price is not correctly formatted
      * @throws IllegalArgumentException if UUID,Category is not correctly formatted
      */
-    public static TreeMap<String, Item> parseItems(String filename) throws IOException,NoSuchElementException,NumberFormatException,IllegalArgumentException {
+    public static TreeMap<String, Item> parseItems(String filename) throws IOException {
         File file = parseFileName(filename);
         TreeMap<String,Item> items = new TreeMap<String,Item>();
         BufferedReader br = new BufferedReader(new java.io.FileReader(file));
@@ -110,10 +119,14 @@ public class FileReader {
             //add every order to map
 
             while(allItemsScanner.hasNextLine()) {
-                String itemString = allItemsScanner.nextLine();
-                Item item = parseSingleItem(itemString);
-                if(item!=null) {
-                    items.put(item.getName(), item);
+                try {
+                    String itemString = allItemsScanner.nextLine();
+                    Item item = parseSingleItem(itemString);
+                    if (item != null) {
+                        items.put(item.getName(), item);
+                    }
+                } catch (Exception e){
+                    e.printStackTrace();
                 }
             }
         } finally {

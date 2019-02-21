@@ -72,21 +72,25 @@ public class TestFileReader {
         assertEquals(1,map.size());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void parseItemWrongCategoryFail() throws IOException {
-        FileReader.parseItems("ItemsWrongCategory.csv");
+        TreeMap<String, Item> map = FileReader.parseItems("ItemsWrongCategory.csv");
+        assertEquals(0,map.size());
+
     }
 
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void parseItemWrongUUIDFail() throws IOException {
-        FileReader.parseItems("ItemsWrongUUID.csv");
+        TreeMap<String, Item> map = FileReader.parseItems("ItemsWrongUUID.csv");
+        assertEquals(0,map.size());
+
     }
 
-
-    @Test(expected = NumberFormatException.class)
+    @Test
     public void parseItemWrongPriceFail() throws IOException {
-        FileReader.parseItems("ItemsWrongPrice.csv");
+        TreeMap<String, Item> map = FileReader.parseItems("ItemsWrongPrice.csv");
+        assertEquals(map.size(),1);
     }
 
 
