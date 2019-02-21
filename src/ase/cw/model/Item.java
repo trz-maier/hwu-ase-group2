@@ -71,4 +71,16 @@ public class Item {
 	public int hashCode() {
 		return Objects.hash(id);
 	}
+
+	public void setCategory(Category category) {
+		this.category = category;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public void setPrice(float price) {
+		this.price = price;
+	}
 }
