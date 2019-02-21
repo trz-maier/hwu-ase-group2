@@ -77,6 +77,28 @@ public class Bill {
             i++;
         }
 
+        for (OrderItem temp : order.getOrderItems()) {
+            if (temp.getItem().getName().equals("Coffee")) {
+                for (OrderItem ot : order.getOrderItems()){
+                    if ( ot.getItem().getName().equals("Newspaper")){
+                        discount +=  (ot.getItem().getPrice());
+                    }
+                }
+            }
+        }
+
+        int countJamDoughnut =0;
+
+        for (OrderItem temp : order.getOrderItems()) {
+            if(temp.getItem().getName().equals("Jam Doughnut")){
+                countJamDoughnut++;
+                if (countJamDoughnut>2){
+                    discount += temp.getItem().getPrice();
+                    break;
+                }
+            }
+        }
+
         discount = (float)(Math.round(discount*100))/100;
         return discount;
     }

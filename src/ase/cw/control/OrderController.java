@@ -165,8 +165,8 @@ public class OrderController {
             Integer itemSoldQuantity = itemSoldQuantities.containsKey(item) ? itemSoldQuantities.get(item) : 0;
             builder.append(this.padString(item.getName(), leftHeader.length())).append(separator).append(itemSoldQuantity.toString()).append(ENDLINE);
         });
-        builder.append(ENDLINE).append(ENDLINE).append("Total Sales w/o discounts: ").append(String.format("%.2f",
-                sumSubtotal)).append(ENDLINE).append("Total Sales with discounts: ").append(String.format("%.2f",
+        builder.append(ENDLINE).append(ENDLINE).append("Total Sales w/o discounts: ").append(String.format("£%.2f",
+                sumSubtotal)).append(ENDLINE).append("Total Sales with discounts: ").append(String.format("£%.2f",
                 sumTotal));
 
         return builder.toString();
