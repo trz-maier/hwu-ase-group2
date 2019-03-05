@@ -6,7 +6,7 @@ import ase.cw.model.Bill;
 import ase.cw.model.Item;
 import ase.cw.model.Order;
 import ase.cw.model.OrderItem;
-import ase.cw.view.SimulationView;
+import ase.cw.view.QueueView;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -22,7 +22,7 @@ public class OrderController {
 
     private Map<String, Item> stockItems;
     private List<Order> orders;
-    private SimulationView view; // TO BE ADDED
+    private QueueView view; // TO BE ADDED
 
     public OrderController() {
         try {
