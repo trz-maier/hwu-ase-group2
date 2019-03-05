@@ -101,4 +101,14 @@ public class Order {
         result = 31 * result + (timestamp != null ? timestamp.hashCode() : 0);
         return result;
     }
+
+    @Override
+    public String toString() {
+        return "Order{" +
+                "customerId='" + customerId + '\'' +
+                ", timestamp=" + timestamp +
+                ", orderItems=" + orderItems +
+                ", bill=" + bill +
+                '}';
+    }
 }
