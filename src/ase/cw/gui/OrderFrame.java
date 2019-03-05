@@ -417,6 +417,7 @@ public class OrderFrame extends JFrame implements ActionListener {
         }
     }
 
+
     private class exitButtonPress extends WindowAdapter {
         public void windowClosing(WindowEvent evt) {
             if (!customerIdInput.isEnabled()) {
