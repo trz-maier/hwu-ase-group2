@@ -25,6 +25,7 @@ public class Log {
     }
 
     public void log (String logLine){
+        logString +="\n";
         logString += logLine;
         System.out.println(logLine);
     }
