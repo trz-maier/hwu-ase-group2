@@ -10,56 +10,36 @@ import ase.cw.model.Item;
 import ase.cw.model.Order;
 import ase.cw.model.OrderItem;
 
-import javax.swing.*;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.*;
-import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by User on 04.02.2019.
  */
-public class OrderController implements OrderStatus {
+public class OrderController {
     private static final int EXPECTED_CUSTOMER_ID_LENGTH = 8;
     private static String ENDLINE = System.lineSeparator();
 
     private Map<String, Item> stockItems;
-
-    //Orders is a queue, because we only remove the first element in the queue. This is a cheap operation for a queue. But it is not a cheap operation for an arrayList
-    private Queue<Order> orders;
-
-    //A list of all servers.
-    private List<OrderConsumer> serverList;
+    private List<Order> orders;
     private Order pendingOrder;
-
-    //How many servers do we have
-    private int serverCount = 5;
-
-    //How many orders do we proceeded, this can be removed later. The only purpose of this field is to print some output.
-    private int proceededOrders;
-  //  private OrderFrame orderFrame;
+    private OrderFrame orderFrame;
 
     public OrderController() {
-        serverList= new ArrayList<>();
         try {
             this.stockItems = FileReader.parseItems("Items.csv");
-            List<Order> orderList = FileReader.parseOrders("Orders.csv");
-            orders = new ConcurrentLinkedQueue<Order>(orderList);
-            System.out.println("We have " + orders.size()+ " Orders");
+            this.orders = FileReader.parseOrders("Orders.csv");
         } catch (IOException e) {
             e.printStackTrace();
         }
-        for(int i=0;i<serverCount;i++){
-            Server server = new Server(orders,this);
-            server.setOrderProcessTime((i+1)*500);
-            server.setName("Server("+i+")");
-            server.startOrderProcess();
-            serverList.add(server);
-        }
-    //    this.orderFrame = new OrderFrame();
-    //    this.orderFrame.setOrderController(this);
-    //    this.orderFrame.setStockItems(stockItems.values().toArray(new Item[stockItems.size()]));
+
+        this.orderFrame = new OrderFrame();
+        this.orderFrame.setOrderController(this);
+        this.orderFrame.setStockItems(stockItems.values().toArray(new Item[stockItems.size()]));
     }
 
     public static void main(String[] args) {
@@ -98,13 +78,13 @@ public class OrderController implements OrderStatus {
     }
 
     private void updateOrderFrameOrderItems() {
-     //   List<OrderItem> itemsInOrder = pendingOrder.getOrderItems();
-     //   this.orderFrame.setOrderItems(itemsInOrder.toArray(new OrderItem[itemsInOrder.size()]));
+        List<OrderItem> itemsInOrder = pendingOrder.getOrderItems();
+        this.orderFrame.setOrderItems(itemsInOrder.toArray(new OrderItem[itemsInOrder.size()]));
     }
 
     private void updateOrderFrameBill() {
-    //    Bill bill = pendingOrder.getBill();
-    //    orderFrame.setOrderTotals(bill.getSubtotal(), bill.getDiscount(), bill.getTotal());
+        Bill bill = pendingOrder.getBill();
+        orderFrame.setOrderTotals(bill.getSubtotal(), bill.getDiscount(), bill.getTotal());
     }
 
     public void addItemToPendingOrder(Item itemToAdd) throws NoOrderException {
@@ -131,17 +111,17 @@ public class OrderController implements OrderStatus {
 
     public void cancelPendingOrder() {
         pendingOrder = null;
-     //   this.orderFrame.setOrderItems(new OrderItem[]{});
-     //   this.orderFrame.setOrderTotals((float) 0.0, (float) 0.0, (float) 0.0);
+        this.orderFrame.setOrderItems(new OrderItem[]{});
+        this.orderFrame.setOrderTotals((float) 0.0, (float) 0.0, (float) 0.0);
     }
 
     public void finalizePendingOrder() throws NoOrderException, EmptyOrderException {
         if (this.pendingOrder == null) throw new NoOrderException("There is no pending order to submit");
         if (this.pendingOrder.getOrderItems().size() < 1) throw new EmptyOrderException("Cannot submit empty order");
 
-    //    orderFrame.setOrderItems(new OrderItem[]{});
-      //  orderFrame.setOrderTotals((float) 0.0, (float) 0.0, (float) 0.0);
-      //  orderFrame.setBillString(pendingOrder.getBill().getBillString());
+        orderFrame.setOrderItems(new OrderItem[]{});
+        orderFrame.setOrderTotals((float) 0.0, (float) 0.0, (float) 0.0);
+        orderFrame.setBillString(pendingOrder.getBill().getBillString());
         orders.add(pendingOrder);
         pendingOrder = null;
     }
@@ -210,114 +190,5 @@ public class OrderController implements OrderStatus {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    @Override
-    public void orderFinished(Order currentOrder, OrderConsumer server) {
-        System.out.println("Server="+server.getName()+" finished the order of customer="+currentOrder.getCustomerId());
-
-        //*******************Important**************************
-        //This method is called asynchronously by multiple servers.
-        // A swing UI can only updated in the main thread.
-        //Thereforce, if you want to update the up pls do it like this:
-        /*
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                //Here we are in our main thread again
-                //Run the UI code here!.
-            }
-        });
-
-        To make the code more pretty use lamda expression(Does excatly the same)
-
-        SwingUtilities.invokeLater(() -> {
-            //Here we are in our main thread again
-            //Run the UI code here!.
-        });*/
-
-        // We need to synchronize this line, otherwise we will get wrong results since multiple threads could change the variable concurenntly
-        synchronized (this){
-            proceededOrders++;
-        }
-        System.out.println("We proceeded "+proceededOrders+ " orders.");
-
-    }
-
-    @Override
-    public void itemFinished(Order currentOrder, OrderItem item, OrderConsumer server) {
-
-        //*******************Important**************************
-        //This method is called asynchronously by multiple servers.
-        // A swing UI can only updated in the main thread.
-        //Thereforce, if you want to update the up pls do it like this:
-        /*
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                //Here we are in our main thread again
-                //Run the UI code here!.
-            }
-        });
-
-        To make the code more pretty use lamda expression(Does excatly the same)
-
-        SwingUtilities.invokeLater(() -> {
-            //Here we are in our main thread again
-            //Run the UI code here!.
-        });*/
-        System.out.println("Server="+server.getName()+" finished the item="+item.getItem().getName()+ "of the Order="+currentOrder.getCustomerId());
-
-    }
-
-    @Override
-    public void itemTaken(Order currentOrder, OrderItem item, OrderConsumer server) {
-
-        //*******************Important**************************
-        //This method is called asynchronously by multiple servers.
-        // A swing UI can only updated in the main thread.
-        //Thereforce, if you want to update the up pls do it like this:
-        /*
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                //Here we are in our main thread again
-                //Run the UI code here!.
-            }
-        });
-
-        To make the code more pretty use lamda expression(Does excatly the same)
-
-        SwingUtilities.invokeLater(() -> {
-            //Here we are in our main thread again
-            //Run the UI code here!.
-        });*/
-        System.out.println("Server="+server.getName()+" took the item="+item.getItem().getName()+ "of the Order="+currentOrder.getCustomerId());
-
-    }
-
-    @Override
-    public void orderTaken(Order currentOrder, OrderConsumer server) {
-
-        //*******************Important**************************
-        //This method is called asynchronously by multiple servers.
-        // A swing UI can only updated in the main thread.
-        //Thereforce, if you want to update the up pls do it like this:
-        /*
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                //Here we are in our main thread again
-                //Run the UI code here!.
-            }
-        });
-
-        To make the code more pretty use lamda expression(Does excatly the same)
-
-        SwingUtilities.invokeLater(() -> {
-            //Here we are in our main thread again
-            //Run the UI code here!.
-        });*/
-        System.out.println("Server="+server.getName()+" took the order of customer="+currentOrder.getCustomerId());
     }
 }

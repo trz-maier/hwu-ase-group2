@@ -1,12 +1,9 @@
-package ase.cw.control;
-
-import ase.cw.model.Order;
-import ase.cw.model.OrderItem;
+package ase.cw.model;
 
 /**
  * Created by Thomas on 01.03.2019.
  */
-public interface OrderStatus {
+public interface OrderHandler {
     /**
      * Called as soon as a order is by an OrderConsumer.
      * Thias means the server took the order and will proceed it.

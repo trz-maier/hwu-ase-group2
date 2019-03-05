@@ -1,4 +1,4 @@
-package ase.cw.control;
+package ase.cw.model;
 
 /**
  * Created by Thomas on 01.03.2019.
@@ -10,7 +10,7 @@ public interface OrderConsumer {
     String getName();
 
 
-    OrderStatus getOrderStatus();
+    OrderHandler getOrderHandler();
     /**
      *
      * @param processTime the time how long it takes to proceed each item
