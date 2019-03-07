@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module type="JAVA_MODULE" version="4">
-  <component name="NewModuleRootManager">
+  <component name="NewModuleRootManager" inherit-compiler-output="false">
     <output url="file://$MODULE_DIR$/output_files" />
     <output-test url="file://$MODULE_DIR$/output_test_files" />
     <exclude-output />
@@ -10,7 +10,7 @@
       <sourceFolder url="file://$MODULE_DIR$/testRes" type="java-test-resource" />
       <sourceFolder url="file://$MODULE_DIR$/res" type="java-resource" />
     </content>
-    <orderEntry type="inheritedJdk" />
+    <orderEntry type="jdk" jdkName="1.8" jdkType="JavaSDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module-library" scope="TEST">
       <library name="JUnit4">
