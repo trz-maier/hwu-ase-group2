@@ -2,10 +2,8 @@ package ase.cw.control;
 
 import ase.cw.IO.FileReader;
 import ase.cw.exceptions.InvalidCustomerIdException;
-import ase.cw.model.Bill;
-import ase.cw.model.Item;
-import ase.cw.model.Order;
-import ase.cw.model.OrderItem;
+import ase.cw.gui.QueueFrame;
+import ase.cw.model.*;
 import ase.cw.view.QueueView;
 import ase.cw.view.ServerView;
 
@@ -15,6 +13,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 
 public class OrderController {
@@ -22,17 +22,24 @@ public class OrderController {
     private static final String ENDLINE = System.lineSeparator();
 
     private Map<String, Item> stockItems;
-    private List<Order> orders;
+    private List<Order> readOrders;
+    private Queue queuedOrders;
+    private List<Order> processedOrders;
     private QueueView queueView;
     private ServerView serverView;
 
     public OrderController() {
         try {
             this.stockItems = FileReader.parseItems("Items.csv");
-            this.orders = FileReader.parseOrders("Orders.csv");
+            this.readOrders = FileReader.parseOrders("Orders.csv");
         } catch (IOException e) {
             e.printStackTrace();
         }
+        QueueFrame qf = new QueueFrame();
+
+        Queue queue = new Queue(this.readOrders);
+        queue.run();
+
         // TODO: initialize this.view
     }
 
@@ -70,13 +77,13 @@ public class OrderController {
     private String createReport() {
         // all items in menu ✓
         // number of times each item sold ✓
-        // income for all orders ✓
+        // income for all processedOrders ✓
         double sumTotal = 0;
         double sumSubtotal = 0;
         Map<Item, Integer> itemSoldQuantities = new HashMap<>();
         StringBuilder builder = new StringBuilder(this.stockItems.size() * 20);
 
-        for (Order order : this.orders) {
+        for (Order order : this.processedOrders) {
             Bill orderBill = order.getBill();
             sumSubtotal += orderBill.getSubtotal();
             sumTotal += orderBill.getTotal();
