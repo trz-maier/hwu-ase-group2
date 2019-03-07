@@ -3,62 +3,28 @@ package ase.cw.model;
 import java.security.InvalidParameterException;
 import java.util.List;
 import java.util.Queue;
+import java.util.concurrent.BlockingDeque;
 
 /**
  * Created by Thomas on 01.03.2019.
+ * Important: Every time
  */
-public class Server implements OrderConsumer, Runnable {
+public class Server implements OrderConsumer {
 
-    private final Queue<Order> orderQueue;
+    private final BlockingDeque<Order> orderQueue;
     private final OrderHandler orderHandler;
     private int processTime = 1000;
     private Thread serverThread;
     private String name = "Server";
 
-    public Server(Queue<Order> queue, OrderHandler orderHandler) {
+    public Server(BlockingDeque<Order> queue, OrderHandler orderHandler) {
+
         if (queue == null || orderHandler == null)
             throw new InvalidParameterException("Queue and orderHandler must be not null");
         this.orderQueue = queue;
         this.orderHandler = orderHandler;
     }
 
-    @Override
-    public void run() {
-        while (!Thread.currentThread().isInterrupted()) {
-            Order currentOrder;
-            //We actually do not need this synchronized block, sinze our implementated orderQueue is already thread safe.
-            //But to make things more robust and consitent(It is possible to pass a non thread safe queue to the Server, in this case we would need the synchronized block)
-            synchronized (orderQueue) {
-                currentOrder = orderQueue.poll();
-            }
-
-            //If we poll get a null element from the queue, we know the queue is empty and we can stop the thread
-            if (currentOrder == null) {
-                System.out.println("Order queue empty, stop Server thread=" + this.toString());
-                break;
-            }
-
-            //Tell listener, we proceed a new order
-            orderHandler.orderTaken(currentOrder, this);
-
-            List<OrderItem> items = currentOrder.getOrderItems();
-            for (OrderItem orderItem : items) {
-                //Proceed item
-                orderHandler.itemTaken(currentOrder, orderItem, this);
-                try {
-                    Thread.sleep(processTime);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                //Item finished after processTime ms
-                orderHandler.itemFinished(currentOrder, orderItem, this);
-
-            }
-            //Order finished
-            orderHandler.orderFinished(currentOrder, this);
-
-        }
-    }
 
     @Override
     public String getName() {
@@ -91,11 +57,29 @@ public class Server implements OrderConsumer, Runnable {
     @Override
     public void startOrderProcess() {
         if (serverThread == null) {
-            serverThread = new Thread(this);
+            serverThread = new Thread(new ServerRunnable());
             serverThread.setName(name);
             serverThread.start();
         } else {
             System.out.println(getName() + "already started");
+        }
+    }
+
+    /**
+     * Stops the internal serverThread.
+     * The Server will finish a started order process before stopping.
+     * This function will block, until the server finished the a started ordrer.
+     */
+    @Override
+    public void stopOrderProcess() {
+        if(serverThread!=null){
+            serverThread.interrupt();
+            try {
+                serverThread.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
         }
     }
 
@@ -105,5 +89,52 @@ public class Server implements OrderConsumer, Runnable {
                 "processTime=" + processTime +
                 ", serverThread=" + serverThread +
                 '}';
+    }
+    /**
+      *  This class is private, so nobody else can use it and create a potential misbehaviour.
+     *  If the Server class would implement the Runnable interface, multiple threads(not only the serverThread) could be started out of the same server object.
+     *  We want to prevent this:
+     *  Server s = new Server();
+     *  Thread t1 = new Thread(s);
+     *  Thread t2 = new Thread(s);
+     *  Therefore, The Server class is not allowed to implement the runnable interface.
+     */
+    private class ServerRunnable implements Runnable {
+
+        @Override
+        public void run() {
+            boolean stop = false;
+            while (!Thread.currentThread().isInterrupted() && !stop) {
+                Order currentOrder;
+                //We actually do not need this synchronized block, sinze our implementated orderQueue is already thread safe.
+                //But to make things more robust and consitent(It is possible to pass a non thread safe queue to the Server, in this case we would need the synchronized block)
+                try {
+                    //Wait forever until a external interupt occurs
+                    currentOrder = orderQueue.takeFirst();
+                } catch (InterruptedException e) {
+                    break;
+                }
+                //Tell listener, we proceed a new order
+                orderHandler.orderTaken(currentOrder, Server.this);
+
+                List<OrderItem> items = currentOrder.getOrderItems();
+                boolean inter=false;
+                for (OrderItem orderItem : items) {
+                    //Proceed item
+                    orderHandler.itemTaken(currentOrder, orderItem, Server.this);
+                    try {
+                        Thread.sleep(processTime);
+                    } catch (InterruptedException e) {
+                        //Finish the current order, then stop
+                        stop=true;
+                    }
+                    //Item finished after processTime ms
+                    orderHandler.itemFinished(currentOrder, orderItem, Server.this);
+
+                }
+                //Order finished
+                orderHandler.orderFinished(currentOrder, Server.this);
+            }
+        }
     }
 }

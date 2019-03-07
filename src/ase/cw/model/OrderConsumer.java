@@ -22,4 +22,9 @@ public interface OrderConsumer {
      * Start a order Process
      */
     void startOrderProcess();
+
+    /**
+     * Stops the OrderConsumer and all attached threads
+     */
+    void stopOrderProcess();
 }
