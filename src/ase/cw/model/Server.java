@@ -17,7 +17,7 @@ public class Server implements OrderConsumer, Runnable {
 
     public Server(Queue<Order> queue, OrderHandler orderHandler) {
         if (queue == null || orderHandler == null)
-            throw new InvalidParameterException("Queue and orderHandler must be not null");
+            throw new InvalidParameterException("OrderQueue and orderHandler must be not null");
         this.orderQueue = queue;
         this.orderHandler = orderHandler;
     }

@@ -13,8 +13,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
 
 
 public class OrderController {
@@ -22,23 +20,25 @@ public class OrderController {
     private static final String ENDLINE = System.lineSeparator();
 
     private Map<String, Item> stockItems;
-    private List<Order> readOrders;
-    private Queue queuedOrders;
+    private List<Order> loadedOrders;
+    private OrderQueue queuedOrders;
     private List<Order> processedOrders;
     private QueueView queueView;
     private ServerView serverView;
+    private OrderProducerListener opl;
 
     public OrderController() {
         try {
             this.stockItems = FileReader.parseItems("Items.csv");
-            this.readOrders = FileReader.parseOrders("Orders.csv");
+            this.loadedOrders = FileReader.parseOrders("Orders.csv");
         } catch (IOException e) {
             e.printStackTrace();
         }
         QueueFrame qf = new QueueFrame();
 
-        Queue queue = new Queue(this.readOrders);
-        queue.run();
+        OrderQueue oq = new OrderQueue(this.loadedOrders, this.opl);
+        Thread t = new Thread(oq);
+        t.start();
 
         // TODO: initialize this.view
     }
