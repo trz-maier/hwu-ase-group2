@@ -13,9 +13,10 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.BlockingQueue;
 
 
-public class OrderController {
+public class OrderController implements OrderProducerListener {
     private static final int EXPECTED_CUSTOMER_ID_LENGTH = 8;
     private static final String ENDLINE = System.lineSeparator();
 
@@ -36,9 +37,10 @@ public class OrderController {
         }
         QueueFrame qf = new QueueFrame();
 
-        OrderQueue oq = new OrderQueue(this.loadedOrders, this.opl);
+        OrderQueue oq = new OrderQueue(this.loadedOrders, this);
         Thread t = new Thread(oq);
         t.start();
+
 
         // TODO: initialize this.view
     }
@@ -133,6 +135,11 @@ public class OrderController {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void onOrderProduced(BlockingQueue order, Order producedOrder) {
+
     }
 }
 // TODO: Add logging

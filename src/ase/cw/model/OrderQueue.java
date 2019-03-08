@@ -25,7 +25,7 @@ public class OrderQueue implements Runnable {
                 Thread.sleep(delay);
                 queuedOrders.put(order);
                 opl.onOrderProduced(queuedOrders, order);
-                System.out.println("Orders in queue: "+this.queuedOrders);
+                System.out.println("Orders in queue: "+this.queuedOrders.size());
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -36,25 +36,4 @@ public class OrderQueue implements Runnable {
     public BlockingQueue<Order> getQueue() {
         return this.queuedOrders;
     }
-
-    public void addToQueue(Order order) {
-        try {
-            queuedOrders.put(order);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    public Order takeFromQueue() {
-        Order returnedOrder = null;
-        try {
-            returnedOrder = queuedOrders.take();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        return returnedOrder;
-    } 
-    
-
 }
