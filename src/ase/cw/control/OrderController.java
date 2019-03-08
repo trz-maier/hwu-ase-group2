@@ -37,12 +37,9 @@ public class OrderController implements OrderProducerListener {
             e.printStackTrace();
         }
 
-        OrderQueue oq = new OrderQueue(this.loadedOrders, this);
-        Thread t = new Thread(oq);
+        this.queuedOrders = new OrderQueue(this.loadedOrders, this);
+        Thread t = new Thread(queuedOrders);
         t.start();
-
-        queuedOrders = oq;
-
 
         // TODO: initialize this.view
     }
@@ -141,7 +138,6 @@ public class OrderController implements OrderProducerListener {
 
     @Override
     public void onOrderProduced(BlockingQueue order, Order producedOrder) {
-        System.out.println("Orders in queue: "+this.queuedOrders.getQueue().size());
         qf.setOrdersInQueue(this.queuedOrders.getQueue().toArray(new Order[0]));
     }
 }

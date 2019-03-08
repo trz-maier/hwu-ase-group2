@@ -24,7 +24,7 @@ public class QueueFrame extends JFrame implements ActionListener, QueueView {
     public QueueFrame() {
 
         this.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("coffee.png")));
-        this.setTitle("Café OrderQueue");
+        this.setTitle("Café Queue");
         this.setPreferredSize(new Dimension(300, 700));
         this.setResizable(false);
         this.buildFrame();
