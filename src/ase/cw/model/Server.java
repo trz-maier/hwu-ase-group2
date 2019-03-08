@@ -2,8 +2,7 @@ package ase.cw.model;
 
 import java.security.InvalidParameterException;
 import java.util.List;
-import java.util.Queue;
-import java.util.concurrent.BlockingDeque;
+import java.util.concurrent.BlockingQueue;
 
 /**
  * Created by Thomas on 01.03.2019.
@@ -11,13 +10,13 @@ import java.util.concurrent.BlockingDeque;
  */
 public class Server implements OrderConsumer {
 
-    private final BlockingDeque<Order> orderQueue;
+    private final BlockingQueue<Order> orderQueue;
     private final OrderHandler orderHandler;
     private int processTime = 1000;
     private Thread serverThread;
     private String name = "Server";
 
-    public Server(BlockingDeque<Order> queue, OrderHandler orderHandler) {
+    public Server(BlockingQueue<Order> queue, OrderHandler orderHandler) {
 
         if (queue == null || orderHandler == null)
             throw new InvalidParameterException("Queue and orderHandler must be not null");
@@ -110,7 +109,7 @@ public class Server implements OrderConsumer {
                 //But to make things more robust and consitent(It is possible to pass a non thread safe queue to the Server, in this case we would need the synchronized block)
                 try {
                     //Wait forever until a external interupt occurs
-                    currentOrder = orderQueue.takeFirst();
+                    currentOrder = orderQueue.take();
                 } catch (InterruptedException e) {
                     break;
                 }
