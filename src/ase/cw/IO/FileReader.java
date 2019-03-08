@@ -5,14 +5,13 @@ import ase.cw.model.Item;
 import ase.cw.model.Item.Category;
 import ase.cw.model.Order;
 
+import java.util.concurrent.ThreadLocalRandom;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.security.InvalidParameterException;
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -28,6 +27,8 @@ public class FileReader {
      * @return a list of all parsed orders
      * @throws IOException if the filename is not correct
      */
+
+
     public static List<Order> parseOrders(String filename) throws IOException{
         File file = parseFileName(filename);
         List<Order> orderList = new ArrayList<Order>();
@@ -69,11 +70,10 @@ public class FileReader {
      * @throws ParseException   if the orderString has to many/few items
      * @throws IllegalArgumentException
      */
-    private static void parseSingleOrder(String orderString, List<Order> orderList) throws InvalidCustomerIdException,ParseException,IllegalArgumentException{
+    private static void parseSingleOrder(String orderString, List<Order> orderList) throws InvalidCustomerIdException, IllegalArgumentException {
 
         Scanner singleOrderScanner = null;
         String customerId="";
-        String dateStr = "";
 
         try {
             singleOrderScanner = new Scanner(orderString);
@@ -83,12 +83,9 @@ public class FileReader {
                 //Where evey item has the following format: UUID,NAME,CATEGORY,Price
 
                 customerId = singleOrderScanner.next();
-                dateStr = singleOrderScanner.next();
-                DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
-                Date date = df.parse(dateStr);
                 UUID uuid = parseUUID(singleOrderScanner);
                 Item item = getItemById(uuid);
-                Order order = new Order(customerId,date);
+                Order order = new Order(customerId);
 
                 //If we already created this specific order, add the Item to the existing order.
                 //Else create a new order and add the item to the new order.
