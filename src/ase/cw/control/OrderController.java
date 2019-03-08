@@ -26,7 +26,8 @@ public class OrderController implements OrderProducerListener {
     private List<Order> processedOrders;
     private QueueView queueView;
     private ServerView serverView;
-    private OrderProducerListener opl;
+    private QueueFrame qf = new QueueFrame();
+
 
     public OrderController() {
         try {
@@ -35,11 +36,12 @@ public class OrderController implements OrderProducerListener {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        QueueFrame qf = new QueueFrame();
 
         OrderQueue oq = new OrderQueue(this.loadedOrders, this);
         Thread t = new Thread(oq);
         t.start();
+
+        queuedOrders = oq;
 
 
         // TODO: initialize this.view
@@ -139,7 +141,8 @@ public class OrderController implements OrderProducerListener {
 
     @Override
     public void onOrderProduced(BlockingQueue order, Order producedOrder) {
-
+        System.out.println("Orders in queue: "+this.queuedOrders.getQueue().size());
+        qf.setOrdersInQueue(this.queuedOrders.getQueue().toArray(new Order[0]));
     }
 }
 // TODO: Add logging

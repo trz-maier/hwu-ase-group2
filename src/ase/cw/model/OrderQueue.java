@@ -25,7 +25,6 @@ public class OrderQueue implements Runnable {
                 Thread.sleep(delay);
                 queuedOrders.put(order);
                 opl.onOrderProduced(queuedOrders, order);
-                System.out.println("Orders in queue: "+this.queuedOrders.size());
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
