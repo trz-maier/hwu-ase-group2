@@ -24,7 +24,7 @@ public class Order {
      *
      */
     public Order(String customerId) throws InvalidCustomerIdException {
-        this(customerId, new Date());
+        this(customerId, null);
     }
 
     public Order(String customerId, Date timestamp) throws InvalidCustomerIdException {
