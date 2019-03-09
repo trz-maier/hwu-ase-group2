@@ -14,7 +14,6 @@ import java.awt.event.*;
 
 public class QueueFrame extends JFrame implements ActionListener, QueueView {
 
-    private OrderController orderController;
     private JPanel content = new JPanel(new BorderLayout(10, 10));
     private JScrollPane queueScroll = new JScrollPane();
     private JList<Order> queueJList = new JList<>();
@@ -33,11 +32,6 @@ public class QueueFrame extends JFrame implements ActionListener, QueueView {
         this.setLocationRelativeTo(null);
         this.setVisible(true);
         Log.getLogger().log("GUI: QueueFrame opened.");
-    }
-
-    //Setters
-    public void setOrderController(OrderController orderController) {
-        this.orderController = orderController;
     }
 
     private void buildFrame() {

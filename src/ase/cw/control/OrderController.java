@@ -54,7 +54,7 @@ public class OrderController implements OrderProducerListener, OrderHandler, Ord
             //Create Servers
             for (int i = 1; i < SERVER_COUNT+1; i++) {
                 Server server = new Server(queuedOrders, this, i);
-                server.setName("Server(" + i + ")");
+                server.setName("Server "+i);
                 server.setOrderProcessTime(5000);
                 server.startOrderProcess();
                 serverList.add(server);
@@ -194,7 +194,7 @@ public class OrderController implements OrderProducerListener, OrderHandler, Ord
         //SwingUtilities.invokeLater(() -> {
         //We don't need SwingUtilities.invokeLater(()) in this case, but this would improve the stability of our application
         // in case we change something and change values of a order in multiple threads because the order class is not threadsafe.
-        server.setStatus("busy");
+        server.setBusy(true);
         currentOrder.setTimestamp(new Date());
         //         });
         Log.getLogger().log(server.getName() + " took an order " + this.queuedOrders.size() + " orders in queue");
@@ -208,7 +208,7 @@ public class OrderController implements OrderProducerListener, OrderHandler, Ord
         synchronized (this) {
             processedOrders.add(currentOrder);
         }
-        server.setStatus("free");
+        server.setBusy(false);
         this.serverViewList.get(server.getId()-1).updateView(server, currentOrder);
     }
 

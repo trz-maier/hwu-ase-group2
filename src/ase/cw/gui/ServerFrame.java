@@ -22,7 +22,7 @@ public class ServerFrame extends JFrame implements ActionListener, ServerView {
     public ServerFrame(Server server, JFrame parentFrame) {
 
         this.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("coffee.png")));
-        this.setTitle("Server: "+server.getId());
+        this.setTitle(server.getName());
         this.setPreferredSize(new Dimension(300, 200));
         this.setLocation(parentFrame.getX()+parentFrame.getWidth()+(server.getId()*10), parentFrame.getY()+(server.getId()*10));
         this.setResizable(false);
@@ -54,11 +54,11 @@ public class ServerFrame extends JFrame implements ActionListener, ServerView {
 
     @Override
     public void updateView(OrderConsumer server, Order order) {
-        if (!server.getStatus().equals("busy")) {
-            this.textArea.setText("Status: "+server.getStatus());
+        if (!server.isBusy()) {
+            this.textArea.setText("Busy: "+server.isBusy());
         }
         else {
-            this.textArea.setText("Status: "+server.getStatus()+"\nProcessing: "+order.getCustomerId()+"\nItems: "+order.getOrderItems().size()+"\nBill: £"+order.getBill().getTotal());
+            this.textArea.setText("Busy: "+server.isBusy()+"\nProcessing: "+order.getCustomerId()+"\nItems: "+order.getOrderItems().size()+"\nBill: £"+order.getBill().getTotal());
         }
     }
 }

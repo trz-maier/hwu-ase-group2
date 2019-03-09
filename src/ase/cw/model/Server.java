@@ -15,7 +15,7 @@ public class Server implements OrderConsumer {
     private int processTime = 1000;
     private Thread serverThread;
     private String name = "Server";
-    private String status;
+    private boolean busy;
     private int serverId;
     private boolean stopThread = false;
 
@@ -48,13 +48,13 @@ public class Server implements OrderConsumer {
     }
 
     @Override
-    public void setStatus(String status) {
-        this.status = status;
+    public void setBusy(boolean busy) {
+        this.busy = busy;
     }
 
     @Override
-    public String getStatus() {
-        return status;
+    public boolean isBusy() {
+        return this.busy;
     }
 
     public OrderHandler getOrderHandler() {
