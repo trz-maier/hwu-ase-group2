@@ -7,20 +7,23 @@ public interface OrderHandler {
     /**
      * Called as soon as a order is by an OrderConsumer.
      * Thias means the server took the order and will proceed it.
+     *
      * @param currentOrder the order which is started
-     * @param server ther Consumer which started the order
+     * @param server       ther Consumer which started the order
      */
     void orderTaken(Order currentOrder, OrderConsumer server);
 
     /**
      * Called as soon as a order is finished by an OrderConsumer.
+     *
      * @param currentOrder
      * @param server
      */
     void orderFinished(Order currentOrder, OrderConsumer server);
 
     /**
-     *  Called when a item of a order is finished by an OrderConsumer.
+     * Called when a item of a order is finished by an OrderConsumer.
+     *
      * @param currentOrder
      * @param item
      * @param server
@@ -28,10 +31,11 @@ public interface OrderHandler {
     void itemFinished(Order currentOrder, OrderItem item, OrderConsumer server);
 
     /**
-     *  Called when a item of a order taken in the OrderConsumer
+     * Called when a item of a order taken in the OrderConsumer
+     *
      * @param currentOrder the current order
-     * @param item the current item of the order
-     * @param server the consumer, who took the item
+     * @param item         the current item of the order
+     * @param server       the consumer, who took the item
      */
     void itemTaken(Order currentOrder, OrderItem item, OrderConsumer server);
 }

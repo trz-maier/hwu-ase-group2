@@ -3,7 +3,6 @@ package ase.cw.model;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadLocalRandom;
 
 
 public class OrderQueue implements Runnable {
@@ -11,6 +10,7 @@ public class OrderQueue implements Runnable {
     private List<Order> loadedOrders;
     private BlockingQueue<Order> queuedOrders = new LinkedBlockingQueue<>();
     private OrderProducerListener opl;
+    private int maxDelayTime = 1000;
 
     public OrderQueue(List<Order> loadedOrders, OrderProducerListener opl) {
         this.loadedOrders = loadedOrders;
@@ -20,7 +20,7 @@ public class OrderQueue implements Runnable {
     @Override
     public void run() {
         for (Order order : this.loadedOrders) {
-            int delay = ThreadLocalRandom.current().nextInt(1000, 9000);
+            int delay = (int) (Math.random() * maxDelayTime);
             try {
                 Thread.sleep(delay);
                 queuedOrders.put(order);
