@@ -15,14 +15,17 @@ public class Server implements OrderConsumer {
     private int processTime = 1000;
     private Thread serverThread;
     private String name = "Server";
+    private String status;
+    private int serverId;
     private boolean stopThread = false;
 
-    public Server(BlockingQueue<Order> queue, OrderHandler orderHandler) {
+    public Server(BlockingQueue<Order> queue, OrderHandler orderHandler, int serverId) {
 
         if (queue == null || orderHandler == null)
             throw new InvalidParameterException("OrderQueue and orderHandler must be not null");
         this.orderQueue = queue;
         this.orderHandler = orderHandler;
+        this.serverId = serverId;
     }
 
 
@@ -37,6 +40,21 @@ public class Server implements OrderConsumer {
         if (serverThread != null) {
             serverThread.setName(name);
         }
+    }
+
+    @Override
+    public int getId() {
+        return serverId;
+    }
+
+    @Override
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    @Override
+    public String getStatus() {
+        return status;
     }
 
     public OrderHandler getOrderHandler() {

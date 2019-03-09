@@ -1,5 +1,9 @@
 package ase.cw.gui;
 
+import ase.cw.log.Log;
+import ase.cw.model.Order;
+import ase.cw.model.OrderConsumer;
+import ase.cw.model.Server;
 import ase.cw.view.ServerView;
 import javax.swing.*;
 import java.awt.*;
@@ -12,20 +16,22 @@ import java.awt.event.*;
 public class ServerFrame extends JFrame implements ActionListener, ServerView {
 
     private JPanel content = new JPanel(new BorderLayout(10, 10));
-    private JTextArea textArea = new JTextArea("Status: free");
+    private JTextArea textArea = new JTextArea("");
 
     // Frame constructor
-    public ServerFrame(int server_id) {
+    public ServerFrame(Server server, JFrame parentFrame) {
 
         this.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("coffee.png")));
-        this.setTitle("Server " + server_id);
+        this.setTitle("Server: "+server.getId());
         this.setPreferredSize(new Dimension(300, 200));
+        this.setLocation(parentFrame.getX()+parentFrame.getWidth()+(server.getId()*10), parentFrame.getY()+(server.getId()*10));
         this.setResizable(false);
+        this.textArea.setEditable(false);
         this.buildFrame();
         this.pack();
         this.setVisible(true);
 
-        System.out.println("GUI: ServerFrame "+server_id+" opened.");
+        Log.getLogger().log("GUI: ServerFrame "+server.getId()+" opened.");
     }
     private void buildFrame() {
         content.setBackground(Color.white);
@@ -44,5 +50,15 @@ public class ServerFrame extends JFrame implements ActionListener, ServerView {
     @Override
     public void setServerInfo(String information) {
         textArea.setText(information);
+    }
+
+    @Override
+    public void updateView(OrderConsumer server, Order order) {
+        if (!server.getStatus().equals("busy")) {
+            this.textArea.setText("Status: "+server.getStatus());
+        }
+        else {
+            this.textArea.setText("Status: "+server.getStatus()+"\nProcessing: "+order.getCustomerId()+"\nItems: "+order.getOrderItems().size()+"\nBill: £"+order.getBill().getTotal());
+        }
     }
 }

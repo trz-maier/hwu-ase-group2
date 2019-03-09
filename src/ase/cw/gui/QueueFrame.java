@@ -1,6 +1,7 @@
 package ase.cw.gui;
 
 import ase.cw.control.OrderController;
+import ase.cw.log.Log;
 import ase.cw.model.Order;
 import ase.cw.view.QueueView;
 import javax.swing.*;
@@ -31,7 +32,7 @@ public class QueueFrame extends JFrame implements ActionListener, QueueView {
         this.pack();
         this.setLocationRelativeTo(null);
         this.setVisible(true);
-        System.out.println("GUI: QueueFrame opened.");
+        Log.getLogger().log("GUI: QueueFrame opened.");
     }
 
     //Setters
@@ -58,11 +59,11 @@ public class QueueFrame extends JFrame implements ActionListener, QueueView {
     public void actionPerformed(ActionEvent e) {
 
         if (e.getSource() == startButton) {
-            System.out.println("GUI: Start button pressed.");
+            Log.getLogger().log("GUI: Start button pressed.");
         }
 
         if (e.getSource() == stopButton) {
-            System.out.println("GUI: Stop button pressed.");
+            Log.getLogger().log("GUI: Stop button pressed.");
         }
 
     }
