@@ -3,46 +3,78 @@ package ase.cw.control;
 import ase.cw.IO.FileReader;
 import ase.cw.exceptions.InvalidCustomerIdException;
 import ase.cw.gui.QueueFrame;
+import ase.cw.log.Log;
 import ase.cw.model.*;
 import ase.cw.view.QueueView;
 import ase.cw.view.ServerView;
 
+import javax.swing.*;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.BlockingQueue;
 
 
-public class OrderController implements OrderProducerListener {
+public class OrderController implements OrderProducerListener, OrderHandler, OrdersDoneEvent {
     private static final int EXPECTED_CUSTOMER_ID_LENGTH = 8;
     private static final String ENDLINE = System.lineSeparator();
+    private static final int SERVER_COUNT = 5;
+    private static final String FILENAME = "Report.txt";
 
     private Map<String, Item> stockItems;
-    private List<Order> loadedOrders;
-    private OrderQueue queuedOrders;
-    private List<Order> processedOrders;
+    private OrderQueue orderProducer;
+    private List<Order> processedOrders = new ArrayList<>();
+    private List<Server> serverList = new ArrayList<>();
+    private BlockingQueue<Order> queuedOrders;
+
     private QueueView queueView;
     private ServerView serverView;
     private QueueFrame qf = new QueueFrame();
 
+    /**
+     * Total number of orders, which were produced
+     */
+    private int totalProducedOrders = 0;
+    /**
+     * Total number of orders in Orderss.csv file
+     */
+    private int totalOrders = 0;
 
     public OrderController() {
         try {
+            List<Order> loadedOrders = FileReader.parseOrders("Orders.csv");
             this.stockItems = FileReader.parseItems("Items.csv");
-            this.loadedOrders = FileReader.parseOrders("Orders.csv");
+            totalOrders = loadedOrders.size();
+
+            //Create Order producer
+            this.orderProducer = new OrderQueue(loadedOrders, this);
+            queuedOrders = this.orderProducer.getQueue();
+            Thread t = new Thread(orderProducer);
+            t.start();
+
+            //Create Servers
+            for (int i = 0; i < SERVER_COUNT; i++) {
+                Server server = new Server(queuedOrders, this);
+                server.setName("Server(" + i + ")");
+                server.setOrderProcessTime(5000);
+                server.startOrderProcess();
+                serverList.add(server);
+            }
+
+            //Create application close Thread
+            ApplicationCloseTask applicationCloseTask = new ApplicationCloseTask(this, t, serverList, queuedOrders);
+            Thread applicationCloseThread = new Thread(applicationCloseTask);
+            applicationCloseThread.setName("Application close thread");
+            applicationCloseThread.start();
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        this.queuedOrders = new OrderQueue(this.loadedOrders, this);
-        Thread t = new Thread(queuedOrders);
-        t.start();
 
         // TODO: initialize this.view
     }
+
 
     public static void main(String[] args) {
         new OrderController();
@@ -137,8 +169,78 @@ public class OrderController implements OrderProducerListener {
     }
 
     @Override
-    public void onOrderProduced(BlockingQueue order, Order producedOrder) {
-        qf.setOrdersInQueue(this.queuedOrders.getQueue().toArray(new Order[0]));
+    public void onOrderProduced(BlockingQueue<Order> order, Order producedOrder) {
+        Log.getLogger().log("Order produced=" + this.queuedOrders.size() + " orders remaining");
+
+        updateOrderFrame(order);
+        synchronized (this) {
+            //Synchonized not needed, since only one thread will call this mehtod, but if we decide to add multiple order producers, we need the synchronization.
+            //To avoid that we will search for bugs later Thomas added the synchronized
+            totalProducedOrders++;
+        }
+        Log.getLogger().log(totalProducedOrders + " Orders produced");
+        Log.getLogger().log(totalOrders + " Orders will be produced");
+
+
+    }
+
+    private void updateOrderFrame(BlockingQueue<Order> order) {
+        SwingUtilities.invokeLater(() -> qf.setOrdersInQueue(order.toArray(new Order[order.size()])));
+    }
+
+    @Override
+    public void orderTaken(Order currentOrder, OrderConsumer server) {
+        //Set a timestamp to a order, as soon as the order is taken by a server
+        //SwingUtilities.invokeLater(() -> {
+        //We doont need SwingUtilities.invokeLater(()) in this case, but this would improve the stability of our application
+        // in case we change something and change values of a order in multiple threads because the order class is not threadsafe.
+        currentOrder.setTimestamp(new Date());
+        //         });
+        Log.getLogger().log(server.getName() + " took a Order " + this.queuedOrders.size() + " orders in queue");
+        updateOrderFrame(this.queuedOrders);
+        //TODO: Update serverview
+
+    }
+
+    @Override
+    public void orderFinished(Order currentOrder, OrderConsumer server) {
+        Log.getLogger().log(server.getName() + " finished a Order " + this.queuedOrders.size() + " orders in queue");
+        synchronized (this) {
+            processedOrders.add(currentOrder);
+        }
+        //TODO: Update serverview
+    }
+
+    @Override
+    public void itemFinished(Order currentOrder, OrderItem item, OrderConsumer server) {
+        Log.getLogger().log(server.getName() + " finished item=" + item.getItem().toString() + " in Order=" + currentOrder.toString());
+        //TODO: Update serverview
+
+    }
+
+    @Override
+    public void itemTaken(Order currentOrder, OrderItem item, OrderConsumer server) {
+        Log.getLogger().log(server.getName() + " took item=" + item.getItem().toString() + " in Order=" + currentOrder.toString());
+        //TODO: Update serverview
+
+    }
+
+    @Override
+    public void allServersDone() {
+        //Here we close the application, because the queue is empty and all orderes are produced
+        //Stop all servers
+        Log.getLogger().log("All orders produced and queue is empty, stop servers...");
+        for (Server server : this.serverList) {
+            server.stopOrderProcess();
+        }
+        Log.getLogger().log("Stopping servers done, close application and generate Report");
+
+        //All servers are done, so we can close the application
+        SwingUtilities.invokeLater(() -> {
+            this.qf.dispose();
+            this.generateReportTo(FILENAME);
+        });
+
     }
 }
 // TODO: Add logging

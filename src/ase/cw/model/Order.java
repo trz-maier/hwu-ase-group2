@@ -12,7 +12,6 @@ import java.util.List;
 
 /**
  * @author Ram
- *
  */
 public class Order {
     private String customerId;
@@ -48,6 +47,9 @@ public class Order {
         }
     }
 
+    public void setTimestamp(Date timestamp) {
+        this.timestamp = timestamp;
+    }
 
     /**
      * @return the customerId
