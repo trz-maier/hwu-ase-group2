@@ -1,6 +1,7 @@
 package ase.cw.view;
 
 import ase.cw.model.Order;
+import ase.cw.model.OrderConsumer;
 
 public interface ServerView {
 
@@ -10,5 +11,7 @@ public interface ServerView {
      * @param information
      */
     void setServerInfo(String information);
+
+    void updateView(OrderConsumer server, Order order);
 }
 

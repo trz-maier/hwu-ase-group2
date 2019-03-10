@@ -5,10 +5,12 @@ package ase.cw.model;
  */
 public interface OrderConsumer {
 
-    void setName(String time);
+    void setName(String name);
+    void setBusy(boolean busy);
 
     String getName();
-
+    boolean isBusy();
+    int getId();
 
     OrderHandler getOrderHandler();
 
@@ -16,6 +18,7 @@ public interface OrderConsumer {
      * @param processTime the time how long it takes to proceed each item
      */
     void setOrderProcessTime(int processTime);
+
 
     int getOrderProcessTime();
 
@@ -28,4 +31,5 @@ public interface OrderConsumer {
      * Stops the OrderConsumer and all attached threads
      */
     void stopOrderProcess();
+
 }
