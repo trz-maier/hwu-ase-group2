@@ -56,9 +56,9 @@ public class OrderController implements OrderProducerListener, OrderHandler, Ord
                 Server server = new Server(queuedOrders, this, i);
                 server.setName("Server "+i);
                 server.setOrderProcessTime(5000);
-                server.startOrderProcess();
                 serverList.add(server);
                 serverViewList.add(new ServerFrame(server, this.qf));
+                server.startOrderProcess();
             }
 
             //Create application close Thread
