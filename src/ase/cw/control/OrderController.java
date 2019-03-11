@@ -238,6 +238,7 @@ public class OrderController implements OrderProducerListener, OrderHandler, Ord
         SwingUtilities.invokeLater(() -> {
             this.qf.dispose();
             this.generateReportTo(FILENAME);
+            Log.getLogger().writeToLogFile();
             System.exit(0);
         });
 
