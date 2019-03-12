@@ -85,12 +85,7 @@ public class ServerFrame extends JFrame implements ActionListener, ServerFrameVi
 
     @Override
     public void updateView(OrderConsumer server, Order order) {
-        if (!server.isBusy()) {
-            this.textArea.setText("Busy: "+server.isBusy());
-        }
-        else {
-            this.textArea.setText("Busy: "+server.isBusy()+"\nProcessing: "+order.getCustomerId()+"\nItems: "+order.getOrderItems().size()+"\nBill: £"+order.getBill().getTotal());
-        }
+        this.textArea.setText("Busy: "+(server.isBusy() ? "yes"+"\nProcessing: "+order.getCustomerId()+"\nItems: "+order.getOrderItems().size()+"\nBill: £"+order.getBill().getTotal() : "no"));
     }
 
     private class exitButtonPress extends WindowAdapter {
