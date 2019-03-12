@@ -18,6 +18,8 @@ public interface OrderConsumer {
      */
     void setOrderProcessTime(int processTime);
 
+    int getOrderProcessTime();
+
     /**
      * Start a order Process
      */
