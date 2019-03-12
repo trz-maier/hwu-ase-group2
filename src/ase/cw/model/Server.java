@@ -69,6 +69,11 @@ public class Server implements OrderConsumer {
     }
 
     @Override
+    public int getOrderProcessTime() {
+        return processTime;
+    }
+
+    @Override
     public void startOrderProcess() {
         if (serverThread == null) {
             serverThread = new Thread(new ServerRunnable());
