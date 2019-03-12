@@ -2,7 +2,7 @@ package ase.cw.view;
 
 import ase.cw.model.Order;
 
-public interface QueueView {
+public interface QueueFrameView {
 
     /**
      * Called when the pendings Orders/Customers in the waiting queue have been changed.

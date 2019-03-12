@@ -6,7 +6,7 @@ import ase.cw.gui.QueueFrame;
 import ase.cw.gui.ServerFrame;
 import ase.cw.log.Log;
 import ase.cw.model.*;
-import ase.cw.view.ServerView;
+import ase.cw.view.ServerFrameView;
 
 import javax.swing.*;
 import java.io.File;
@@ -27,8 +27,8 @@ public class OrderController implements OrderProducerListener, OrderHandler, Ord
     private List<Order> processedOrders = new ArrayList<>();
     private List<Server> serverList = new ArrayList<>();
     private BlockingQueue<Order> queuedOrders;
-    private List<ServerView> serverViewList = new ArrayList<>();
-    private QueueFrame qf = new QueueFrame();
+    private List<ServerFrameView> serverViewList = new ArrayList<>();
+    private QueueFrame qf = new QueueFrame(this);
 
     /**
      * Total number of orders, which were produced
@@ -71,13 +71,19 @@ public class OrderController implements OrderProducerListener, OrderHandler, Ord
         }
 
 
-        // TODO: initialize this.view
     }
 
 
     public static void main(String[] args) {
         new OrderController();
     }
+
+    public void startProcessing() {
+        // TODO: Implement start processing method
+         }
+    public void pauseProcessing() {
+        // TODO: Implement pause processing method
+         }
 
     /**
      * Checks whether a customer's ID is properly formatted, consisting of 8 alphanumeric characters.
@@ -194,7 +200,6 @@ public class OrderController implements OrderProducerListener, OrderHandler, Ord
         //SwingUtilities.invokeLater(() -> {
         //We don't need SwingUtilities.invokeLater(()) in this case, but this would improve the stability of our application
         // in case we change something and change values of a order in multiple threads because the order class is not threadsafe.
-        server.setBusy(true);
         currentOrder.setTimestamp(new Date());
         //         });
         Log.getLogger().log(server.getName() + " took an order " + this.queuedOrders.size() + " orders in queue");
@@ -208,7 +213,6 @@ public class OrderController implements OrderProducerListener, OrderHandler, Ord
         synchronized (this) {
             processedOrders.add(currentOrder);
         }
-        server.setBusy(false);
         this.serverViewList.get(server.getId()-1).updateView(server, currentOrder);
     }
 

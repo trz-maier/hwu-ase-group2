@@ -1,5 +1,8 @@
 package ase.cw.model;
 
+import ase.cw.log.Log;
+import com.sun.tools.javac.Main;
+
 import java.security.InvalidParameterException;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
@@ -15,9 +18,10 @@ public class Server implements OrderConsumer {
     private int processTime = 1000;
     private Thread serverThread;
     private String name = "Server";
-    private boolean busy;
+    private boolean busy = false;
     private int serverId;
     private boolean stopThread = false;
+    private boolean pauseThread = false;
 
     public Server(BlockingQueue<Order> queue, OrderHandler orderHandler, int serverId) {
 
@@ -47,28 +51,20 @@ public class Server implements OrderConsumer {
         return serverId;
     }
 
-    @Override
-    public void setBusy(boolean busy) {
-        this.busy = busy;
-    }
 
     @Override
     public boolean isBusy() {
-        return this.busy;
+        return busy;
     }
 
     public OrderHandler getOrderHandler() {
         return this.orderHandler;
     }
 
-    @Override
-    public int getOrderProcessTime() {
-        return this.processTime;
-    }
 
     @Override
     public void setOrderProcessTime(int processTime) {
-        if (processTime < 0) throw new InvalidParameterException("Processtime must be greater than 0");
+        if (processTime < 0) throw new InvalidParameterException("Process time must be greater than 0");
         this.processTime = processTime;
     }
 
@@ -78,15 +74,34 @@ public class Server implements OrderConsumer {
             serverThread = new Thread(new ServerRunnable());
             serverThread.setName(name);
             serverThread.start();
+            busy = true;
         } else {
             System.out.println(getName() + "already started");
         }
+
+    }
+
+    @Override
+    public void pauseOrderProcess() {
+        pauseThread = true;
+        busy = false;
+        logAction("order processing paused");
+    }
+
+    @Override
+    public void restartOrderProcess() {
+        pauseThread = false;
+        synchronized (serverThread) {
+            serverThread.notify();
+        }
+        busy = true;
+        logAction("order processing restarted");
     }
 
     /**
      * Stops the internal serverThread.
      * The Server will finish a started order process before stopping.
-     * This function will block, until the server finished the a started ordrer.
+     * This function will block, until the server finished the a started order.
      */
     @Override
     public void stopOrderProcess() {
@@ -110,6 +125,10 @@ public class Server implements OrderConsumer {
                 '}';
     }
 
+    private void logAction(String string) {
+        Log.getLogger().log(this.getName()+": "+string);
+    }
+
     /**
      * This class is private, so nobody else can use it and create a potential misbehaviour.
      * If the Server class would implement the Runnable interface, multiple threads(not only the serverThread) could be started out of the same server object.
@@ -123,12 +142,12 @@ public class Server implements OrderConsumer {
 
         @Override
         public void run() {
-            while (!Thread.currentThread().isInterrupted() && !stopThread) {
+            while (!(Thread.currentThread().isInterrupted() && !stopThread)) {
                 Order currentOrder;
-                //We actually do not need this synchronized block, sinze our implementated orderQueue is already thread safe.
-                //But to make things more robust and consitent(It is possible to pass a non thread safe queue to the Server, in this case we would need the synchronized block)
+                //We actually do not need this synchronized block, since our implemented orderQueue is already thread safe.
+                //But to make things more robust and consistent(It is possible to pass a non thread safe queue to the Server, in this case we would need the synchronized block)
                 try {
-                    //Wait forever until a external interupt occurs
+                    //Wait forever until a external interrupt occurs
                     currentOrder = orderQueue.take();
                 } catch (InterruptedException e) {
                     break;
@@ -152,6 +171,17 @@ public class Server implements OrderConsumer {
                 }
                 //Order finished
                 orderHandler.orderFinished(currentOrder, Server.this);
+
+                //Pause processing if server on break
+                synchronized (serverThread) {
+                    if (pauseThread) {
+                        try {
+                            serverThread.wait();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
             }
         }
     }

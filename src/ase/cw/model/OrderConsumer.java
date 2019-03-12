@@ -6,7 +6,6 @@ package ase.cw.model;
 public interface OrderConsumer {
 
     void setName(String name);
-    void setBusy(boolean busy);
 
     String getName();
     boolean isBusy();
@@ -19,13 +18,21 @@ public interface OrderConsumer {
      */
     void setOrderProcessTime(int processTime);
 
-
-    int getOrderProcessTime();
-
     /**
      * Start a order Process
      */
     void startOrderProcess();
+
+    /**
+     * Pause a order Process
+     */
+    void pauseOrderProcess();
+
+
+    /**
+     * Restart a order Process
+     */
+    void restartOrderProcess();
 
     /**
      * Stops the OrderConsumer and all attached threads
