@@ -8,7 +8,7 @@ public interface OrderConsumer {
     void setName(String name);
 
     String getName();
-    boolean isBusy();
+    String getStatus();
     int getId();
 
     OrderHandler getOrderHandler();

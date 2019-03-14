@@ -13,15 +13,17 @@ import java.util.concurrent.BlockingQueue;
  */
 public class Server implements OrderConsumer {
 
+    private enum status {FREE, BUSY, PAUSED}
+
     private final BlockingQueue<Order> orderQueue;
     private final OrderHandler orderHandler;
     private int processTime = 1000;
     private Thread serverThread;
     private String name = "Server";
-    private boolean busy = false;
     private int serverId;
     private boolean stopThread = false;
     private boolean pauseThread = false;
+    private status serverStatus;
 
     public Server(BlockingQueue<Order> queue, OrderHandler orderHandler, int serverId) {
 
@@ -30,6 +32,7 @@ public class Server implements OrderConsumer {
         this.orderQueue = queue;
         this.orderHandler = orderHandler;
         this.serverId = serverId;
+        this.serverStatus = status.FREE;
     }
 
 
@@ -53,8 +56,8 @@ public class Server implements OrderConsumer {
 
 
     @Override
-    public boolean isBusy() {
-        return busy;
+    public String getStatus() {
+        return serverStatus.toString();
     }
 
     public OrderHandler getOrderHandler() {
@@ -79,7 +82,7 @@ public class Server implements OrderConsumer {
             serverThread = new Thread(new ServerRunnable());
             serverThread.setName(name);
             serverThread.start();
-            busy = true;
+            serverStatus = status.BUSY;
         } else {
             System.out.println(getName() + "already started");
         }
@@ -89,7 +92,7 @@ public class Server implements OrderConsumer {
     @Override
     public void pauseOrderProcess() {
         pauseThread = true;
-        busy = false;
+        serverStatus = status.PAUSED;
         logAction("order processing paused");
     }
 
@@ -99,7 +102,7 @@ public class Server implements OrderConsumer {
         synchronized (serverThread) {
             serverThread.notify();
         }
-        busy = true;
+        serverStatus = status.FREE;
         logAction("order processing restarted");
     }
 
@@ -152,8 +155,9 @@ public class Server implements OrderConsumer {
                 //We actually do not need this synchronized block, since our implemented orderQueue is already thread safe.
                 //But to make things more robust and consistent(It is possible to pass a non thread safe queue to the Server, in this case we would need the synchronized block)
                 try {
-                    //Wait forever until a external interrupt occurs
+                    //Wait forever until an external interruption occurs
                     currentOrder = orderQueue.take();
+                    serverStatus = status.BUSY;
                 } catch (InterruptedException e) {
                     break;
                 }
@@ -179,13 +183,15 @@ public class Server implements OrderConsumer {
 
                 //Pause processing if server on break
                 synchronized (serverThread) {
-                    if (pauseThread) {
+                    if (serverStatus.equals(status.PAUSED)) {
                         try {
                             serverThread.wait();
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
                     }
+                    else serverStatus = status.FREE;
+
                 }
             }
         }

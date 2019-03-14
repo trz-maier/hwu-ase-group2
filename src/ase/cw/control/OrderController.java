@@ -27,7 +27,7 @@ public class OrderController implements OrderProducerListener, OrderHandler, Ord
     private List<Order> processedOrders = new ArrayList<>();
     private List<Server> serverList = new ArrayList<>();
     private BlockingQueue<Order> queuedOrders;
-    private List<ServerFrameView> serverViewList = new ArrayList<>();
+    private List<ServerFrameView> serverFrameViewList = new ArrayList<>();
     private QueueFrame qf = new QueueFrame(this);
 
     /**
@@ -57,7 +57,7 @@ public class OrderController implements OrderProducerListener, OrderHandler, Ord
                 server.setName("Server "+i);
                 server.setOrderProcessTime(5000);
                 serverList.add(server);
-                serverViewList.add(new ServerFrame(server, this.qf));
+                serverFrameViewList.add(new ServerFrame(server.getId(), this.qf, this));
                 server.startOrderProcess();
             }
 
@@ -71,6 +71,23 @@ public class OrderController implements OrderProducerListener, OrderHandler, Ord
         }
 
 
+    }
+    private Server getServerById(int serverId) {
+        Server result = null;
+        for (Server server : serverList)
+            if (server.getId() == serverId) {
+                result = server;
+            }
+        return result;
+    }
+
+    private ServerFrameView getServerFrameById(int serverId) {
+        ServerFrameView result = null;
+        for (ServerFrameView frame : serverFrameViewList)
+            if (frame.getServerId() == serverId) {
+                result = frame;
+            }
+        return result;
     }
 
 
@@ -161,11 +178,11 @@ public class OrderController implements OrderProducerListener, OrderHandler, Ord
         return String.format("%-" + width + "s", str).replace(' ', fill);
     }
 
-    public void generateReportTo(String filename) {
+    private void generateReportTo(String filename) {
         this.generateReportTo(new File(filename));
     }
 
-    public void generateReportTo(File filename) {
+    private void generateReportTo(File filename) {
         try (FileWriter writer = new FileWriter(filename)) {
             writer.write(this.createReport());
         } catch (IOException e) {
@@ -193,7 +210,6 @@ public class OrderController implements OrderProducerListener, OrderHandler, Ord
         SwingUtilities.invokeLater(() -> qf.setOrdersInQueue(order.toArray(new Order[order.size()])));
     }
 
-
     @Override
     public void orderTaken(Order currentOrder, OrderConsumer server) {
         //Set a timestamp to a order, as soon as the order is taken by a server
@@ -202,30 +218,30 @@ public class OrderController implements OrderProducerListener, OrderHandler, Ord
         // in case we change something and change values of a order in multiple threads because the order class is not threadsafe.
         currentOrder.setTimestamp(new Date());
         //         });
-        Log.getLogger().log(server.getName() + " took an order " + this.queuedOrders.size() + " orders in queue");
+        Log.getLogger().log(server.getName() + " took order " + this.queuedOrders.size() + " orders in queue");
         updateQueueFrame(this.queuedOrders);
-        this.serverViewList.get(server.getId()-1).updateView(server, currentOrder);
+        getServerFrameById(server.getId()).updateView(server, currentOrder);
     }
 
     @Override
     public void orderFinished(Order currentOrder, OrderConsumer server) {
-        Log.getLogger().log(server.getName() + " finished an order " + this.queuedOrders.size() + " orders in queue");
+        Log.getLogger().log(server.getName() + " finished order " + this.queuedOrders.size() + " orders in queue");
         synchronized (this) {
             processedOrders.add(currentOrder);
         }
-        this.serverViewList.get(server.getId()-1).updateView(server, currentOrder);
+        getServerFrameById(server.getId()).updateView(server, currentOrder);
     }
 
     @Override
     public void itemFinished(Order currentOrder, OrderItem item, OrderConsumer server) {
         Log.getLogger().log(server.getName() + " finished item=" + item.getItem().toString() + " in Order=" + currentOrder.toString());
-        this.serverViewList.get(server.getId()-1).updateView(server, currentOrder);
+        getServerFrameById(server.getId()).updateView(server, currentOrder);
     }
 
     @Override
     public void itemTaken(Order currentOrder, OrderItem item, OrderConsumer server) {
         Log.getLogger().log(server.getName() + " took item=" + item.getItem().toString() + " in Order=" + currentOrder.toString());
-        this.serverViewList.get(server.getId()-1).updateView(server, currentOrder);
+        getServerFrameById(server.getId()).updateView(server, currentOrder);
     }
 
     @Override
@@ -246,5 +262,16 @@ public class OrderController implements OrderProducerListener, OrderHandler, Ord
         });
 
     }
+
+
+    public void pauseOrderProcess(int serverId) {
+        getServerById(serverId).pauseOrderProcess();
+    }
+
+    public void restartOrderProcess(int serverId) {
+        getServerById(serverId).restartOrderProcess();
+    }
+
+
 }
 // TODO: Add logging
