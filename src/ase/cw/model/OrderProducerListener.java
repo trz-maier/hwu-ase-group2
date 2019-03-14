@@ -4,6 +4,6 @@ import java.util.concurrent.BlockingQueue;
 
 public interface OrderProducerListener {
 
-    void onOrderProduced(BlockingQueue<Order> order, Order producedOrder);
+    void onOrderProduced(Order producedOrder);
 
 }

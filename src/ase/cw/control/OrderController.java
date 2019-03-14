@@ -14,6 +14,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 
 public class OrderController implements OrderProducerListener, ServerStatusListener, OrderHandler, OrdersDoneEvent {
@@ -30,10 +31,12 @@ public class OrderController implements OrderProducerListener, ServerStatusListe
     private List<ServerFrameView> serverFrameViewList = new ArrayList<>();
     private QueueFrame qf = new QueueFrame(this);
 
+
     /**
      * Total number of orders, which were produced
      */
     private int totalProducedOrders = 0;
+    private int totalOrdersHandled = 0;
     /**
      * Total number of orders in Orders.csv file
      */
@@ -47,7 +50,7 @@ public class OrderController implements OrderProducerListener, ServerStatusListe
 
             //Create Order producer
             this.orderProducer = new OrderQueue(loadedOrders, this);
-            queuedOrders = this.orderProducer.getQueue();
+            queuedOrders = new LinkedBlockingQueue<Order>();
             Thread t = new Thread(orderProducer);
             t.start();
 
@@ -191,13 +194,14 @@ public class OrderController implements OrderProducerListener, ServerStatusListe
     }
 
     @Override
-    public void onOrderProduced(BlockingQueue<Order> order, Order producedOrder) {
+    public void onOrderProduced(Order producedOrder) {
         Log.getLogger().log("Order produced=" + this.queuedOrders.size() + " orders remaining");
-
-        updateQueueFrame(order);
+        queuedOrders.add(producedOrder);
+        updateQueueFrame(this.queuedOrders);
         synchronized (this) {
             //Synchronized not needed, since only one thread will call this method, but if we decide to add multiple order producers, we need the synchronization.
             //To avoid that we will search for bugs later Thomas added the synchronized
+
             totalProducedOrders++;
         }
         Log.getLogger().log(totalProducedOrders + " Orders produced");
@@ -233,7 +237,7 @@ public class OrderController implements OrderProducerListener, ServerStatusListe
     public void orderFinished(Order currentOrder, OrderConsumer server) {
         Log.getLogger().log(server.getName() + " finished order " + this.queuedOrders.size() + " orders in queue");
         synchronized (this) {
-            processedOrders.add(currentOrder);
+            totalOrdersHandled++;
         }
         getServerFrameById(server.getId()).updateView(server);
     }
@@ -254,14 +258,17 @@ public class OrderController implements OrderProducerListener, ServerStatusListe
     public void allServersDone() {
         //Here we close the application, because the queue is empty and all orders are produced
         //Stop all servers
+
         Log.getLogger().log("All orders produced and queue is empty, stop servers...");
         for (Server server : this.serverList) {
             server.stopOrderProcess();
         }
+        Log.getLogger().log(totalOrdersHandled+ " orders handeld should be="+this.totalProducedOrders);
         Log.getLogger().log("Stopping servers done, close application and generate Report");
 
         //All servers are done, so we can close the application
         SwingUtilities.invokeLater(() -> {
+
             this.qf.dispose();
             this.generateReportTo(FILENAME);
             Log.getLogger().writeToLogFile();
@@ -278,6 +285,7 @@ public class OrderController implements OrderProducerListener, ServerStatusListe
     public void restartOrderProcess(int serverId) {
         getServerById(serverId).restartOrderProcess();
     }
+
 
 
 }

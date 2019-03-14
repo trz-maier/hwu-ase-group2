@@ -157,22 +157,34 @@ public class Server implements OrderConsumer {
         public void run() {
             while (!stopThread) {
                 Order currentOrder=null;
-                setStatus(ServerStatus.FREE);
+                if(orderQueue.size()==0) {
+                    //If there is currently no pending order, we are free until we recive a order
+                    setStatus(ServerStatus.FREE);
+                }
                 //We actually do not need this synchronized block, since our implemented orderQueue is already thread safe.
                 //But to make things more robust and consistent(It is possible to pass a non thread safe queue to the Server, in this case we would need the synchronized block)
-                do {
-                try {
-                    //Wait forever until an external interruption occurs
-                    currentOrder = orderQueue.take();
-                    pauseIfneeded();
-                    setStatus(ServerStatus.BUSY);
-                } catch (InterruptedException e) {
-                    if(stopThread) {
-                        break;
-                    }
-                    pauseIfneeded();
 
-                }} while(!stopThread);
+                boolean takeNextOrder=true;
+                while(takeNextOrder){
+                    try {
+                        //Wait forever until an external interruption occurs
+                        currentOrder = orderQueue.take();
+                        pauseIfneeded();
+                        takeNextOrder=false;
+                    } catch (InterruptedException e) {
+                        //If interrupt happens, we know we should either pause or stop
+                        if(stopThread) {
+                            break;
+                        }
+                        pauseIfneeded();
+                        takeNextOrder=true;
+                    }
+                }
+                if(stopThread){
+                    break;
+                }
+
+                setStatus(ServerStatus.BUSY);
 
                 if(currentOrder==null){
                     //Should never happen
@@ -189,7 +201,10 @@ public class Server implements OrderConsumer {
                     try {
                         Thread.sleep(processTime);
                     } catch (InterruptedException e) {
+                        //If interrupt happens, we know we should either pause or stop
+
                         pauseIfneeded();
+
                         //Finish the current order, then stop
                         //stopThread = true;
                     }
