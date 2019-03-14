@@ -174,9 +174,12 @@ public class Server implements OrderConsumer {
                     } catch (InterruptedException e) {
                         //If interrupt happens, we know we should either pause or stop
                         if(stopThread) {
+                            //Stop
                             break;
                         }
+                        
                         pauseIfneeded();
+                        //If pause is done, take next order
                         takeNextOrder=true;
                     }
                 }
@@ -202,11 +205,8 @@ public class Server implements OrderConsumer {
                         Thread.sleep(processTime);
                     } catch (InterruptedException e) {
                         //If interrupt happens, we know we should either pause or stop
-
                         pauseIfneeded();
-
-                        //Finish the current order, then stop
-                        //stopThread = true;
+                        //If the server should stop, continue finishing the order and then stop
                     }
                     //Item finished after processTime ms
                     orderHandler.itemFinished(currentOrder, orderItem, Server.this);
@@ -224,6 +224,7 @@ public class Server implements OrderConsumer {
 
         private void pauseIfneeded() {
             synchronized (serverThread) {
+                ServerStatus previous = Server.this.getStatus();
                 /**
                  * If a server should stop, we dont allow a pause.
                  */
@@ -235,7 +236,11 @@ public class Server implements OrderConsumer {
                         //Interrupted when the server should stop.
                     }
                 }
+                //After we are done with the pause, set the state to the previous state.
+                setStatus(previous);
+
             }
+
         }
     }
 }
