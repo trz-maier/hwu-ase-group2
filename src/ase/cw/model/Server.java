@@ -21,6 +21,7 @@ public class Server implements OrderConsumer {
     private String name = "Server";
     private int serverId;
     private boolean stopThread = false;
+    private boolean shouldPause = false;
     private ServerStatus serverStatus;
     private ServerStatusListener ssl;
 
@@ -31,8 +32,8 @@ public class Server implements OrderConsumer {
         this.orderQueue = queue;
         this.orderHandler = orderHandler;
         this.serverId = serverId;
-        this.serverStatus = ServerStatus.FREE;
         this.ssl = ssl;
+        this.serverStatus=ServerStatus.FREE;
     }
 
 
@@ -57,7 +58,9 @@ public class Server implements OrderConsumer {
     private void setStatus(ServerStatus status) {
         if (status != serverStatus) {
             serverStatus = status;
-            ssl.onServerStatusChange(this);
+            if(ssl!=null) {
+                ssl.onServerStatusChange(this);
+            }
             logAction("Status set to "+status);
         }
     }
@@ -97,14 +100,14 @@ public class Server implements OrderConsumer {
     @Override
     public void pauseOrderProcess() {
         // this does not pause the Status immediately but waits until current order is processed
-        setStatus(ServerStatus.TO_BE_PAUSED);
+        shouldPause = true;
     }
 
     @Override
     public void restartOrderProcess() {
         synchronized (serverThread) {
+            shouldPause=false;
             serverThread.notify();
-            setStatus(ServerStatus.FREE);
         }
     }
 
@@ -151,17 +154,39 @@ public class Server implements OrderConsumer {
 
         @Override
         public void run() {
-            while (!(Thread.currentThread().isInterrupted() && !stopThread)) {
-                Order currentOrder;
-                setStatus(ServerStatus.FREE);
-                //We actually do not need this synchronized block, since our implemented orderQueue is already thread safe.
-                //But to make things more robust and consistent(It is possible to pass a non thread safe queue to the Server, in this case we would need the synchronized block)
-                try {
-                    //Wait forever until an external interruption occurs
-                    currentOrder = orderQueue.take();
-                    setStatus(ServerStatus.BUSY);
-                } catch (InterruptedException e) {
+            while (!stopThread) {
+                Order currentOrder=null;
+
+
+
+                boolean takeNextOrder=true;
+                while(takeNextOrder){
+                    try {
+                        //Wait forever until an external interruption occurs
+                        currentOrder = orderQueue.take();
+                        pauseIfneeded();
+                        takeNextOrder=false;
+                    } catch (InterruptedException e) {
+                        //If interrupt happens, we know we should either pause or stop
+                        if(stopThread) {
+                            //Stop
+                            break;
+                        } else {
+                            pauseIfneeded();
+                            //If pause is done, take next order
+                            takeNextOrder = true;
+                        }
+                    }
+                }
+                if(stopThread){
                     break;
+                }
+
+                setStatus(ServerStatus.BUSY);
+
+                if(currentOrder==null){
+                    //Should never happen
+                    throw new java.lang.IllegalStateException("Current order is null");
                 }
                 //Tell listener, we proceed a new order
                 orderHandler.orderTaken(currentOrder, Server.this);
@@ -170,11 +195,12 @@ public class Server implements OrderConsumer {
                 for (OrderItem orderItem : items) {
                     //Proceed item
                     orderHandler.itemTaken(currentOrder, orderItem, Server.this);
+
                     try {
                         Thread.sleep(processTime);
                     } catch (InterruptedException e) {
-                        //Finish the current order, then stop
-                        stopThread = true;
+                        //If interrupt happens, we know we should either pause or stop
+                        //If the server should stop, continue finishing the order and then stop
                     }
                     //Item finished after processTime ms
                     orderHandler.itemFinished(currentOrder, orderItem, Server.this);
@@ -183,19 +209,35 @@ public class Server implements OrderConsumer {
                 //Order finished
                 orderHandler.orderFinished(currentOrder, Server.this);
 
+                //Server is free until the server takes a order
+                setStatus(ServerStatus.FREE);
+
                 //Pause processing if server on break
-                synchronized (serverThread) {
-                    if (serverStatus.equals(ServerStatus.TO_BE_PAUSED)) {
-                        try {
-                            setStatus(ServerStatus.PAUSED);
-                            serverThread.wait();
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
+                pauseIfneeded();
+
+            }
+            setStatus(ServerStatus.STOPPED);
+        }
+
+        private void pauseIfneeded() {
+            synchronized (serverThread) {
+                ServerStatus previous = Server.this.getStatus();
+                /**
+                 * If a server should stop, we dont allow a pause.
+                 */
+                while (shouldPause && !stopThread) {
+                    try {
+                        setStatus(ServerStatus.PAUSED);
+                        serverThread.wait();
+                    } catch (InterruptedException e) {
+                        //Interrupted when the server should stop.
                     }
                 }
-                setStatus(ServerStatus.FREE);
+                //After we are done with the pause, set the state to the previous state.
+                setStatus(previous);
+
             }
+
         }
     }
 }

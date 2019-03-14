@@ -8,7 +8,6 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class OrderQueue implements Runnable {
 
     private List<Order> loadedOrders;
-    private BlockingQueue<Order> queuedOrders = new LinkedBlockingQueue<>();
     private OrderProducerListener opl;
     private int maxDelayTime = 1000;
 
@@ -23,8 +22,7 @@ public class OrderQueue implements Runnable {
             int delay = (int) (Math.random() * maxDelayTime);
             try {
                 Thread.sleep(delay);
-                queuedOrders.put(order);
-                opl.onOrderProduced(queuedOrders, order);
+                opl.onOrderProduced(order);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -32,7 +30,4 @@ public class OrderQueue implements Runnable {
 
     }
 
-    public BlockingQueue<Order> getQueue() {
-        return this.queuedOrders;
-    }
 }
