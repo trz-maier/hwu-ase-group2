@@ -101,6 +101,7 @@ public class Server implements OrderConsumer {
     public void pauseOrderProcess() {
         // this does not pause the Status immediately but waits until current order is processed
         shouldPause = true;
+        Thread.currentThread().interrupt();
     }
 
     @Override
@@ -163,8 +164,8 @@ public class Server implements OrderConsumer {
                 while(takeNextOrder){
                     try {
                         //Wait forever until an external interruption occurs
+
                         currentOrder = orderQueue.take();
-                        pauseIfneeded();
                         takeNextOrder=false;
                     } catch (InterruptedException e) {
                         //If interrupt happens, we know we should either pause or stop
