@@ -1,8 +1,7 @@
 package ase.cw.model;
 
 import ase.cw.log.Log;
-import com.sun.tools.javac.Main;
-
+import ase.cw.utlities.ServerStatusEnum.ServerStatus;
 import java.security.InvalidParameterException;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
@@ -13,7 +12,7 @@ import java.util.concurrent.BlockingQueue;
  */
 public class Server implements OrderConsumer {
 
-    private enum status {FREE, BUSY, PAUSED}
+
 
     private final BlockingQueue<Order> orderQueue;
     private final OrderHandler orderHandler;
@@ -22,7 +21,7 @@ public class Server implements OrderConsumer {
     private String name = "Server";
     private int serverId;
     private boolean stopThread = false;
-    private status serverStatus;
+    private ServerStatus serverStatus;
     private ServerStatusListener ssl;
 
     public Server(BlockingQueue<Order> queue, OrderHandler orderHandler, ServerStatusListener ssl, int serverId) {
@@ -32,7 +31,7 @@ public class Server implements OrderConsumer {
         this.orderQueue = queue;
         this.orderHandler = orderHandler;
         this.serverId = serverId;
-        this.serverStatus = status.FREE;
+        this.serverStatus = ServerStatus.FREE;
         this.ssl = ssl;
     }
 
@@ -55,15 +54,16 @@ public class Server implements OrderConsumer {
         return serverId;
     }
 
-    private void setStatus(status status) {
-        serverStatus = status;
-        ssl.onServerStatusChange(this);
-        logAction("status set to "+status);
+    private void setStatus(ServerStatus status) {
+        if (status != serverStatus) {
+            serverStatus = status;
+            ssl.onServerStatusChange(this);
+            logAction("Status set to "+status);
+        }
     }
 
-    @Override
-    public String getStatus() {
-        return serverStatus.toString();
+    public ServerStatus getStatus() {
+        return serverStatus;
     }
 
     public OrderHandler getOrderHandler() {
@@ -96,16 +96,16 @@ public class Server implements OrderConsumer {
 
     @Override
     public void pauseOrderProcess() {
-        // this does not pause the status immediately but waits until current order is processed
-        serverStatus = status.PAUSED;
+        // this does not pause the Status immediately but waits until current order is processed
+        setStatus(ServerStatus.TO_BE_PAUSED);
     }
 
     @Override
     public void restartOrderProcess() {
         synchronized (serverThread) {
             serverThread.notify();
+            setStatus(ServerStatus.FREE);
         }
-        setStatus(status.FREE);
     }
 
     /**
@@ -116,14 +116,13 @@ public class Server implements OrderConsumer {
     @Override
     public void stopOrderProcess() {
         if (serverThread != null) {
-            serverThread.interrupt();
             stopThread = true;
+            serverThread.interrupt();
             try {
                 serverThread.join();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-
         }
     }
 
@@ -154,12 +153,13 @@ public class Server implements OrderConsumer {
         public void run() {
             while (!(Thread.currentThread().isInterrupted() && !stopThread)) {
                 Order currentOrder;
+                setStatus(ServerStatus.FREE);
                 //We actually do not need this synchronized block, since our implemented orderQueue is already thread safe.
                 //But to make things more robust and consistent(It is possible to pass a non thread safe queue to the Server, in this case we would need the synchronized block)
                 try {
                     //Wait forever until an external interruption occurs
                     currentOrder = orderQueue.take();
-                    setStatus(status.BUSY);
+                    setStatus(ServerStatus.BUSY);
                 } catch (InterruptedException e) {
                     break;
                 }
@@ -185,16 +185,16 @@ public class Server implements OrderConsumer {
 
                 //Pause processing if server on break
                 synchronized (serverThread) {
-                    if (serverStatus.equals(status.PAUSED)) {
+                    if (serverStatus.equals(ServerStatus.TO_BE_PAUSED)) {
                         try {
-                            setStatus(status.PAUSED);
+                            setStatus(ServerStatus.PAUSED);
                             serverThread.wait();
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
                     }
                 }
-                setStatus(status.FREE);
+                setStatus(ServerStatus.FREE);
             }
         }
     }
