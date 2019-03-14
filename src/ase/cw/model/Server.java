@@ -21,6 +21,7 @@ public class Server implements OrderConsumer {
     private String name = "Server";
     private int serverId;
     private boolean stopThread = false;
+    private boolean shouldPause = false;
     private ServerStatus serverStatus;
     private ServerStatusListener ssl;
 
@@ -31,8 +32,8 @@ public class Server implements OrderConsumer {
         this.orderQueue = queue;
         this.orderHandler = orderHandler;
         this.serverId = serverId;
-        this.serverStatus = ServerStatus.FREE;
         this.ssl = ssl;
+        this.serverStatus=ServerStatus.FREE;
     }
 
 
@@ -57,7 +58,9 @@ public class Server implements OrderConsumer {
     private void setStatus(ServerStatus status) {
         if (status != serverStatus) {
             serverStatus = status;
-            ssl.onServerStatusChange(this);
+            if(ssl!=null) {
+                ssl.onServerStatusChange(this);
+            }
             logAction("Status set to "+status);
         }
     }
@@ -97,14 +100,15 @@ public class Server implements OrderConsumer {
     @Override
     public void pauseOrderProcess() {
         // this does not pause the Status immediately but waits until current order is processed
-        setStatus(ServerStatus.TO_BE_PAUSED);
+        shouldPause = true;
+        serverThread.interrupt();
     }
 
     @Override
     public void restartOrderProcess() {
         synchronized (serverThread) {
+            shouldPause=false;
             serverThread.notify();
-            setStatus(ServerStatus.FREE);
         }
     }
 
@@ -151,17 +155,28 @@ public class Server implements OrderConsumer {
 
         @Override
         public void run() {
-            while (!(Thread.currentThread().isInterrupted() && !stopThread)) {
-                Order currentOrder;
+            while (!stopThread) {
+                Order currentOrder=null;
                 setStatus(ServerStatus.FREE);
                 //We actually do not need this synchronized block, since our implemented orderQueue is already thread safe.
                 //But to make things more robust and consistent(It is possible to pass a non thread safe queue to the Server, in this case we would need the synchronized block)
+                do {
                 try {
                     //Wait forever until an external interruption occurs
                     currentOrder = orderQueue.take();
+                    pauseIfneeded();
                     setStatus(ServerStatus.BUSY);
                 } catch (InterruptedException e) {
-                    break;
+                    if(stopThread) {
+                        break;
+                    }
+                    pauseIfneeded();
+
+                }} while(!stopThread);
+
+                if(currentOrder==null){
+                    //Should never happen
+                    throw new java.lang.IllegalStateException("Current order is null");
                 }
                 //Tell listener, we proceed a new order
                 orderHandler.orderTaken(currentOrder, Server.this);
@@ -170,31 +185,41 @@ public class Server implements OrderConsumer {
                 for (OrderItem orderItem : items) {
                     //Proceed item
                     orderHandler.itemTaken(currentOrder, orderItem, Server.this);
+
                     try {
                         Thread.sleep(processTime);
                     } catch (InterruptedException e) {
+                        pauseIfneeded();
                         //Finish the current order, then stop
-                        stopThread = true;
+                        //stopThread = true;
                     }
                     //Item finished after processTime ms
                     orderHandler.itemFinished(currentOrder, orderItem, Server.this);
+                    pauseIfneeded();
 
                 }
                 //Order finished
                 orderHandler.orderFinished(currentOrder, Server.this);
 
                 //Pause processing if server on break
-                synchronized (serverThread) {
-                    if (serverStatus.equals(ServerStatus.TO_BE_PAUSED)) {
-                        try {
-                            setStatus(ServerStatus.PAUSED);
-                            serverThread.wait();
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
+                pauseIfneeded();
+            }
+            setStatus(ServerStatus.STOPPED);
+        }
+
+        private void pauseIfneeded() {
+            synchronized (serverThread) {
+                /**
+                 * If a server should stop, we dont allow a pause.
+                 */
+                while (shouldPause && !stopThread) {
+                    try {
+                        setStatus(ServerStatus.PAUSED);
+                        serverThread.wait();
+                    } catch (InterruptedException e) {
+                        //Interrupted when the server should stop.
                     }
                 }
-                setStatus(ServerStatus.FREE);
             }
         }
     }
