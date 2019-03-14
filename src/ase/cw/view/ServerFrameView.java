@@ -5,6 +5,7 @@ import ase.cw.model.OrderConsumer;
 
 public interface ServerFrameView {
     int getServerId();
+    void updateView(OrderConsumer server);
     void updateView(OrderConsumer server, Order order);
 }
 

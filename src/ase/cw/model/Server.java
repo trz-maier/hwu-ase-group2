@@ -22,10 +22,10 @@ public class Server implements OrderConsumer {
     private String name = "Server";
     private int serverId;
     private boolean stopThread = false;
-    private boolean pauseThread = false;
     private status serverStatus;
+    private ServerStatusListener ssl;
 
-    public Server(BlockingQueue<Order> queue, OrderHandler orderHandler, int serverId) {
+    public Server(BlockingQueue<Order> queue, OrderHandler orderHandler, ServerStatusListener ssl, int serverId) {
 
         if (queue == null || orderHandler == null)
             throw new InvalidParameterException("OrderQueue and orderHandler must be not null");
@@ -33,6 +33,7 @@ public class Server implements OrderConsumer {
         this.orderHandler = orderHandler;
         this.serverId = serverId;
         this.serverStatus = status.FREE;
+        this.ssl = ssl;
     }
 
 
@@ -54,6 +55,11 @@ public class Server implements OrderConsumer {
         return serverId;
     }
 
+    private void setStatus(status status) {
+        serverStatus = status;
+        ssl.onServerStatusChange(this);
+        logAction("status set to "+status);
+    }
 
     @Override
     public String getStatus() {
@@ -82,7 +88,6 @@ public class Server implements OrderConsumer {
             serverThread = new Thread(new ServerRunnable());
             serverThread.setName(name);
             serverThread.start();
-            serverStatus = status.BUSY;
         } else {
             System.out.println(getName() + "already started");
         }
@@ -91,19 +96,16 @@ public class Server implements OrderConsumer {
 
     @Override
     public void pauseOrderProcess() {
-        pauseThread = true;
+        // this does not pause the status immediately but waits until current order is processed
         serverStatus = status.PAUSED;
-        logAction("order processing paused");
     }
 
     @Override
     public void restartOrderProcess() {
-        pauseThread = false;
         synchronized (serverThread) {
             serverThread.notify();
         }
-        serverStatus = status.FREE;
-        logAction("order processing restarted");
+        setStatus(status.FREE);
     }
 
     /**
@@ -150,6 +152,7 @@ public class Server implements OrderConsumer {
 
         @Override
         public void run() {
+            setStatus(status.FREE);
             while (!(Thread.currentThread().isInterrupted() && !stopThread)) {
                 Order currentOrder;
                 //We actually do not need this synchronized block, since our implemented orderQueue is already thread safe.
@@ -157,7 +160,7 @@ public class Server implements OrderConsumer {
                 try {
                     //Wait forever until an external interruption occurs
                     currentOrder = orderQueue.take();
-                    serverStatus = status.BUSY;
+                    setStatus(status.BUSY);
                 } catch (InterruptedException e) {
                     break;
                 }
@@ -185,13 +188,12 @@ public class Server implements OrderConsumer {
                 synchronized (serverThread) {
                     if (serverStatus.equals(status.PAUSED)) {
                         try {
+                            setStatus(status.PAUSED);
                             serverThread.wait();
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
                     }
-                    else serverStatus = status.FREE;
-
                 }
             }
         }

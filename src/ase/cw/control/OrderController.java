@@ -16,7 +16,7 @@ import java.util.*;
 import java.util.concurrent.BlockingQueue;
 
 
-public class OrderController implements OrderProducerListener, OrderHandler, OrdersDoneEvent {
+public class OrderController implements OrderProducerListener, ServerStatusListener, OrderHandler, OrdersDoneEvent {
     private static final int EXPECTED_CUSTOMER_ID_LENGTH = 8;
     private static final String ENDLINE = System.lineSeparator();
     private static final int SERVER_COUNT = 3;
@@ -53,7 +53,7 @@ public class OrderController implements OrderProducerListener, OrderHandler, Ord
 
             //Create Servers
             for (int i = 1; i < SERVER_COUNT+1; i++) {
-                Server server = new Server(queuedOrders, this, i);
+                Server server = new Server(queuedOrders, this, this, i);
                 server.setName("Server "+i);
                 server.setOrderProcessTime(5000);
                 serverList.add(server);
@@ -206,6 +206,12 @@ public class OrderController implements OrderProducerListener, OrderHandler, Ord
 
     }
 
+    @Override
+    public void onServerStatusChange(OrderConsumer server) {
+        ServerFrameView frame = getServerFrameById(server.getId());
+        frame.updateView(server);
+    }
+
     private void updateQueueFrame(BlockingQueue<Order> order) {
         SwingUtilities.invokeLater(() -> qf.setOrdersInQueue(order.toArray(new Order[order.size()])));
     }
@@ -229,18 +235,18 @@ public class OrderController implements OrderProducerListener, OrderHandler, Ord
         synchronized (this) {
             processedOrders.add(currentOrder);
         }
-        getServerFrameById(server.getId()).updateView(server, currentOrder);
+        getServerFrameById(server.getId()).updateView(server);
     }
 
     @Override
     public void itemFinished(Order currentOrder, OrderItem item, OrderConsumer server) {
-        Log.getLogger().log(server.getName() + " finished item=" + item.getItem().toString() + " in Order=" + currentOrder.toString());
+        Log.getLogger().log(server.getName() + ": finished item=" + item.getItem().toString() + " in Order=" + currentOrder.toString());
         getServerFrameById(server.getId()).updateView(server, currentOrder);
     }
 
     @Override
     public void itemTaken(Order currentOrder, OrderItem item, OrderConsumer server) {
-        Log.getLogger().log(server.getName() + " took item=" + item.getItem().toString() + " in Order=" + currentOrder.toString());
+        Log.getLogger().log(server.getName() + ": took item=" + item.getItem().toString() + " in Order=" + currentOrder.toString());
         getServerFrameById(server.getId()).updateView(server, currentOrder);
     }
 

@@ -4,7 +4,6 @@ import ase.cw.control.OrderController;
 import ase.cw.log.Log;
 import ase.cw.model.Order;
 import ase.cw.model.OrderConsumer;
-import ase.cw.model.Server;
 import ase.cw.view.ServerFrameView;
 import javax.swing.*;
 import java.awt.*;
@@ -16,51 +15,43 @@ import java.awt.event.*;
 
 public class ServerFrame extends JFrame implements ActionListener, ServerFrameView {
 
-    private JPanel content = new JPanel(new BorderLayout(10, 10));
     private JTextArea textArea = new JTextArea("");
     private JButton breakButton = new JButton("On-Break");
-    private JButton returnButton = new JButton("Restart");
+    private JButton restartButton = new JButton("Restart");
     private OrderController controller;
     private int serverId;
-    //private Server server;
 
     // Frame constructor
     public ServerFrame(int id, JFrame parentFrame, OrderController controller) {
-
         this.serverId = id;
+        this.textArea.setEditable(false);
+        this.controller = controller;
         this.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("coffee.png")));
         this.setTitle("Server "+serverId);
         this.setName("QueueFrame "+this.getTitle());
         this.setPreferredSize(new Dimension(300, 200));
-        this.setLocation(parentFrame.getX()+parentFrame.getWidth()+(this.serverId*10), parentFrame.getY()+(this.serverId*10));
+        this.setLocation(parentFrame.getX()+parentFrame.getWidth()+(serverId*10), parentFrame.getY()+(serverId*10));
         this.setResizable(false);
-        this.textArea.setEditable(false);
         this.buildFrame();
         this.pack();
         this.setVisible(true);
-        this.controller = controller;
-        //this.server = server;
-
         this.addWindowListener(new exitButtonPress());
 
         Log.getLogger().log("GUI: "+this.getName()+" opened.");
     }
 
     private void buildFrame() {
-        //content.setBackground(Color.white);
         JPanel top = new JPanel(new BorderLayout(5, 5));
         top.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        //textArea.setMargin(new Insets(10, 10, 10, 10));
         textArea.setFont(new Font("monospaced", Font.PLAIN, 12));
         textArea.setOpaque(false);
         top.add(textArea, BorderLayout.CENTER);
-
         JPanel bottom = new JPanel(new GridLayout(1, 2, 5, 5));
-        returnButton.setEnabled(false);
+        restartButton.setEnabled(false);
         breakButton.addActionListener(this);
-        returnButton.addActionListener(this);
+        restartButton.addActionListener(this);
         bottom.add(breakButton);
-        bottom.add(returnButton);
+        bottom.add(restartButton);
         top.add(bottom, BorderLayout.PAGE_END);
 
         this.add(top);
@@ -81,13 +72,13 @@ public class ServerFrame extends JFrame implements ActionListener, ServerFrameVi
         if (e.getSource() == breakButton) {
             logButtonPress(breakButton);
             breakButton.setEnabled(false);
-            returnButton.setEnabled(true);
+            restartButton.setEnabled(true);
             controller.pauseOrderProcess(this.serverId);
         }
 
-        if (e.getSource() == returnButton) {
-            logButtonPress(returnButton);
-            returnButton.setEnabled(false);
+        if (e.getSource() == restartButton) {
+            logButtonPress(restartButton);
+            restartButton.setEnabled(false);
             breakButton.setEnabled(true);
             controller.restartOrderProcess(this.serverId);
         }
@@ -97,11 +88,18 @@ public class ServerFrame extends JFrame implements ActionListener, ServerFrameVi
     public void updateView(OrderConsumer server, Order order) {
         this.textArea.setText(
                 "Status: "+(server.getStatus()
-                +"\nOrder: "+order.getCustomerId()
-                +"\nItems: "+order.getOrderItems().size()
-                +"\nSubtotal: £"+order.getBill().getSubtotal()
-                +"\nTotal: £"+order.getBill().getTotal()
-        ));
+                        +"\nOrder: "+order.getCustomerId()
+                        +"\nItems: "+order.getOrderItems().size()
+                        +"\nSubtotal: £"+order.getBill().getSubtotal()
+                        +"\nTotal: £"+order.getBill().getTotal()
+                ));
+        }
+
+    @Override
+    public void updateView(OrderConsumer server) {
+        this.textArea.setText(
+                "Status: "+(server.getStatus()
+                ));
     }
 
     private class exitButtonPress extends WindowAdapter {
