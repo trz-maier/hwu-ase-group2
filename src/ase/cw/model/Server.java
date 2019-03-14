@@ -101,7 +101,6 @@ public class Server implements OrderConsumer {
     public void pauseOrderProcess() {
         // this does not pause the Status immediately but waits until current order is processed
         shouldPause = true;
-        serverThread.interrupt();
     }
 
     @Override
@@ -158,11 +157,7 @@ public class Server implements OrderConsumer {
             while (!stopThread) {
                 Order currentOrder=null;
 
-                //Server is free until the server takes a order
-                setStatus(ServerStatus.FREE);
 
-                //We actually do not need this synchronized block, since our implemented orderQueue is already thread safe.
-                //But to make things more robust and consistent(It is possible to pass a non thread safe queue to the Server, in this case we would need the synchronized block)
 
                 boolean takeNextOrder=true;
                 while(takeNextOrder){
@@ -205,19 +200,21 @@ public class Server implements OrderConsumer {
                         Thread.sleep(processTime);
                     } catch (InterruptedException e) {
                         //If interrupt happens, we know we should either pause or stop
-                        pauseIfneeded();
                         //If the server should stop, continue finishing the order and then stop
                     }
                     //Item finished after processTime ms
                     orderHandler.itemFinished(currentOrder, orderItem, Server.this);
-                    pauseIfneeded();
 
                 }
                 //Order finished
                 orderHandler.orderFinished(currentOrder, Server.this);
 
+                //Server is free until the server takes a order
+                setStatus(ServerStatus.FREE);
+
                 //Pause processing if server on break
                 pauseIfneeded();
+
             }
             setStatus(ServerStatus.STOPPED);
         }
