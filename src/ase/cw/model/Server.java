@@ -152,7 +152,6 @@ public class Server implements OrderConsumer {
 
         @Override
         public void run() {
-            setStatus(status.FREE);
             while (!(Thread.currentThread().isInterrupted() && !stopThread)) {
                 Order currentOrder;
                 //We actually do not need this synchronized block, since our implemented orderQueue is already thread safe.
@@ -195,6 +194,7 @@ public class Server implements OrderConsumer {
                         }
                     }
                 }
+                setStatus(status.FREE);
             }
         }
     }
