@@ -1,5 +1,7 @@
 package ase.cw.model;
 
+import ase.cw.log.Log;
+import ase.cw.utlities.ServerStatusEnum.ServerStatus;
 import java.security.InvalidParameterException;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
@@ -10,22 +12,27 @@ import java.util.concurrent.BlockingQueue;
  */
 public class Server implements OrderConsumer {
 
+
+
     private final BlockingQueue<Order> orderQueue;
     private final OrderHandler orderHandler;
     private int processTime = 1000;
     private Thread serverThread;
     private String name = "Server";
-    private boolean busy;
     private int serverId;
     private boolean stopThread = false;
+    private ServerStatus serverStatus;
+    private ServerStatusListener ssl;
 
-    public Server(BlockingQueue<Order> queue, OrderHandler orderHandler, int serverId) {
+    public Server(BlockingQueue<Order> queue, OrderHandler orderHandler, ServerStatusListener ssl, int serverId) {
 
         if (queue == null || orderHandler == null)
             throw new InvalidParameterException("OrderQueue and orderHandler must be not null");
         this.orderQueue = queue;
         this.orderHandler = orderHandler;
         this.serverId = serverId;
+        this.serverStatus = ServerStatus.FREE;
+        this.ssl = ssl;
     }
 
 
@@ -47,29 +54,32 @@ public class Server implements OrderConsumer {
         return serverId;
     }
 
-    @Override
-    public void setBusy(boolean busy) {
-        this.busy = busy;
+    private void setStatus(ServerStatus status) {
+        if (status != serverStatus) {
+            serverStatus = status;
+            ssl.onServerStatusChange(this);
+            logAction("Status set to "+status);
+        }
     }
 
-    @Override
-    public boolean isBusy() {
-        return this.busy;
+    public ServerStatus getStatus() {
+        return serverStatus;
     }
 
     public OrderHandler getOrderHandler() {
         return this.orderHandler;
     }
 
-    @Override
-    public int getOrderProcessTime() {
-        return this.processTime;
-    }
 
     @Override
     public void setOrderProcessTime(int processTime) {
-        if (processTime < 0) throw new InvalidParameterException("Processtime must be greater than 0");
+        if (processTime < 0) throw new InvalidParameterException("Process time must be greater than 0");
         this.processTime = processTime;
+    }
+
+    @Override
+    public int getOrderProcessTime() {
+        return processTime;
     }
 
     @Override
@@ -81,24 +91,38 @@ public class Server implements OrderConsumer {
         } else {
             System.out.println(getName() + "already started");
         }
+
+    }
+
+    @Override
+    public void pauseOrderProcess() {
+        // this does not pause the Status immediately but waits until current order is processed
+        setStatus(ServerStatus.TO_BE_PAUSED);
+    }
+
+    @Override
+    public void restartOrderProcess() {
+        synchronized (serverThread) {
+            serverThread.notify();
+            setStatus(ServerStatus.FREE);
+        }
     }
 
     /**
      * Stops the internal serverThread.
      * The Server will finish a started order process before stopping.
-     * This function will block, until the server finished the a started ordrer.
+     * This function will block, until the server finished the a started order.
      */
     @Override
     public void stopOrderProcess() {
         if (serverThread != null) {
-            serverThread.interrupt();
             stopThread = true;
+            serverThread.interrupt();
             try {
                 serverThread.join();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-
         }
     }
 
@@ -108,6 +132,10 @@ public class Server implements OrderConsumer {
                 "processTime=" + processTime +
                 ", serverThread=" + serverThread +
                 '}';
+    }
+
+    private void logAction(String string) {
+        Log.getLogger().log(this.getName()+": "+string);
     }
 
     /**
@@ -123,13 +151,15 @@ public class Server implements OrderConsumer {
 
         @Override
         public void run() {
-            while (!Thread.currentThread().isInterrupted() && !stopThread) {
+            while (!(Thread.currentThread().isInterrupted() && !stopThread)) {
                 Order currentOrder;
-                //We actually do not need this synchronized block, sinze our implementated orderQueue is already thread safe.
-                //But to make things more robust and consitent(It is possible to pass a non thread safe queue to the Server, in this case we would need the synchronized block)
+                setStatus(ServerStatus.FREE);
+                //We actually do not need this synchronized block, since our implemented orderQueue is already thread safe.
+                //But to make things more robust and consistent(It is possible to pass a non thread safe queue to the Server, in this case we would need the synchronized block)
                 try {
-                    //Wait forever until a external interupt occurs
+                    //Wait forever until an external interruption occurs
                     currentOrder = orderQueue.take();
+                    setStatus(ServerStatus.BUSY);
                 } catch (InterruptedException e) {
                     break;
                 }
@@ -152,6 +182,19 @@ public class Server implements OrderConsumer {
                 }
                 //Order finished
                 orderHandler.orderFinished(currentOrder, Server.this);
+
+                //Pause processing if server on break
+                synchronized (serverThread) {
+                    if (serverStatus.equals(ServerStatus.TO_BE_PAUSED)) {
+                        try {
+                            setStatus(ServerStatus.PAUSED);
+                            serverThread.wait();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+                setStatus(ServerStatus.FREE);
             }
         }
     }

@@ -6,7 +6,7 @@ import ase.cw.gui.QueueFrame;
 import ase.cw.gui.ServerFrame;
 import ase.cw.log.Log;
 import ase.cw.model.*;
-import ase.cw.view.ServerView;
+import ase.cw.view.ServerFrameView;
 
 import javax.swing.*;
 import java.io.File;
@@ -16,7 +16,7 @@ import java.util.*;
 import java.util.concurrent.BlockingQueue;
 
 
-public class OrderController implements OrderProducerListener, OrderHandler, OrdersDoneEvent {
+public class OrderController implements OrderProducerListener, ServerStatusListener, OrderHandler, OrdersDoneEvent {
     private static final int EXPECTED_CUSTOMER_ID_LENGTH = 8;
     private static final String ENDLINE = System.lineSeparator();
     private static final int SERVER_COUNT = 3;
@@ -27,8 +27,8 @@ public class OrderController implements OrderProducerListener, OrderHandler, Ord
     private List<Order> processedOrders = new ArrayList<>();
     private List<Server> serverList = new ArrayList<>();
     private BlockingQueue<Order> queuedOrders;
-    private List<ServerView> serverViewList = new ArrayList<>();
-    private QueueFrame qf = new QueueFrame();
+    private List<ServerFrameView> serverFrameViewList = new ArrayList<>();
+    private QueueFrame qf = new QueueFrame(this);
 
     /**
      * Total number of orders, which were produced
@@ -53,11 +53,11 @@ public class OrderController implements OrderProducerListener, OrderHandler, Ord
 
             //Create Servers
             for (int i = 1; i < SERVER_COUNT+1; i++) {
-                Server server = new Server(queuedOrders, this, i);
+                Server server = new Server(queuedOrders, this, this, i);
                 server.setName("Server "+i);
                 server.setOrderProcessTime(5000);
                 serverList.add(server);
-                serverViewList.add(new ServerFrame(server, this.qf));
+                serverFrameViewList.add(new ServerFrame(server.getId(), this.qf, this));
                 server.startOrderProcess();
             }
 
@@ -71,13 +71,36 @@ public class OrderController implements OrderProducerListener, OrderHandler, Ord
         }
 
 
-        // TODO: initialize this.view
+    }
+    private Server getServerById(int serverId) {
+        Server result = null;
+        for (Server server : serverList)
+            if (server.getId() == serverId) {
+                result = server;
+            }
+        return result;
+    }
+
+    private ServerFrameView getServerFrameById(int serverId) {
+        ServerFrameView result = null;
+        for (ServerFrameView frame : serverFrameViewList)
+            if (frame.getServerId() == serverId) {
+                result = frame;
+            }
+        return result;
     }
 
 
     public static void main(String[] args) {
         new OrderController();
     }
+
+    public void startProcessing() {
+        // TODO: Implement start processing method
+         }
+    public void pauseProcessing() {
+        // TODO: Implement pause processing method
+         }
 
     /**
      * Checks whether a customer's ID is properly formatted, consisting of 8 alphanumeric characters.
@@ -155,11 +178,11 @@ public class OrderController implements OrderProducerListener, OrderHandler, Ord
         return String.format("%-" + width + "s", str).replace(' ', fill);
     }
 
-    public void generateReportTo(String filename) {
+    private void generateReportTo(String filename) {
         this.generateReportTo(new File(filename));
     }
 
-    public void generateReportTo(File filename) {
+    private void generateReportTo(File filename) {
         try (FileWriter writer = new FileWriter(filename)) {
             writer.write(this.createReport());
         } catch (IOException e) {
@@ -183,10 +206,15 @@ public class OrderController implements OrderProducerListener, OrderHandler, Ord
 
     }
 
+    @Override
+    public void onServerStatusChange(OrderConsumer server) {
+        ServerFrameView frame = getServerFrameById(server.getId());
+        frame.updateView(server);
+    }
+
     private void updateQueueFrame(BlockingQueue<Order> order) {
         SwingUtilities.invokeLater(() -> qf.setOrdersInQueue(order.toArray(new Order[order.size()])));
     }
-
 
     @Override
     public void orderTaken(Order currentOrder, OrderConsumer server) {
@@ -194,34 +222,32 @@ public class OrderController implements OrderProducerListener, OrderHandler, Ord
         //SwingUtilities.invokeLater(() -> {
         //We don't need SwingUtilities.invokeLater(()) in this case, but this would improve the stability of our application
         // in case we change something and change values of a order in multiple threads because the order class is not threadsafe.
-        server.setBusy(true);
         currentOrder.setTimestamp(new Date());
         //         });
-        Log.getLogger().log(server.getName() + " took an order " + this.queuedOrders.size() + " orders in queue");
+        Log.getLogger().log(server.getName() + " took order " + this.queuedOrders.size() + " orders in queue");
         updateQueueFrame(this.queuedOrders);
-        this.serverViewList.get(server.getId()-1).updateView(server, currentOrder);
+        getServerFrameById(server.getId()).updateView(server, currentOrder);
     }
 
     @Override
     public void orderFinished(Order currentOrder, OrderConsumer server) {
-        Log.getLogger().log(server.getName() + " finished an order " + this.queuedOrders.size() + " orders in queue");
+        Log.getLogger().log(server.getName() + " finished order " + this.queuedOrders.size() + " orders in queue");
         synchronized (this) {
             processedOrders.add(currentOrder);
         }
-        server.setBusy(false);
-        this.serverViewList.get(server.getId()-1).updateView(server, currentOrder);
+        getServerFrameById(server.getId()).updateView(server);
     }
 
     @Override
     public void itemFinished(Order currentOrder, OrderItem item, OrderConsumer server) {
-        Log.getLogger().log(server.getName() + " finished item=" + item.getItem().toString() + " in Order=" + currentOrder.toString());
-        this.serverViewList.get(server.getId()-1).updateView(server, currentOrder);
+        Log.getLogger().log(server.getName() + ": finished item=" + item.getItem().toString() + " in Order=" + currentOrder.toString());
+        getServerFrameById(server.getId()).updateView(server, currentOrder);
     }
 
     @Override
     public void itemTaken(Order currentOrder, OrderItem item, OrderConsumer server) {
-        Log.getLogger().log(server.getName() + " took item=" + item.getItem().toString() + " in Order=" + currentOrder.toString());
-        this.serverViewList.get(server.getId()-1).updateView(server, currentOrder);
+        Log.getLogger().log(server.getName() + ": took item=" + item.getItem().toString() + " in Order=" + currentOrder.toString());
+        getServerFrameById(server.getId()).updateView(server, currentOrder);
     }
 
     @Override
@@ -243,5 +269,16 @@ public class OrderController implements OrderProducerListener, OrderHandler, Ord
         });
 
     }
+
+
+    public void pauseOrderProcess(int serverId) {
+        getServerById(serverId).pauseOrderProcess();
+    }
+
+    public void restartOrderProcess(int serverId) {
+        getServerById(serverId).restartOrderProcess();
+    }
+
+
 }
 // TODO: Add logging

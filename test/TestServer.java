@@ -35,11 +35,11 @@ public class TestServer {
         //Create Servers
         TestServerSuccessListener listener = new TestServerSuccessListener();
         for(int i=1;i<serverCount+1;i++){
-            Server s = new Server(queue,listener,i);
-            s.setName("S="+i);
-            s.setOrderProcessTime(50);
-            s.startOrderProcess();
-            servers.add(s);
+            //Server s = new Server(queue,listener,i);
+            //s.setName("S="+i);
+            //s.setOrderProcessTime(50);
+            //s.startOrderProcess();
+            //servers.add(s);
         }
         System.out.println("Wait for factorys...");
 
