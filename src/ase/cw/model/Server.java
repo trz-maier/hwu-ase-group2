@@ -157,10 +157,10 @@ public class Server implements OrderConsumer {
         public void run() {
             while (!stopThread) {
                 Order currentOrder=null;
-                if(orderQueue.size()==0) {
-                    //If there is currently no pending order, we are free until we recive a order
-                    setStatus(ServerStatus.FREE);
-                }
+
+                //Server is free until the server takes a order
+                setStatus(ServerStatus.FREE);
+
                 //We actually do not need this synchronized block, since our implemented orderQueue is already thread safe.
                 //But to make things more robust and consistent(It is possible to pass a non thread safe queue to the Server, in this case we would need the synchronized block)
 
@@ -176,11 +176,11 @@ public class Server implements OrderConsumer {
                         if(stopThread) {
                             //Stop
                             break;
+                        } else {
+                            pauseIfneeded();
+                            //If pause is done, take next order
+                            takeNextOrder = true;
                         }
-                        
-                        pauseIfneeded();
-                        //If pause is done, take next order
-                        takeNextOrder=true;
                     }
                 }
                 if(stopThread){
