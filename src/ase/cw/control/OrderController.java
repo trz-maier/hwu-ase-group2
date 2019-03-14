@@ -238,6 +238,7 @@ public class OrderController implements OrderProducerListener, ServerStatusListe
         Log.getLogger().log(server.getName() + " finished order " + this.queuedOrders.size() + " orders in queue");
         synchronized (this) {
             totalOrdersHandled++;
+            processedOrders.add(currentOrder);
         }
         getServerFrameById(server.getId()).updateView(server);
     }
