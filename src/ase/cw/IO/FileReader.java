@@ -5,6 +5,7 @@ import ase.cw.model.Item;
 import ase.cw.model.Item.Category;
 import ase.cw.model.Order;
 
+import javax.sound.midi.SysexMessage;
 import java.util.concurrent.ThreadLocalRandom;
 import java.io.BufferedReader;
 import java.io.File;
@@ -44,6 +45,7 @@ public class FileReader {
                     nextOrder = allOrderScanner.nextLine();
                     parseSingleOrder(nextOrder, orderList);
                 } catch (Exception e){
+                    e.printStackTrace();
                     if(!"".equals(nextOrder) && !nextOrder.startsWith("//"))
                         System.out.println("Invaild Order="+nextOrder+" skip order");
                 }
@@ -85,7 +87,8 @@ public class FileReader {
                 customerId = singleOrderScanner.next();
                 UUID uuid = parseUUID(singleOrderScanner);
                 Item item = getItemById(uuid);
-                Order order = new Order(customerId);
+                boolean isPriorityOrder = (singleOrderScanner.next().equals("Y")) ? true : false;
+                Order order = new Order(customerId, isPriorityOrder);
 
                 //If we already created this specific order, add the Item to the existing order.
                 //Else create a new order and add the item to the new order.

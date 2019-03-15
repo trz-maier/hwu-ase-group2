@@ -115,7 +115,7 @@ public class TestServer {
         }
 
         @Override
-        public void orderTaken(Order currentOrder, OrderConsumer server) {
+        public void orderReceivedByServer(Order currentOrder, OrderConsumer server) {
             synchronized (this){
                 orderstaken++;
             }

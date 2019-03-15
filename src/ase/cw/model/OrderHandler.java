@@ -11,7 +11,7 @@ public interface OrderHandler {
      * @param currentOrder the order which is started
      * @param server       ther Consumer which started the order
      */
-    void orderTaken(Order currentOrder, OrderConsumer server);
+    void orderReceivedByServer(Order currentOrder, OrderConsumer server);
 
     /**
      * Called as soon as a order is finished by an OrderConsumer.
