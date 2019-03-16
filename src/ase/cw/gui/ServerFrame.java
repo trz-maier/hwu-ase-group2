@@ -21,8 +21,8 @@ public class ServerFrame extends JFrame implements ActionListener, ServerFrameVi
     private OrderController controller;
     private int serverId;
 
-    private int dimHeight=150;
-    private int dimWidth=300;
+    private int dimHeight = 200;
+    private int dimWidth = 300;
     private int gapX = 10;
     private int gapY = 40;
 
@@ -93,7 +93,7 @@ public class ServerFrame extends JFrame implements ActionListener, ServerFrameVi
     public void updateView(OrderConsumer server, Order order) {
         this.textArea.setText(
                 "Status: "+(server.getStatus()
-                        +"\nOrder: "+order.getCustomerId()
+                        +"\nOrder: "+order.getCustomerId()+ (order.isPriorityOrder() ? " (priority)" : "")
                         +"\nItems: "+order.getOrderItems().size()
                         +"\nSubtotal: £"+order.getBill().getSubtotal()
                         +"\nTotal: £"+order.getBill().getTotal()

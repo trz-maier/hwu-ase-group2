@@ -4,6 +4,7 @@ import ase.cw.IO.FileReader;
 import ase.cw.exceptions.InvalidCustomerIdException;
 import ase.cw.gui.QueueFrame;
 import ase.cw.gui.ServerFrame;
+import ase.cw.model.Order;
 import ase.cw.log.Log;
 import ase.cw.model.*;
 import ase.cw.view.ServerFrameView;
@@ -15,6 +16,7 @@ import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.PriorityBlockingQueue;
+import java.util.concurrent.ThreadLocalRandom;
 
 
 public class OrderController implements OrderProducerListener, ServerStatusListener, OrderHandler, OrdersDoneEvent {
@@ -91,6 +93,20 @@ public class OrderController implements OrderProducerListener, ServerStatusListe
                     customerId, character));
         }
         return;
+    }
+
+    public void addRandomOrder(boolean priority) throws InvalidCustomerIdException {
+        String customerId = "C"+ThreadLocalRandom.current().nextInt(1000000, 9999999);
+        int noOfItems = ThreadLocalRandom.current().nextInt(1, 5);
+        Order order = new Order(customerId, priority);
+        for (int i = 0; i < noOfItems; i++) {
+            int rIdx = ThreadLocalRandom.current().nextInt(stockItems.size());
+            Object[] keys = stockItems.keySet().toArray();
+            Object key = keys[rIdx];
+            Item item = stockItems.get(key);
+            order.addOrderItem(item);
+        }
+        onOrderProduced(order);
     }
 
     private void createServer(int serverId) {
@@ -206,8 +222,7 @@ public class OrderController implements OrderProducerListener, ServerStatusListe
 
             totalProducedOrders++;
         }
-        LOGGER.log(totalProducedOrders + " Orders produced");
-        LOGGER.log(totalOrders + " Orders will be produced");
+        LOGGER.log("Order added: "+producedOrder+". Total order count: "+totalProducedOrders);
     }
 
     @Override

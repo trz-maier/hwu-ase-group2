@@ -1,6 +1,7 @@
 package ase.cw.gui;
 
 import ase.cw.control.OrderController;
+import ase.cw.exceptions.InvalidCustomerIdException;
 import ase.cw.log.Log;
 import ase.cw.model.Order;
 import ase.cw.view.QueueFrameView;
@@ -20,6 +21,7 @@ public class QueueFrame extends JFrame implements ActionListener, QueueFrameView
     private JList<Order> priorityQueueJList = new JList<>();
     private JButton startButton = new JButton("Start");
     private JButton pauseButton = new JButton("Pause");
+    private JButton addServerButton = new JButton("Add Server");
     private JButton addOrderButton = new JButton("Add Order");
     private JButton addOrderPriorityButton = new JButton("Add Priority Order");
     private JSlider speedSlider = new JSlider();
@@ -42,20 +44,25 @@ public class QueueFrame extends JFrame implements ActionListener, QueueFrameView
     }
 
     private void buildFrame() {
+
         startButton.addActionListener(this);
         pauseButton.addActionListener(this);
+        addServerButton.addActionListener(this);
+        addOrderButton.addActionListener(this);
+        addOrderPriorityButton.addActionListener(this);
+
         JPanel top = new JPanel(new BorderLayout(5, 5));
         top.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        JPanel controls = new JPanel(new GridLayout(4, 1, 5, 5));
+        JPanel controls = new JPanel(new GridLayout(2, 1, 5, 5));
         controls.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         JPanel controlsInner = new JPanel(new GridLayout(1, 2, 5, 5));
         controlsInner.add(startButton);
         controlsInner.add(pauseButton);
         controls.add(controlsInner);
         //controls.add(speedSlider);
+        controls.add(addServerButton);
         controls.setBorder(BorderFactory.createTitledBorder("Controls"));
         top.add(controls, BorderLayout.PAGE_START);
-
         JPanel lists = new JPanel(new GridLayout(2, 1, 5, 5));
 
         JPanel list1 = new JPanel(new BorderLayout(5, 5));
@@ -65,7 +72,6 @@ public class QueueFrame extends JFrame implements ActionListener, QueueFrameView
         queueJList.setOpaque(false);
         queueScroll.setViewportView(queueJList);
         list1.add(queueScroll, BorderLayout.CENTER);
-        addOrderButton.addActionListener(this);
         list1.add(addOrderButton, BorderLayout.PAGE_END);
 
         JPanel list2 = new JPanel(new BorderLayout(5, 5));
@@ -75,7 +81,7 @@ public class QueueFrame extends JFrame implements ActionListener, QueueFrameView
         priorityQueueJList.setOpaque(false);
         priorityQueueScroll.setViewportView(priorityQueueJList);
         list2.add(priorityQueueScroll, BorderLayout.CENTER);
-        addOrderPriorityButton.addActionListener(this);
+
         list2.add(addOrderPriorityButton, BorderLayout.PAGE_END);
 
         lists.add(list1);
@@ -107,20 +113,28 @@ public class QueueFrame extends JFrame implements ActionListener, QueueFrameView
 
         if (e.getSource() == addOrderButton) {
             logButtonPress(addOrderButton);
-            //TODO: this currently has no effect
+            try {
+                oc.addRandomOrder(false);
+            } catch (InvalidCustomerIdException e1) {
+                e1.printStackTrace();
+            }
         }
 
         if (e.getSource() == addOrderPriorityButton) {
             logButtonPress(addOrderPriorityButton);
-            //TODO: this currently has no effect
+            try {
+                oc.addRandomOrder(true);
+            } catch (InvalidCustomerIdException e1) {
+                e1.printStackTrace();
+            }
         }
 
     }
 
     @Override
     public void setOrdersInQueue(Order[] orders) {
-        this.queueJList.setListData(orders);
-        queueScroll.setViewportView(this.queueJList);
+        queueJList.setListData(orders);
+        queueScroll.setViewportView(queueJList);
     }
 
     @Override

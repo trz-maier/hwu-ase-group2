@@ -44,6 +44,9 @@ public class Order implements Comparable<Order> {
             }
         }
     }
+    public boolean isPriorityOrder() {
+        return this.isPriorityOrder;
+    }
 
     /**
      * @return the customerId
@@ -105,10 +108,7 @@ public class Order implements Comparable<Order> {
 
     @Override
     public String toString() {
-//        return "Order{" + "customerId='" + customerId + '\'' + ", timestamp=" + timestamp + ", orderItems=" +
-//        orderItems + ", bill=" + bill + '}';
-        return String.format("%s Customer ID: %s, %o items", hasPriority() ? "[*] " : "", customerId,
-                orderItems.size());
+        return String.format("Customer: %s, Items: %o", customerId, orderItems.size());
     }
 
     public boolean hasPriority() {
