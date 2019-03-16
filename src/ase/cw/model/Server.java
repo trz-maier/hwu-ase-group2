@@ -2,6 +2,7 @@ package ase.cw.model;
 
 import ase.cw.log.Log;
 import ase.cw.utlities.ServerStatusEnum.ServerStatus;
+
 import java.security.InvalidParameterException;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
@@ -61,7 +62,7 @@ public class Server implements OrderConsumer {
             if(ssl!=null) {
                 ssl.onServerStatusChange(this);
             }
-            logAction("Status set to "+status);
+            logAction("Status is set to: "+status);
         }
     }
 

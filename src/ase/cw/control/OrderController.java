@@ -195,7 +195,7 @@ public class OrderController implements OrderProducerListener, ServerStatusListe
 
     @Override
     public void onOrderProduced(Order producedOrder) {
-        Log.getLogger().log("Order produced=" + this.queuedOrders.size() + " orders remaining");
+        Log.getLogger().log("Order produced- " + this.queuedOrders.size() + " orders remaining");
         queuedOrders.add(producedOrder);
         updateQueueFrame(this.queuedOrders);
         synchronized (this) {
@@ -228,14 +228,14 @@ public class OrderController implements OrderProducerListener, ServerStatusListe
         // in case we change something and change values of a order in multiple threads because the order class is not threadsafe.
         currentOrder.setTimestamp(new Date());
         //         });
-        Log.getLogger().log(server.getName() + " took order " + this.queuedOrders.size() + " orders in queue");
+        Log.getLogger().log(server.getName() + " took order. " + this.queuedOrders.size() + " orders in queue");
         updateQueueFrame(this.queuedOrders);
         getServerFrameById(server.getId()).updateView(server, currentOrder);
     }
 
     @Override
     public void orderFinished(Order currentOrder, OrderConsumer server) {
-        Log.getLogger().log(server.getName() + " finished order " + this.queuedOrders.size() + " orders in queue");
+        Log.getLogger().log(server.getName() + " finished order. " + this.queuedOrders.size() + " orders in queue");
         synchronized (this) {
             totalOrdersHandled++;
             processedOrders.add(currentOrder);
@@ -245,13 +245,13 @@ public class OrderController implements OrderProducerListener, ServerStatusListe
 
     @Override
     public void itemFinished(Order currentOrder, OrderItem item, OrderConsumer server) {
-        Log.getLogger().log(server.getName() + ": finished item=" + item.getItem().toString() + " in Order=" + currentOrder.toString());
+        Log.getLogger().log(server.getName() + ": finished item: " + item.getItem().toString() + " in Order: " + currentOrder.toString());
         getServerFrameById(server.getId()).updateView(server, currentOrder);
     }
 
     @Override
     public void itemTaken(Order currentOrder, OrderItem item, OrderConsumer server) {
-        Log.getLogger().log(server.getName() + ": took item=" + item.getItem().toString() + " in Order=" + currentOrder.toString());
+        Log.getLogger().log(server.getName() + ": took item: " + item.getItem().toString() + " in Order: " + currentOrder.toString());
         getServerFrameById(server.getId()).updateView(server, currentOrder);
     }
 
@@ -260,12 +260,12 @@ public class OrderController implements OrderProducerListener, ServerStatusListe
         //Here we close the application, because the queue is empty and all orders are produced
         //Stop all servers
 
-        Log.getLogger().log("All orders produced and queue is empty, stop servers...");
+        Log.getLogger().log("All orders done and queue is empty, stop servers...");
         for (Server server : this.serverList) {
             server.stopOrderProcess();
         }
-        Log.getLogger().log(totalOrdersHandled+ " orders handeld should be="+this.totalProducedOrders);
-        Log.getLogger().log("Stopping servers done, close application and generate Report");
+        Log.getLogger().log(totalOrdersHandled+ " orders handled. Should be = "+this.totalProducedOrders);
+        Log.getLogger().log("Stopping... Servers are done, closing application and generating Report");
 
         //All servers are done, so we can close the application
         SwingUtilities.invokeLater(() -> {

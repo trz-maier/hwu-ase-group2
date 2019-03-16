@@ -107,11 +107,10 @@ public class Order {
 
     @Override
     public String toString() {
-        return "Order{" +
-                "customerId='" + customerId + '\'' +
-                ", timestamp=" + timestamp +
-                ", orderItems=" + orderItems +
-                ", bill=" + bill +
+        return "{" +
+                "Customer ID: '" + customerId + '\'' +
+                ", Order Items: " + orderItems +
+//                ", Total: " + bill.getTotal() +
                 '}';
     }
 }
