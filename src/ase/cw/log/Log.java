@@ -45,7 +45,6 @@ public class Log {
         catch (FileNotFoundException fe){
             System.out.println(logFileName + " was not found");
         }
-
         catch (IOException ioe){
             ioe.printStackTrace();
         }

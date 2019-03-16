@@ -196,7 +196,7 @@ public class OrderController implements OrderProducerListener, ServerStatusListe
 
     @Override
     public void onOrderProduced(Order producedOrder) {
-        LOGGER.log("Order produced=" + this.queuedOrders.size() + " orders remaining");
+        LOGGER.log("Order produced = " + this.queuedOrders.size() + " orders remaining");
         queuedOrders.add(producedOrder);
         updateQueueFrame();
         synchronized (this) {
@@ -261,13 +261,13 @@ public class OrderController implements OrderProducerListener, ServerStatusListe
 
     @Override
     public void itemFinished(Order currentOrder, OrderItem item, OrderConsumer server) {
-        LOGGER.log(server.getName() + ": finished item=" + item.getItem().toString() + " in Order=" + currentOrder.toString());
+        LOGGER.log(server.getName() + ": finished item = " + item.getItem().toString() + " in Order = " + currentOrder.toString());
         getServerFrameById(server.getId()).updateView(server, currentOrder);
     }
 
     @Override
     public void itemTaken(Order currentOrder, OrderItem item, OrderConsumer server) {
-        LOGGER.log(server.getName() + ": took item=" + item.getItem().toString() + " in Order=" + currentOrder.toString());
+        LOGGER.log(server.getName() + ": took item = " + item.getItem().toString() + " in Order = " + currentOrder.toString());
         getServerFrameById(server.getId()).updateView(server, currentOrder);
     }
 
@@ -276,12 +276,12 @@ public class OrderController implements OrderProducerListener, ServerStatusListe
         //Here we close the application, because the queue is empty and all orders are produced
         //Stop all servers
 
-        LOGGER.log("All orders produced and queue is empty, stop servers...");
+        LOGGER.log("All orders produced and queue is empty, stopping servers...");
         for (Server server : this.serverList) {
             server.stopOrderProcess();
         }
-        LOGGER.log(totalOrdersHandled + " orders handeld should be=" + this.totalProducedOrders);
-        LOGGER.log("Stopping servers done, close application and generate Report");
+        LOGGER.log(totalOrdersHandled + " orders handled should be = " + this.totalProducedOrders);
+        LOGGER.log("Stopping servers done, closing application and generating Report");
 
         //All servers are done, so we can close the application
         SwingUtilities.invokeLater(() -> {
