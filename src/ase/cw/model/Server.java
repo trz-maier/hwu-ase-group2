@@ -19,7 +19,7 @@ public class Server implements OrderConsumer {
 
     private final BlockingQueue<Order> orderQueue;
     private final OrderHandler orderHandler;
-    private int processTime = 1000;
+    private int processTime = 5000;
     private Thread serverThread;
     private String name = "Server";
     private int serverId;
@@ -121,13 +121,15 @@ public class Server implements OrderConsumer {
      */
     @Override
     public void stopOrderProcess() {
-        if (serverThread != null) {
-            stopThread = true;
-            serverThread.interrupt();
-            try {
-                serverThread.join();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+        synchronized (serverThread) {
+            if (serverThread != null) {
+                stopThread = true;
+                serverThread.interrupt();
+                try {
+                    serverThread.join();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }

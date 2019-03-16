@@ -159,12 +159,12 @@ public class QueueFrame extends JFrame implements ActionListener, ChangeListener
 
         if (e.getSource() == addServerButton) {
             logButtonPress(addServerButton);
-            //TODO: this currently has no effect
+            oc.addServer();
         }
 
         if (e.getSource() == removeServerButton) {
             logButtonPress(removeServerButton);
-            //TODO: this currently has no effect
+            oc.removeServer();
         }
 
         if (e.getSource() == addOrderButton) {
