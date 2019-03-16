@@ -1,5 +1,7 @@
 package ase.cw.model;
 
+import ase.cw.interfaces.OrderConsumer;
+import ase.cw.interfaces.OrderHandler;
 import ase.cw.log.Log;
 import ase.cw.utlities.ServerStatusEnum.ServerStatus;
 

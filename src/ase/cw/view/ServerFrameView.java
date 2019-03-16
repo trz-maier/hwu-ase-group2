@@ -1,6 +1,6 @@
 package ase.cw.view;
 
-import ase.cw.model.OrderConsumer;
+import ase.cw.interfaces.OrderConsumer;
 import ase.cw.model.Order;
 
 public interface ServerFrameView {

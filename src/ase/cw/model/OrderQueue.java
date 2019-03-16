@@ -1,5 +1,7 @@
 package ase.cw.model;
 
+import ase.cw.interfaces.OrderProducerListener;
+
 import java.util.List;
 
 
