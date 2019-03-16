@@ -8,6 +8,7 @@ import ase.cw.model.Order;
 import ase.cw.log.Log;
 import ase.cw.model.*;
 import ase.cw.view.ServerFrameView;
+import ase.cw.model.ServerStatusListener;
 
 import javax.swing.*;
 import java.io.File;
@@ -134,6 +135,14 @@ public class OrderController implements OrderProducerListener, ServerStatusListe
                 result = frame;
             }
         return result;
+    }
+
+    public void setProcessingSpeed(double factor) {
+        for (Server server : serverList) {
+            int time = (int) (10000*factor);
+            server.setOrderProcessTime(time);
+            orderProducer.setMaxDelayTime(time);
+        }
     }
 
     public void startProcessing() {

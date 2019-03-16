@@ -6,14 +6,17 @@ import ase.cw.log.Log;
 import ase.cw.model.Order;
 import ase.cw.view.QueueFrameView;
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.Hashtable;
 
 /**
  * Created by Bartosz on 03.03.2019.
  */
 
-public class QueueFrame extends JFrame implements ActionListener, QueueFrameView {
+public class QueueFrame extends JFrame implements ActionListener, ChangeListener, QueueFrameView {
 
     private JScrollPane queueScroll = new JScrollPane();
     private JList<Order> queueJList = new JList<>();
@@ -21,10 +24,11 @@ public class QueueFrame extends JFrame implements ActionListener, QueueFrameView
     private JList<Order> priorityQueueJList = new JList<>();
     private JButton startButton = new JButton("Start");
     private JButton pauseButton = new JButton("Pause");
-    private JButton addServerButton = new JButton("Add Server");
+    private JButton addServerButton = new JButton("Add");
+    private JButton removeServerButton = new JButton("Remove");
     private JButton addOrderButton = new JButton("Add Order");
     private JButton addOrderPriorityButton = new JButton("Add Priority Order");
-    private JSlider speedSlider = new JSlider();
+    private JSlider speedSlider = new JSlider(JSlider.HORIZONTAL, 2, 18, 10);
     private OrderController oc;
 
     // Frame constructor
@@ -43,26 +47,60 @@ public class QueueFrame extends JFrame implements ActionListener, QueueFrameView
         Log.getLogger().log("GUI: "+this.getName()+" opened.");
     }
 
+    @Override
+    public void setOrdersInQueue(Order[] orders) {
+        queueJList.setListData(orders);
+        queueScroll.setViewportView(queueJList);
+    }
+
+    @Override
+    public void setOrdersInPriorityQueue(Order[] orders) {
+        this.priorityQueueJList.setListData(orders);
+        priorityQueueScroll.setViewportView(this.priorityQueueJList);
+    }
+
     private void buildFrame() {
 
         startButton.addActionListener(this);
         pauseButton.addActionListener(this);
         addServerButton.addActionListener(this);
+        removeServerButton.addActionListener(this);
         addOrderButton.addActionListener(this);
         addOrderPriorityButton.addActionListener(this);
+        speedSlider.addChangeListener(this::stateChanged);
+
+        Hashtable labelTable = new Hashtable();
+        labelTable.put(2, new JLabel("Fast") );
+        labelTable.put(18, new JLabel("Slow") );
+        speedSlider.setLabelTable(labelTable);
+        speedSlider.setPaintLabels(true);
 
         JPanel top = new JPanel(new BorderLayout(5, 5));
         top.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        JPanel controls = new JPanel(new GridLayout(2, 1, 5, 5));
-        controls.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        JPanel controlsInner = new JPanel(new GridLayout(1, 2, 5, 5));
-        controlsInner.add(startButton);
-        controlsInner.add(pauseButton);
-        controls.add(controlsInner);
-        //controls.add(speedSlider);
-        controls.add(addServerButton);
-        controls.setBorder(BorderFactory.createTitledBorder("Controls"));
+
+        JPanel controls = new JPanel(new BorderLayout(5, 5));
+
+        JPanel controls1 = new JPanel(new GridLayout(1, 2, 5, 5));
+        controls1.setBorder(BorderFactory.createTitledBorder("Controls"));
+        controls1.add(startButton);
+        controls1.add(pauseButton);
+
+        JPanel controls2 = new JPanel(new GridLayout(1, 2, 5, 5));
+        controls2.setBorder(BorderFactory.createTitledBorder("Servers"));
+        controls2.add(addServerButton);
+        controls2.add(removeServerButton);
+
+        JPanel controls3 = new JPanel(new GridLayout(1, 1, 5, 5));
+        controls3.setBorder(BorderFactory.createTitledBorder("Speed"));
+        speedSlider.setInverted(true);
+        controls3.add(speedSlider);
+
+        controls.add(controls1, BorderLayout.PAGE_START);
+        controls.add(controls2, BorderLayout.CENTER);
+        controls.add(controls3, BorderLayout.PAGE_END);
+
         top.add(controls, BorderLayout.PAGE_START);
+
         JPanel lists = new JPanel(new GridLayout(2, 1, 5, 5));
 
         JPanel list1 = new JPanel(new BorderLayout(5, 5));
@@ -96,6 +134,14 @@ public class QueueFrame extends JFrame implements ActionListener, QueueFrameView
         Log.getLogger().log("GUI: "+this.getName()+" "+button.getText()+" button pressed.");
     }
 
+
+    @Override
+    public void stateChanged(ChangeEvent e) {
+        if (e.getSource() == speedSlider) {
+            oc.setProcessingSpeed(speedSlider.getValue()/10.0);
+        }
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
 
@@ -108,6 +154,16 @@ public class QueueFrame extends JFrame implements ActionListener, QueueFrameView
         if (e.getSource() == pauseButton) {
             logButtonPress(startButton);
             oc.pauseProcessing();
+            //TODO: this currently has no effect
+        }
+
+        if (e.getSource() == addServerButton) {
+            logButtonPress(addServerButton);
+            //TODO: this currently has no effect
+        }
+
+        if (e.getSource() == removeServerButton) {
+            logButtonPress(removeServerButton);
             //TODO: this currently has no effect
         }
 
@@ -131,15 +187,6 @@ public class QueueFrame extends JFrame implements ActionListener, QueueFrameView
 
     }
 
-    @Override
-    public void setOrdersInQueue(Order[] orders) {
-        queueJList.setListData(orders);
-        queueScroll.setViewportView(queueJList);
-    }
 
-    @Override
-    public void setOrdersInPriorityQueue(Order[] orders) {
-        this.priorityQueueJList.setListData(orders);
-        priorityQueueScroll.setViewportView(this.priorityQueueJList);
-    }
+
 }
