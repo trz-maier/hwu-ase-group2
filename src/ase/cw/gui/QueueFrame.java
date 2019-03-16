@@ -32,7 +32,7 @@ public class QueueFrame extends JFrame implements ActionListener, QueueFrameView
         this.setName("QueueFrame");
         this.setTitle("Café Queue");
         this.setPreferredSize(new Dimension(300, 800));
-        this.setResizable(false);
+        this.setResizable(true);
         this.buildFrame();
         this.pack();
         this.setLocationRelativeTo(null);
@@ -121,5 +121,11 @@ public class QueueFrame extends JFrame implements ActionListener, QueueFrameView
     public void setOrdersInQueue(Order[] orders) {
         this.queueJList.setListData(orders);
         queueScroll.setViewportView(this.queueJList);
+    }
+
+    @Override
+    public void setOrdersInPriorityQueue(Order[] orders) {
+        this.priorityQueueJList.setListData(orders);
+        priorityQueueScroll.setViewportView(this.priorityQueueJList);
     }
 }

@@ -21,6 +21,11 @@ public class ServerFrame extends JFrame implements ActionListener, ServerFrameVi
     private OrderController controller;
     private int serverId;
 
+    private int dimHeight=150;
+    private int dimWidth=300;
+    private int gapX = 10;
+    private int gapY = 40;
+
     // Frame constructor
     public ServerFrame(int id, JFrame parentFrame, OrderController controller) {
         this.serverId = id;
@@ -29,8 +34,8 @@ public class ServerFrame extends JFrame implements ActionListener, ServerFrameVi
         this.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("coffee.png")));
         this.setTitle("Server "+serverId);
         this.setName("QueueFrame "+this.getTitle());
-        this.setPreferredSize(new Dimension(300, 200));
-        this.setLocation(parentFrame.getX()+parentFrame.getWidth()+(serverId*10), parentFrame.getY()+(serverId*10));
+        this.setPreferredSize(new Dimension(dimWidth, dimHeight));
+        this.setLocation(parentFrame.getX()+parentFrame.getWidth()+gapX, parentFrame.getY()+(serverId-1)*(gapY+dimHeight));
         this.setResizable(false);
         this.buildFrame();
         this.pack();

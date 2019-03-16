@@ -190,7 +190,7 @@ public class Server implements OrderConsumer {
                     throw new java.lang.IllegalStateException("Current order is null");
                 }
                 //Tell listener, we proceed a new order
-                orderHandler.orderTaken(currentOrder, Server.this);
+                orderHandler.orderReceivedByServer(currentOrder, Server.this);
 
                 List<OrderItem> items = currentOrder.getOrderItems();
                 for (OrderItem orderItem : items) {
