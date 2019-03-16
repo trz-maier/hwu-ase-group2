@@ -3,7 +3,7 @@ package ase.cw.gui;
 import ase.cw.control.OrderController;
 import ase.cw.log.Log;
 import ase.cw.model.Order;
-import ase.cw.model.OrderConsumer;
+import ase.cw.interfaces.OrderConsumer;
 import ase.cw.view.ServerFrameView;
 import javax.swing.*;
 import java.awt.*;

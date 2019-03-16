@@ -1,8 +1,8 @@
 package ase.cw.model;
 
+import ase.cw.interfaces.OrderProducerListener;
+
 import java.util.List;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
 
 
 public class OrderQueue implements Runnable {
@@ -14,6 +14,10 @@ public class OrderQueue implements Runnable {
     public OrderQueue(List<Order> loadedOrders, OrderProducerListener opl) {
         this.loadedOrders = loadedOrders;
         this.opl = opl;
+    }
+
+    public void setMaxDelayTime(int delay) {
+        this.maxDelayTime = delay;
     }
 
     @Override

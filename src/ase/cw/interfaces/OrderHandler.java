@@ -1,4 +1,8 @@
-package ase.cw.model;
+package ase.cw.interfaces;
+
+import ase.cw.interfaces.OrderConsumer;
+import ase.cw.model.Order;
+import ase.cw.model.OrderItem;
 
 /**
  * Created by Thomas on 01.03.2019.

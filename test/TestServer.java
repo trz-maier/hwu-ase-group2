@@ -1,4 +1,6 @@
 import ase.cw.exceptions.InvalidCustomerIdException;
+import ase.cw.interfaces.OrderConsumer;
+import ase.cw.interfaces.OrderHandler;
 import ase.cw.model.*;
 import org.junit.Test;
 
