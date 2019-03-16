@@ -1,4 +1,4 @@
-package ase.cw.model;
+package ase.cw.interfaces;
 
 import ase.cw.utlities.ServerStatusEnum.ServerStatus;
 

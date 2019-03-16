@@ -1,4 +1,6 @@
-package ase.cw.model;
+package ase.cw.interfaces;
+
+import ase.cw.model.Order;
 
 import java.util.concurrent.BlockingQueue;
 
