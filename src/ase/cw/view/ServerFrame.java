@@ -22,12 +22,6 @@ public class ServerFrame extends JFrame implements ActionListener, ServerFrameVi
     private JButton restartButton = new JButton("Restart");
     private Pausable pausable;
     private int serverId;
-
-    private int dimHeight=150;
-    private int dimWidth=300;
-    private int gapX = 10;
-    private int gapY = 40;
-
     // Frame constructor
     public ServerFrame(int id, JFrame parentFrame, Pausable pausable) {
         this.serverId = id;
@@ -73,11 +67,6 @@ public class ServerFrame extends JFrame implements ActionListener, ServerFrameVi
     }
 
     @Override
-    public int getServerId() {
-        return this.serverId;
-    }
-
-    @Override
     public void actionPerformed(ActionEvent e) {
 
         if (e.getSource() == breakButton) {
@@ -118,11 +107,6 @@ public class ServerFrame extends JFrame implements ActionListener, ServerFrameVi
         } else {
 
         }
-    }
-
-    @Override
-    public void closeFrame() {
-        this.dispose();
     }
 
 
