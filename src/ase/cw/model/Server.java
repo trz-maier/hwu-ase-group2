@@ -58,10 +58,10 @@ public class Server implements OrderConsumer {
         this.rawStatus=status;
         ServerStatus newStatus = status;
         if(shouldStop && status!=ServerStatus.STOPPED){
-            newStatus=ServerStatus.GOING_TO_STOP;
+            newStatus=ServerStatus.TO_BE_STOPPED;
         }
         else if(shouldPause && status!=ServerStatus.PAUSED) {
-            newStatus=ServerStatus.GOING_TO_PAUSED;
+            newStatus=ServerStatus.TO_BE_PAUSED;
         }
 
         if (newStatus != serverStatus) {
@@ -76,7 +76,7 @@ public class Server implements OrderConsumer {
     private synchronized void clearStatus() {
         ServerStatus newStatus = rawStatus;
 
-        if((!shouldStop && serverStatus==ServerStatus.GOING_TO_STOP) || (!shouldPause && serverStatus==ServerStatus.GOING_TO_PAUSED) ) {
+        if((!shouldStop && serverStatus==ServerStatus.TO_BE_STOPPED) || (!shouldPause && serverStatus==ServerStatus.TO_BE_PAUSED) ) {
             serverStatus = rawStatus;
             logAction("Status set to "+newStatus);
             if(ssl!=null) {

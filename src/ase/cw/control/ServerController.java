@@ -51,7 +51,6 @@ public class ServerController implements Pausable {
         Thread t = new Thread(server::stopOrderProcess);
         t.setName("Server close task");
         t.start();
-        serverFrame.closeFrame();
     }
 
 

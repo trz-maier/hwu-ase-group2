@@ -37,14 +37,14 @@ public class ServerFrame extends JFrame implements ActionListener, ServerFrameVi
         this.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("coffee.png")));
         this.setTitle("Server "+serverId);
         this.setName("QueueFrame "+this.getTitle());
-        this.setPreferredSize(new Dimension(dimWidth, dimHeight));
-        this.setLocation(parentFrame.getX()+parentFrame.getWidth()+gapX, parentFrame.getY()+(serverId-1)*(gapY+dimHeight));
+        this.setPreferredSize(new Dimension(300, 200));
+        this.setLocation(parentFrame.getX()+parentFrame.getWidth()+(id*10), parentFrame.getY()+(id*10));
         this.setResizable(false);
         this.buildFrame();
         this.pack();
         this.setVisible(true);
         this.addWindowListener(new exitButtonPress());
-
+        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         Log.getLogger().log("GUI: "+this.getName()+" opened.");
     }
 

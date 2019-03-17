@@ -140,8 +140,8 @@ public class OrderController implements OrderProducerListener,OrdersDoneEvent, O
 
     public void removeServer() {
         synchronized (serverList){
-            if(!applicationClosing) {
-                if (serverList.size() > 0) { // If the application is currently closing(if the factory is done and the queue is empty) it is not allowed to remove servers
+            if(!applicationClosing) {// If the application is currently closing(if the factory is done and the queue is empty) it is not allowed to remove servers
+                if (serverList.size() > 0) {
                     ServerController closingServer = serverList.get(serverList.size() - 1);
                     closingServer.stop();
                     serverList.remove(serverList.size() - 1);
