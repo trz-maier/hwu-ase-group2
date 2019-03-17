@@ -4,12 +4,13 @@ import ase.cw.control.OrderController;
 import ase.cw.exceptions.InvalidCustomerIdException;
 import ase.cw.log.Log;
 import ase.cw.model.Order;
-import ase.cw.view.QueueFrameView;
+
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Hashtable;
 
 /**
@@ -148,13 +149,11 @@ public class QueueFrame extends JFrame implements ActionListener, ChangeListener
         if (e.getSource() == startButton) {
             logButtonPress(startButton);
             oc.startProcessing();
-            //TODO: this currently has no effect
         }
 
         if (e.getSource() == pauseButton) {
             logButtonPress(startButton);
             oc.pauseProcessing();
-            //TODO: this currently has no effect
         }
 
         if (e.getSource() == addServerButton) {

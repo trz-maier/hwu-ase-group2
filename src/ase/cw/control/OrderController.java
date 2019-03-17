@@ -2,22 +2,21 @@ package ase.cw.control;
 
 import ase.cw.IO.FileReader;
 import ase.cw.exceptions.InvalidCustomerIdException;
-
 import ase.cw.interfaces.OrderConsumer;
 import ase.cw.interfaces.OrderHandler;
 import ase.cw.interfaces.OrderProducerListener;
-import ase.cw.model.Order;
 import ase.cw.log.Log;
 import ase.cw.model.*;
 import ase.cw.view.QueueFrame;
-import ase.cw.view.ServerFrameView;
-import ase.cw.model.ServerStatusListener;
 
 import javax.swing.*;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.ThreadLocalRandom;
@@ -160,11 +159,17 @@ public class OrderController implements OrderProducerListener,OrdersDoneEvent, O
     }
 
     public void startProcessing() {
-        // TODO: Implement start processing method
+        for (ServerController serverController : serverList) {
+            serverController.unPause();
+        }
+        orderProducer.restartOrderProcess();
     }
 
     public void pauseProcessing() {
-        // TODO: Implement pause processing method
+        for (ServerController serverController : serverList) {
+            serverController.pause();
+        }
+        orderProducer.pauseOrderProcess();
     }
 
     /**

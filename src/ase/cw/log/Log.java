@@ -27,7 +27,6 @@ public class Log {
     }
 
     public void log (String logLine){
-
         logLine = "\n\n" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss"))+ "\n> " + logLine;
         System.out.println(logLine);
         logString += logLine;
