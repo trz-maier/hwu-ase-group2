@@ -4,7 +4,6 @@ import ase.cw.interfaces.OrderConsumer;
 import ase.cw.interfaces.OrderHandler;
 import ase.cw.log.Log;
 import ase.cw.utlities.ServerStatusEnum.ServerStatus;
-
 import java.security.InvalidParameterException;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
@@ -19,15 +18,16 @@ public class Server implements OrderConsumer {
 
     private final BlockingQueue<Order> orderQueue;
     private final OrderHandler orderHandler;
-    private int processTime = 5000;
+    private int processTime = 1000;
     private Thread serverThread;
     private String name = "Server";
     private int serverId;
-    private boolean stopThread = false;
+    private boolean shouldStop = false;
     private boolean shouldPause = false;
     private ServerStatus serverStatus;
     private ServerStatusListener ssl;
 
+    private ServerStatus rawStatus;
     public Server(BlockingQueue<Order> queue, OrderHandler orderHandler, ServerStatusListener ssl, int serverId) {
 
         if (queue == null || orderHandler == null)
@@ -53,18 +53,35 @@ public class Server implements OrderConsumer {
         }
     }
 
-    @Override
-    public int getId() {
-        return serverId;
-    }
 
-    private void setStatus(ServerStatus status) {
-        if (status != serverStatus) {
-            serverStatus = status;
+    private synchronized void updateStatus(ServerStatus status) {
+        this.rawStatus=status;
+        ServerStatus newStatus = status;
+        if(shouldStop && status!=ServerStatus.STOPPED){
+            newStatus=ServerStatus.GOING_TO_STOP;
+        }
+        else if(shouldPause && status!=ServerStatus.PAUSED) {
+            newStatus=ServerStatus.GOING_TO_PAUSED;
+        }
+
+        if (newStatus != serverStatus) {
+
+            serverStatus = newStatus;
+            logAction("Status set to "+newStatus);
             if(ssl!=null) {
                 ssl.onServerStatusChange(this);
             }
-            logAction("Status is set to: "+status);
+        }
+    }
+    private synchronized void clearStatus() {
+        ServerStatus newStatus = rawStatus;
+
+        if((!shouldStop && serverStatus==ServerStatus.GOING_TO_STOP) || (!shouldPause && serverStatus==ServerStatus.GOING_TO_PAUSED) ) {
+            serverStatus = rawStatus;
+            logAction("Status set to "+newStatus);
+            if(ssl!=null) {
+                ssl.onServerStatusChange(this);
+            }
         }
     }
 
@@ -104,15 +121,21 @@ public class Server implements OrderConsumer {
     public void pauseOrderProcess() {
         // this does not pause the Status immediately but waits until current order is processed
         shouldPause = true;
-        Thread.currentThread().interrupt();
+        synchronized (serverThread) {
+            serverThread.interrupt();
+        }
     }
 
     @Override
     public void restartOrderProcess() {
+
+        shouldPause=false;
+        clearStatus();
+
         synchronized (serverThread) {
-            shouldPause=false;
             serverThread.notify();
         }
+
     }
 
     /**
@@ -122,15 +145,13 @@ public class Server implements OrderConsumer {
      */
     @Override
     public void stopOrderProcess() {
-        synchronized (serverThread) {
-            if (serverThread != null) {
-                stopThread = true;
-                serverThread.interrupt();
-                try {
-                    serverThread.join();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+        if (serverThread != null) {
+            shouldStop = true;
+            serverThread.interrupt();
+            try {
+                serverThread.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
     }
@@ -160,21 +181,18 @@ public class Server implements OrderConsumer {
 
         @Override
         public void run() {
-            while (!stopThread) {
+            while (!shouldStop) {
                 Order currentOrder=null;
-
-
-
                 boolean takeNextOrder=true;
                 while(takeNextOrder){
                     try {
                         //Wait forever until an external interruption occurs
-
                         currentOrder = orderQueue.take();
+                        pauseIfneeded();
                         takeNextOrder=false;
                     } catch (InterruptedException e) {
                         //If interrupt happens, we know we should either pause or stop
-                        if(stopThread) {
+                        if(shouldStop) {
                             //Stop
                             break;
                         } else {
@@ -184,11 +202,11 @@ public class Server implements OrderConsumer {
                         }
                     }
                 }
-                if(stopThread){
+                if(shouldStop){
                     break;
                 }
 
-                setStatus(ServerStatus.BUSY);
+                updateStatus(ServerStatus.BUSY);
 
                 if(currentOrder==null){
                     //Should never happen
@@ -210,19 +228,21 @@ public class Server implements OrderConsumer {
                     }
                     //Item finished after processTime ms
                     orderHandler.itemFinished(currentOrder, orderItem, Server.this);
+                    updateStatus(serverStatus);
+
 
                 }
                 //Order finished
                 orderHandler.orderFinished(currentOrder, Server.this);
 
                 //Server is free until the server takes a order
-                setStatus(ServerStatus.FREE);
+                updateStatus(ServerStatus.FREE);
 
                 //Pause processing if server on break
                 pauseIfneeded();
 
             }
-            setStatus(ServerStatus.STOPPED);
+            updateStatus(ServerStatus.STOPPED);
         }
 
         private void pauseIfneeded() {
@@ -231,16 +251,16 @@ public class Server implements OrderConsumer {
                 /**
                  * If a server should stop, we dont allow a pause.
                  */
-                while (shouldPause && !stopThread) {
+                while (shouldPause && !shouldStop) {
                     try {
-                        setStatus(ServerStatus.PAUSED);
+                        updateStatus(ServerStatus.PAUSED);
                         serverThread.wait();
                     } catch (InterruptedException e) {
                         //Interrupted when the server should stop.
                     }
                 }
                 //After we are done with the pause, set the state to the previous state.
-                setStatus(previous);
+                updateStatus(previous);
 
             }
 

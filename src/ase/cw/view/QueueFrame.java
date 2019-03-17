@@ -1,4 +1,4 @@
-package ase.cw.gui;
+package ase.cw.view;
 
 import ase.cw.control.OrderController;
 import ase.cw.exceptions.InvalidCustomerIdException;
