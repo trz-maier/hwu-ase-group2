@@ -1,10 +1,8 @@
-package ase.cw.model;
+package ase.cw.interfaces;
 
 import ase.cw.utlities.ServerStatusEnum.ServerStatus;
 
-/**
- * Created by Thomas on 01.03.2019.
- */
+
 public interface OrderConsumer {
 
     void setName(String name);

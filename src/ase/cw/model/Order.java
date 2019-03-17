@@ -13,24 +13,23 @@ import java.util.List;
 /**
  * @author Ram
  */
-public class Order {
+public class Order implements Comparable<Order> {
     private String customerId;
     private Date timestamp;
     private List<OrderItem> orderItems;
     private Bill bill;
+    private boolean isPriorityOrder;
 
-    /**
-     *
-     */
+
     public Order(String customerId) throws InvalidCustomerIdException {
-        this(customerId, null);
+        this(customerId, false);
     }
 
-    public Order(String customerId, Date timestamp) throws InvalidCustomerIdException {
+    public Order(String customerId, boolean isPriorityOrder) throws InvalidCustomerIdException {
         OrderController.validateCustomerId(customerId);
         this.customerId = customerId;
-        this.timestamp = timestamp;
-        this.orderItems = new ArrayList<OrderItem>();
+        this.orderItems = new ArrayList<>();
+        this.isPriorityOrder = isPriorityOrder;
     }
 
     public void addOrderItem(Item item) {
@@ -38,7 +37,6 @@ public class Order {
     }
 
     public void removeOrderItem(Item item) {
-//		this.orderItems.remove(orderItem);
         for (OrderItem oitem : orderItems) {
             if (oitem.getItem() == item) {
                 this.orderItems.remove(oitem);
@@ -46,9 +44,8 @@ public class Order {
             }
         }
     }
-
-    public void setTimestamp(Date timestamp) {
-        this.timestamp = timestamp;
+    public boolean isPriorityOrder() {
+        return this.isPriorityOrder;
     }
 
     /**
@@ -70,6 +67,10 @@ public class Order {
      */
     public Date getTimestamp() {
         return timestamp;
+    }
+
+    public void setTimestamp(Date timestamp) {
+        this.timestamp = timestamp;
     }
 
     /**
@@ -107,11 +108,17 @@ public class Order {
 
     @Override
     public String toString() {
-        return "Order{" +
-                "customerId='" + customerId + '\'' +
-                ", timestamp=" + timestamp +
-                ", orderItems=" + orderItems +
-                ", bill=" + bill +
-                '}';
+        return String.format("Customer: %s, Items: %o", customerId, orderItems.size());
+    }
+
+    public boolean hasPriority() {
+        return this.isPriorityOrder;
+    }
+
+    @Override
+    public int compareTo(Order other) {
+        if (this.hasPriority() && !other.hasPriority()) return -1;
+        if (!this.hasPriority() && other.hasPriority()) return 1;
+        return 0;
     }
 }

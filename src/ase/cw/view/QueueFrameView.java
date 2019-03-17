@@ -9,6 +9,7 @@ public interface QueueFrameView {
      * @param orders
      */
     void setOrdersInQueue(Order[] orders);
+    void setOrdersInPriorityQueue(Order[] orders);
 
 }
 

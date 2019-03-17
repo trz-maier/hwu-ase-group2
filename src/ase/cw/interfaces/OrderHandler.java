@@ -1,4 +1,8 @@
-package ase.cw.model;
+package ase.cw.interfaces;
+
+import ase.cw.interfaces.OrderConsumer;
+import ase.cw.model.Order;
+import ase.cw.model.OrderItem;
 
 /**
  * Created by Thomas on 01.03.2019.
@@ -11,7 +15,7 @@ public interface OrderHandler {
      * @param currentOrder the order which is started
      * @param server       ther Consumer which started the order
      */
-    void orderTaken(Order currentOrder, OrderConsumer server);
+    void orderReceivedByServer(Order currentOrder, OrderConsumer server);
 
     /**
      * Called as soon as a order is finished by an OrderConsumer.

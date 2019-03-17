@@ -3,7 +3,7 @@ package ase.cw.gui;
 import ase.cw.control.OrderController;
 import ase.cw.log.Log;
 import ase.cw.model.Order;
-import ase.cw.model.OrderConsumer;
+import ase.cw.interfaces.OrderConsumer;
 import ase.cw.view.ServerFrameView;
 import javax.swing.*;
 import java.awt.*;
@@ -18,24 +18,26 @@ public class ServerFrame extends JFrame implements ActionListener, ServerFrameVi
     private JTextArea textArea = new JTextArea("");
     private JButton breakButton = new JButton("On-Break");
     private JButton restartButton = new JButton("Restart");
-    private OrderController controller;
     private int serverId;
+    private OrderController oc;
+
 
     // Frame constructor
     public ServerFrame(int id, JFrame parentFrame, OrderController controller) {
         this.serverId = id;
         this.textArea.setEditable(false);
-        this.controller = controller;
+        this.oc = controller;
         this.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("coffee.png")));
         this.setTitle("Server "+serverId);
         this.setName("QueueFrame "+this.getTitle());
         this.setPreferredSize(new Dimension(300, 200));
-        this.setLocation(parentFrame.getX()+parentFrame.getWidth()+(serverId*10), parentFrame.getY()+(serverId*10));
+        this.setLocation(parentFrame.getX()+parentFrame.getWidth()+(id*10), parentFrame.getY()+(id*10));
         this.setResizable(false);
         this.buildFrame();
         this.pack();
         this.setVisible(true);
         this.addWindowListener(new exitButtonPress());
+
 
         Log.getLogger().log("GUI: "+this.getName()+" opened.");
     }
@@ -73,14 +75,14 @@ public class ServerFrame extends JFrame implements ActionListener, ServerFrameVi
             logButtonPress(breakButton);
             breakButton.setEnabled(false);
             restartButton.setEnabled(true);
-            controller.pauseOrderProcess(this.serverId);
+            oc.pauseOrderProcess(this.serverId);
         }
 
         if (e.getSource() == restartButton) {
             logButtonPress(restartButton);
             restartButton.setEnabled(false);
             breakButton.setEnabled(true);
-            controller.restartOrderProcess(this.serverId);
+            oc.restartOrderProcess(this.serverId);
         }
     }
 
@@ -88,12 +90,17 @@ public class ServerFrame extends JFrame implements ActionListener, ServerFrameVi
     public void updateView(OrderConsumer server, Order order) {
         this.textArea.setText(
                 "Status: "+(server.getStatus()
-                        +"\nOrder: "+order.getCustomerId()
+                        +"\nOrder: "+order.getCustomerId()+ (order.isPriorityOrder() ? " (priority)" : "")
                         +"\nItems: "+order.getOrderItems().size()
                         +"\nSubtotal: £"+order.getBill().getSubtotal()
                         +"\nTotal: £"+order.getBill().getTotal()
                 ));
         }
+
+    @Override
+    public void closeFrame() {
+        dispose();
+    }
 
     @Override
     public void updateView(OrderConsumer server) {
@@ -105,7 +112,7 @@ public class ServerFrame extends JFrame implements ActionListener, ServerFrameVi
     private class exitButtonPress extends WindowAdapter {
         public void windowClosing(WindowEvent evt) {
             Log.getLogger().log("GUI: ServerFrame "+serverId+" window close button pressed.");
-            //TODO: stop server thread and dispose of server frame after current order is processed
+            oc.removeServer(oc.getServerById(serverId));
         }
     }
 }

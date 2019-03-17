@@ -1,7 +1,10 @@
 package ase.cw.model;
 
+import ase.cw.interfaces.OrderConsumer;
+import ase.cw.interfaces.OrderHandler;
 import ase.cw.log.Log;
 import ase.cw.utlities.ServerStatusEnum.ServerStatus;
+
 import java.security.InvalidParameterException;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
@@ -16,7 +19,7 @@ public class Server implements OrderConsumer {
 
     private final BlockingQueue<Order> orderQueue;
     private final OrderHandler orderHandler;
-    private int processTime = 1000;
+    private int processTime = 5000;
     private Thread serverThread;
     private String name = "Server";
     private int serverId;
@@ -61,7 +64,7 @@ public class Server implements OrderConsumer {
             if(ssl!=null) {
                 ssl.onServerStatusChange(this);
             }
-            logAction("Status set to "+status);
+            logAction("Status is set to: "+status);
         }
     }
 
@@ -119,13 +122,15 @@ public class Server implements OrderConsumer {
      */
     @Override
     public void stopOrderProcess() {
-        if (serverThread != null) {
-            stopThread = true;
-            serverThread.interrupt();
-            try {
-                serverThread.join();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+        synchronized (serverThread) {
+            if (serverThread != null) {
+                stopThread = true;
+                serverThread.interrupt();
+                try {
+                    serverThread.join();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
@@ -190,7 +195,7 @@ public class Server implements OrderConsumer {
                     throw new java.lang.IllegalStateException("Current order is null");
                 }
                 //Tell listener, we proceed a new order
-                orderHandler.orderTaken(currentOrder, Server.this);
+                orderHandler.orderReceivedByServer(currentOrder, Server.this);
 
                 List<OrderItem> items = currentOrder.getOrderItems();
                 for (OrderItem orderItem : items) {

@@ -1,4 +1,6 @@
 import ase.cw.exceptions.InvalidCustomerIdException;
+import ase.cw.interfaces.OrderConsumer;
+import ase.cw.interfaces.OrderHandler;
 import ase.cw.model.*;
 import org.junit.Test;
 
@@ -115,7 +117,7 @@ public class TestServer {
         }
 
         @Override
-        public void orderTaken(Order currentOrder, OrderConsumer server) {
+        public void orderReceivedByServer(Order currentOrder, OrderConsumer server) {
             synchronized (this){
                 orderstaken++;
             }

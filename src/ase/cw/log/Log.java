@@ -2,6 +2,8 @@ package ase.cw.log;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class Log {
     private static Log logger;
@@ -25,10 +27,13 @@ public class Log {
     }
 
     public void log (String logLine){
-        logString +="\n";
-        logString += logLine;
+
+        logLine = "\n\n" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss"))+ "\n> " + logLine;
         System.out.println(logLine);
+        logString += logLine;
     }
+
+
 
     public void writeToLogFile(){
 
@@ -40,7 +45,6 @@ public class Log {
         catch (FileNotFoundException fe){
             System.out.println(logFileName + " was not found");
         }
-
         catch (IOException ioe){
             ioe.printStackTrace();
         }
