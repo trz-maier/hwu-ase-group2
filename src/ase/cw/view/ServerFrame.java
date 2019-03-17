@@ -1,9 +1,10 @@
-package ase.cw.gui;
+package ase.cw.view;
 
-import ase.cw.control.OrderController;
+import ase.cw.interfaces.OrderConsumer;
+import ase.cw.model.Pausable;
 import ase.cw.log.Log;
 import ase.cw.model.Order;
-import ase.cw.interfaces.OrderConsumer;
+import ase.cw.utlities.ServerStatusEnum;
 import ase.cw.view.ServerFrameView;
 import javax.swing.*;
 import java.awt.*;
@@ -16,17 +17,23 @@ import java.awt.event.*;
 public class ServerFrame extends JFrame implements ActionListener, ServerFrameView {
 
     private JTextArea textArea = new JTextArea("");
+    private JTextArea statusArea = new JTextArea("");
     private JButton breakButton = new JButton("On-Break");
     private JButton restartButton = new JButton("Restart");
+    private Pausable pausable;
     private int serverId;
-    private OrderController oc;
 
+    private int dimHeight=150;
+    private int dimWidth=300;
+    private int gapX = 10;
+    private int gapY = 40;
 
     // Frame constructor
-    public ServerFrame(int id, JFrame parentFrame, OrderController controller) {
+    public ServerFrame(int id, JFrame parentFrame, Pausable pausable) {
         this.serverId = id;
         this.textArea.setEditable(false);
-        this.oc = controller;
+        this.statusArea.setEditable(false);
+        this.pausable = pausable;
         this.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("coffee.png")));
         this.setTitle("Server "+serverId);
         this.setName("QueueFrame "+this.getTitle());
@@ -37,8 +44,7 @@ public class ServerFrame extends JFrame implements ActionListener, ServerFrameVi
         this.pack();
         this.setVisible(true);
         this.addWindowListener(new exitButtonPress());
-
-
+        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         Log.getLogger().log("GUI: "+this.getName()+" opened.");
     }
 
@@ -46,8 +52,11 @@ public class ServerFrame extends JFrame implements ActionListener, ServerFrameVi
         JPanel top = new JPanel(new BorderLayout(5, 5));
         top.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         textArea.setFont(new Font("monospaced", Font.PLAIN, 12));
+        statusArea.setFont(new Font("monospaced", Font.PLAIN, 12));
         textArea.setOpaque(false);
+        statusArea.setOpaque(false);
         top.add(textArea, BorderLayout.CENTER);
+        top.add(statusArea,BorderLayout.NORTH);
         JPanel bottom = new JPanel(new GridLayout(1, 2, 5, 5));
         restartButton.setEnabled(false);
         breakButton.addActionListener(this);
@@ -72,47 +81,63 @@ public class ServerFrame extends JFrame implements ActionListener, ServerFrameVi
     public void actionPerformed(ActionEvent e) {
 
         if (e.getSource() == breakButton) {
-            logButtonPress(breakButton);
-            breakButton.setEnabled(false);
-            restartButton.setEnabled(true);
-            oc.pauseOrderProcess(this.serverId);
+            if(pausable!=null) {
+                logButtonPress(breakButton);
+                breakButton.setEnabled(false);
+                restartButton.setEnabled(true);
+                pausable.pause();
+            }
+
         }
 
         if (e.getSource() == restartButton) {
-            logButtonPress(restartButton);
-            restartButton.setEnabled(false);
-            breakButton.setEnabled(true);
-            oc.restartOrderProcess(this.serverId);
+            if(pausable!=null){
+                logButtonPress(restartButton);
+                restartButton.setEnabled(false);
+                breakButton.setEnabled(true);
+                pausable.unPause();
+            }
         }
     }
 
     @Override
     public void updateView(OrderConsumer server, Order order) {
-        this.textArea.setText(
-                "Status: "+(server.getStatus()
-                        +"\nOrder: "+order.getCustomerId()+ (order.isPriorityOrder() ? " (priority)" : "")
-                        +"\nItems: "+order.getOrderItems().size()
-                        +"\nSubtotal: £"+order.getBill().getSubtotal()
-                        +"\nTotal: £"+order.getBill().getTotal()
-                ));
+
+        this.statusArea.setText("Status: " + (server.getStatus()));
+        if(server.getStatus()== ServerStatusEnum.ServerStatus.STOPPED){
+            this.dispose();
+        } else if (server.getStatus() == ServerStatusEnum.ServerStatus.BUSY && order != null) {
+            this.textArea.setText(
+                             "Order: " + order.getCustomerId()
+                            + "\nItems: " + order.getOrderItems().size()
+                            + "\nSubtotal: £" + order.getBill().getSubtotal()
+                            + "\nTotal: £" + order.getBill().getTotal()
+                    );
+        } else if(server.getStatus()== ServerStatusEnum.ServerStatus.FREE || server.getStatus()== ServerStatusEnum.ServerStatus.PAUSED){
+            this.textArea.setText("");
+        } else {
+
         }
+    }
 
     @Override
     public void closeFrame() {
-        dispose();
+        this.dispose();
     }
+
 
     @Override
     public void updateView(OrderConsumer server) {
-        this.textArea.setText(
-                "Status: "+(server.getStatus()
-                ));
+        updateView(server,null);
     }
+
+
 
     private class exitButtonPress extends WindowAdapter {
         public void windowClosing(WindowEvent evt) {
             Log.getLogger().log("GUI: ServerFrame "+serverId+" window close button pressed.");
-            oc.removeServer(oc.getServerById(serverId));
+            pausable.stop();
+            //TODO: stop server thread and dispose of server frame after current order is processed
         }
     }
 }

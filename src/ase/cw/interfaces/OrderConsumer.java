@@ -9,7 +9,6 @@ public interface OrderConsumer {
 
     String getName();
     ServerStatus getStatus();
-    int getId();
 
     OrderHandler getOrderHandler();
 

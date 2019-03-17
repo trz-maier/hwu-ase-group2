@@ -10,13 +10,11 @@ public class ApplicationCloseTask implements Runnable {
 
     private final OrdersDoneEvent ordersDoneEvent;
     private final Thread producerThread;
-    private final Collection<Server> servers;
     private final BlockingQueue<Order> queue;
 
-    public ApplicationCloseTask(OrdersDoneEvent ordersDoneEvent, Thread producerThread, Collection<Server> servers, BlockingQueue<Order> queue) {
+    public ApplicationCloseTask(OrdersDoneEvent ordersDoneEvent, Thread producerThread, BlockingQueue<Order> queue) {
         this.ordersDoneEvent = ordersDoneEvent;
         this.producerThread = producerThread;
-        this.servers = servers;
         this.queue = queue;
     }
 
