@@ -26,9 +26,10 @@ import java.util.concurrent.ThreadLocalRandom;
 public class OrderController implements OrderProducerListener, ServerStatusListener, OrderHandler, OrdersDoneEvent {
     private static final int EXPECTED_CUSTOMER_ID_LENGTH = 8;
     private static final String ENDLINE = System.lineSeparator();
-    private static final int SERVER_COUNT = 3;
+    private static final int SERVER_COUNT = 2;
     private static final String FILENAME = "Report.txt";
     private static final Log LOGGER = Log.getLogger();
+    private static final int BASE_PROCESSING_TIME = 5000;
 
     private Map<String, Item> stockItems;
     private OrderQueue orderProducer;
@@ -62,8 +63,8 @@ public class OrderController implements OrderProducerListener, ServerStatusListe
         t.start();
 
         //Create Servers
-        for (int counter = 1; counter < SERVER_COUNT + 1; counter++) {
-            this.createServer(counter);
+        for (int i=1; i<SERVER_COUNT+1; i++) {
+            this.addServer();
         }
 
         //Create application close Thread
@@ -113,16 +114,46 @@ public class OrderController implements OrderProducerListener, ServerStatusListe
         onOrderProduced(order);
     }
 
-    private void createServer(int serverId) {
+    public void addServer() {
+        int max = 0;
+        for (Server server : serverList)
+            if (server.getId() > max) {
+                max = server.getId();
+            }
+        int serverId = max+1;
         Server server = new Server(queuedOrders, this, this, serverId);
         server.setName("Server " + serverId);
-        server.setOrderProcessTime(5000);
+        server.setOrderProcessTime(BASE_PROCESSING_TIME);
         serverList.add(server);
         serverFrameViewList.add(new ServerFrame(server.getId(), this.queueFrame, this));
         server.startOrderProcess();
     }
 
-    private Server getServerById(int serverId) {
+    public void removeServer() {
+
+        if (serverList.size()>0) {
+            Server server = serverList.get(serverList.size() - 1);
+            serverList.remove(server);
+            server.stopOrderProcess();
+        }
+        if (serverFrameViewList.size()>0) {
+            ServerFrameView frame = serverFrameViewList.get(serverFrameViewList.size()-1);
+            serverFrameViewList.remove(frame);
+            frame.closeFrame();
+        }
+    }
+
+    public void removeServer(Server server) {
+
+        serverList.remove(server);
+        server.stopOrderProcess();
+
+        ServerFrameView frame = getServerFrameById(server.getId());
+        serverFrameViewList.remove(frame);
+        frame.closeFrame();
+    }
+
+    public Server getServerById(int serverId) {
         Server result = null;
         for (Server server : serverList)
             if (server.getId() == serverId) {
@@ -142,7 +173,7 @@ public class OrderController implements OrderProducerListener, ServerStatusListe
 
     public void setProcessingSpeed(double factor) {
         for (Server server : serverList) {
-            int time = (int) (10000*factor);
+            int time = (int) (BASE_PROCESSING_TIME*factor);
             server.setOrderProcessTime(time);
             orderProducer.setMaxDelayTime(time);
         }

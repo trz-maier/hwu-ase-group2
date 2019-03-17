@@ -7,5 +7,6 @@ public interface ServerFrameView {
     int getServerId();
     void updateView(OrderConsumer server);
     void updateView(OrderConsumer server, Order order);
+    void closeFrame();
 }
 
