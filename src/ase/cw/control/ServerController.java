@@ -2,10 +2,10 @@ package ase.cw.control;
 
 import ase.cw.interfaces.OrderConsumer;
 import ase.cw.interfaces.OrderHandler;
-import ase.cw.utlities.ServerStatusEnum;
-import ase.cw.view.ServerFrame;
 import ase.cw.log.Log;
 import ase.cw.model.*;
+import ase.cw.utlities.ServerStatusEnum;
+import ase.cw.view.ServerFrame;
 
 import javax.swing.*;
 import java.util.Date;
@@ -21,19 +21,16 @@ public class ServerController implements Pausable {
     private final ServerFrame serverFrame;
     private final OrderHandler callback;
 
-    public ServerController(int serverID, JFrame parentFrame, BlockingQueue<Order> orders,OrderHandler handler){
+    public ServerController(int serverID, JFrame parentFrame, BlockingQueue<Order> orders, OrderHandler handler) {
         ServerStatusListener serverStatusListener = new ServerControllerStatusListener();
-        OrderHandler orderHandlerListener = new ServerContollerOrderHandler();
-        this.serverFrame=new ServerFrame(serverID,parentFrame,this);
-        this.server=new Server(orders, orderHandlerListener, serverStatusListener,serverID);
+        OrderHandler orderHandlerListener = new ServerControllerOrderHandler();
+        this.serverFrame = new ServerFrame(serverID, parentFrame, this);
+        this.server = new Server(orders, orderHandlerListener, serverStatusListener, serverID);
         server.setOrderProcessTime(3000);
-        server.setName("Server="+serverID);
+        server.setName("Server=" + serverID);
         server.startOrderProcess();
-        this.callback=handler;
+        this.callback = handler;
     }
-
-
-
 
     @Override
     public void pause() {
@@ -47,20 +44,20 @@ public class ServerController implements Pausable {
 
     @Override
     public void stop() {
-        //since stopOrderProcess is a blocking method, perform this task in a new thread, otherwise we would block the ui.
+        //since stopOrderProcess is a blocking method, perform this task in a new thread, otherwise we would block
+        // the ui.
         Thread t = new Thread(server::stopOrderProcess);
         t.setName("Server close task");
         t.start();
     }
 
-
     public void setOrderProcessTime(int orderProcessTime) {
-        if(orderProcessTime<0) LOGGER.log("orderProcessTime must be greater 0");
+        if (orderProcessTime < 0) LOGGER.log("orderProcessTime must be greater 0");
         this.server.setOrderProcessTime(orderProcessTime);
     }
 
     public boolean isStopped() {
-        return server.getStatus()== ServerStatusEnum.ServerStatus.STOPPED;
+        return server.getStatus() == ServerStatusEnum.ServerStatus.STOPPED;
     }
 
 
@@ -71,7 +68,7 @@ public class ServerController implements Pausable {
         }
     }
 
-    private class ServerContollerOrderHandler implements OrderHandler {
+    private class ServerControllerOrderHandler implements OrderHandler {
         @Override
         public void orderReceivedByServer(Order currentOrder, OrderConsumer server) {
             //Set a timestamp to a order, as soon as the order is taken by a server
@@ -79,7 +76,7 @@ public class ServerController implements Pausable {
             LOGGER.log(server.getName() + ": received order=" + currentOrder.toString());
 
             serverFrame.updateView(server, currentOrder);
-            callback.orderReceivedByServer(currentOrder,server);
+            callback.orderReceivedByServer(currentOrder, server);
         }
 
         @Override
@@ -87,23 +84,23 @@ public class ServerController implements Pausable {
             LOGGER.log(server.getName() + ": finished order=" + currentOrder.toString());
 
             serverFrame.updateView(server, currentOrder);
-            callback.orderFinished(currentOrder,server);
+            callback.orderFinished(currentOrder, server);
         }
 
         @Override
         public void itemFinished(Order currentOrder, OrderItem item, OrderConsumer server) {
             LOGGER.log(server.getName() + ": finished item=" + item.getItem().toString() + " in Order=" + currentOrder.toString());
-            serverFrame.updateView(server, currentOrder);
-            callback.itemFinished(currentOrder,item,server);
 
+            serverFrame.updateView(server, currentOrder);
+            callback.itemFinished(currentOrder, item, server);
         }
 
         @Override
         public void itemTaken(Order currentOrder, OrderItem item, OrderConsumer server) {
             LOGGER.log(server.getName() + ": took item=" + item.getItem().toString() + " in Order=" + currentOrder.toString());
-            serverFrame.updateView(server, currentOrder);
-            callback.itemTaken(currentOrder,item,server);
 
+            serverFrame.updateView(server, currentOrder);
+            callback.itemTaken(currentOrder, item, server);
         }
     }
 }
