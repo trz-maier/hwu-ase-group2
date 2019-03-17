@@ -6,6 +6,7 @@ import ase.cw.utlities.ServerStatusEnum;
 import ase.cw.view.ServerFrame;
 import ase.cw.log.Log;
 import ase.cw.model.*;
+import ase.cw.view.ServerFrameView;
 
 import javax.swing.*;
 import java.util.Date;
@@ -18,7 +19,7 @@ public class ServerController implements Pausable {
 
     private static final Log LOGGER = Log.getLogger();
     private final OrderConsumer server;
-    private final ServerFrame serverFrame;
+    private final ServerFrameView serverFrame;
     private final OrderHandler callback;
 
     public ServerController(int serverID, JFrame parentFrame, BlockingQueue<Order> orders,OrderHandler handler){
