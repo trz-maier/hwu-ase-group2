@@ -309,6 +309,7 @@ public class OrderController implements OrderProducerListener,OrdersDoneEvent, O
     public void orderFinished(Order currentOrder, OrderConsumer server) {
         synchronized (this){
             this.totalOrdersHandled++;
+            this.processedOrders.add(currentOrder);
         }
 
     }
