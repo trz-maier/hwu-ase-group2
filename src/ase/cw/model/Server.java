@@ -60,7 +60,7 @@ public class Server implements OrderConsumer {
         if(shouldStop && status!=ServerStatus.STOPPED){
             newStatus=ServerStatus.TO_BE_STOPPED;
         }
-        else if(shouldPause && status!=ServerStatus.PAUSED) {
+        else if(shouldPause && status!=ServerStatus.PAUSED && status!=ServerStatus.TO_BE_STOPPED && !shouldStop) {
             newStatus=ServerStatus.TO_BE_PAUSED;
         }
 
@@ -219,12 +219,23 @@ public class Server implements OrderConsumer {
                 for (OrderItem orderItem : items) {
                     //Proceed item
                     orderHandler.itemTaken(currentOrder, orderItem, Server.this);
+                    long sleepTime = processTime;
+                    while(true) {
 
-                    try {
-                        Thread.sleep(processTime);
-                    } catch (InterruptedException e) {
-                        //If interrupt happens, we know we should either pause or stop
-                        //If the server should stop, continue finishing the order and then stop
+                        long startSleep = System.currentTimeMillis();
+                        try {
+                            Thread.sleep(sleepTime);
+                            break;
+                        } catch (InterruptedException e) {
+                            updateStatus(serverStatus);
+                            long delta = startSleep-System.currentTimeMillis();
+                            if(sleepTime>=delta)break;
+                            else {
+                                sleepTime = sleepTime-delta;
+                            }
+                            //If interrupt happens, we know we should either pause or stop
+                            //If the server should stop, continue finishing the order and then stop
+                        }
                     }
                     //Item finished after processTime ms
                     orderHandler.itemFinished(currentOrder, orderItem, Server.this);
