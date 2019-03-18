@@ -29,6 +29,7 @@ public class OrderController implements OrderProducerListener, OrdersDoneEvent, 
     private static final Log LOGGER = Log.getLogger();
     private static final int BASE_PROCESSING_TIME = 5000;
 
+    private ThreadLocalRandom randomSeed = ThreadLocalRandom.current();
     private Map<String, Item> stockItems;
     private OrderQueue orderProducer;
     private Vector<Order> loadedOrders = new Vector<>(); // orders loaded from file
@@ -38,6 +39,7 @@ public class OrderController implements OrderProducerListener, OrdersDoneEvent, 
     private QueueFrame queueFrame = new QueueFrame(this);
 
     private int currentServerNumber = 1;
+    private int extraRandomOrdersAdded = 0;
     private boolean applicationClosing = false;
 
     public OrderController() {
@@ -92,17 +94,17 @@ public class OrderController implements OrderProducerListener, OrdersDoneEvent, 
     }
 
     public void addRandomOrder(boolean priority) throws InvalidCustomerIdException {
-        String customerId = "C" + ThreadLocalRandom.current().nextInt(1000000, 9999999);
-        int noOfItems = ThreadLocalRandom.current().nextInt(1, 5);
+        String customerId = "C" + randomSeed.nextInt(1000000, 9999999 + 1);
+        int noOfItems = randomSeed.nextInt(1, 5);
         Order order = new Order(customerId, priority);
-        for (int i = 0; i < noOfItems; i++) {
-            int rIdx = ThreadLocalRandom.current().nextInt(stockItems.size());
-            Object[] keys = stockItems.keySet().toArray();
-            Object key = keys[rIdx];
-            Item item = stockItems.get(key);
+        for (int itemCount = 0; itemCount < noOfItems; itemCount++) {
+            Object[] itemKeys = stockItems.keySet().toArray();
+            int randomIndex = randomSeed.nextInt(0, itemKeys.length);
+            Item item = stockItems.get(itemKeys[randomIndex]);
             order.addOrderItem(item);
         }
         onOrderProduced(order);
+        this.extraRandomOrdersAdded++;
     }
 
     public void addServer() {
@@ -158,19 +160,24 @@ public class OrderController implements OrderProducerListener, OrdersDoneEvent, 
     }
 
     private void updateQueueFrame() {
-        Object[] sortedOrders = queuedOrders.toArray();
+        Order[] sortedOrders = queuedOrders.toArray(new Order[queuedOrders.size()]);
         Arrays.sort(sortedOrders);
 
         List<Order> orders = new Vector<>();
         List<Order> priorityOrders = new Vector<>();
-        for (Object obj : sortedOrders) {
-            Order order= (Order) obj;
+        System.out.printf("queuedOrders size:%s, sortedOrders size:%s\n", queuedOrders.size(), sortedOrders.length);
+        System.out.println("ORDERS CONTAIN");
+        for (Order o : queuedOrders) {
+            System.out.println(o);
+        }
+        for (Order order : sortedOrders) {
             if (order.hasPriority()) {
                 priorityOrders.add(order);
             } else {
                 orders.add(order);
             }
         }
+
         SwingUtilities.invokeLater(() -> {
             queueFrame.setOrdersInQueue(orders.toArray(new Order[orders.size()]));
             queueFrame.setOrdersInPriorityQueue(priorityOrders.toArray(new Order[priorityOrders.size()]));
@@ -196,7 +203,8 @@ public class OrderController implements OrderProducerListener, OrdersDoneEvent, 
                 }
             }
         }
-        LOGGER.log("Orders processed=" + this.processedOrders.size() + ", should be=" + this.loadedOrders.size());
+        LOGGER.log(String.format("Orders processed=%s, should be=%s", this.processedOrders.size(),
+                this.loadedOrders.size() + this.extraRandomOrdersAdded));
         LOGGER.log("All orders produced and queue is empty, stopping servers and generating report...");
 
         //All servers are done, so we can close the application
