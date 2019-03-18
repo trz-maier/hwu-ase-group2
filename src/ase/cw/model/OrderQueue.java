@@ -3,25 +3,25 @@ package ase.cw.model;
 import ase.cw.interfaces.OrderProducerListener;
 
 import java.util.List;
+import java.util.Vector;
 
 
 public class OrderQueue implements Runnable {
 
     private List<Order> loadedOrders;
-    private OrderProducerListener opl;
+    private OrderProducerListener listener;
     private int maxDelayTime = 1000;
     private Thread orderQueueThread;
     private boolean shouldPause = false;
-
-
-
     private String name = "Order Queue";
-//    private boolean shouldStop = false;
 
-    public OrderQueue(List<Order> loadedOrders, OrderProducerListener opl) {
+
+    public OrderQueue(Vector<Order> loadedOrders, OrderProducerListener listener) {
         this.loadedOrders = loadedOrders;
-        this.opl = opl;
+//<<<<<<< HEAD
+//        this.opl = opl;
 
+        this.listener = listener;
             if (orderQueueThread == null) {
                 orderQueueThread = new Thread(this);
                 orderQueueThread.setName(name);
@@ -33,6 +33,9 @@ public class OrderQueue implements Runnable {
 
     public String getName() {
         return name;
+//=======
+//
+//>>>>>>> master
     }
 
     public void setMaxDelayTime(int delay) {
@@ -54,13 +57,13 @@ public class OrderQueue implements Runnable {
             int delay = (int) (Math.random() * maxDelayTime);
             try {
                 Thread.sleep(delay);
-                opl.onOrderProduced(order);
+                listener.onOrderProduced(order);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
-
     }
+
 }
 
     public void pauseOrderProcess(){
@@ -78,6 +81,5 @@ public class OrderQueue implements Runnable {
         }
 
     }
-
 
 }

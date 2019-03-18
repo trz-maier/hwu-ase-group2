@@ -4,6 +4,7 @@ import ase.cw.interfaces.OrderConsumer;
 import ase.cw.interfaces.OrderHandler;
 import ase.cw.log.Log;
 import ase.cw.utlities.ServerStatusEnum.ServerStatus;
+
 import java.security.InvalidParameterException;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
@@ -14,8 +15,7 @@ import java.util.concurrent.BlockingQueue;
  */
 public class Server implements OrderConsumer {
 
-
-
+    private final Log LOGGER = Log.getLogger();
     private final BlockingQueue<Order> orderQueue;
     private final OrderHandler orderHandler;
     private int processTime = 1000;
@@ -26,19 +26,17 @@ public class Server implements OrderConsumer {
     private boolean shouldPause = false;
     private ServerStatus serverStatus;
     private ServerStatusListener ssl;
-
     private ServerStatus rawStatus;
-    public Server(BlockingQueue<Order> queue, OrderHandler orderHandler, ServerStatusListener ssl, int serverId) {
 
+    public Server(BlockingQueue<Order> queue, OrderHandler orderHandler, ServerStatusListener ssl, int serverId) {
         if (queue == null || orderHandler == null)
             throw new InvalidParameterException("OrderQueue and orderHandler must be not null");
         this.orderQueue = queue;
         this.orderHandler = orderHandler;
         this.serverId = serverId;
         this.ssl = ssl;
-        this.serverStatus=ServerStatus.FREE;
+        this.serverStatus = ServerStatus.FREE;
     }
-
 
     @Override
     public String getName() {
@@ -53,33 +51,32 @@ public class Server implements OrderConsumer {
         }
     }
 
-
     private synchronized void updateStatus(ServerStatus status) {
-        this.rawStatus=status;
+        this.rawStatus = status;
         ServerStatus newStatus = status;
-        if(shouldStop && status!=ServerStatus.STOPPED){
-            newStatus=ServerStatus.TO_BE_STOPPED;
-        }
-        else if(shouldPause && status!=ServerStatus.PAUSED && status!=ServerStatus.TO_BE_STOPPED && !shouldStop) {
-            newStatus=ServerStatus.TO_BE_PAUSED;
+        if (shouldStop && status != ServerStatus.STOPPED) {
+            newStatus = ServerStatus.TO_BE_STOPPED;
+        } else if (shouldPause && status != ServerStatus.PAUSED && status != ServerStatus.TO_BE_STOPPED && !shouldStop) {
+            newStatus = ServerStatus.TO_BE_PAUSED;
         }
 
         if (newStatus != serverStatus) {
 
             serverStatus = newStatus;
-            logAction("Status set to "+newStatus);
-            if(ssl!=null) {
+            LOGGER.log("Status set to " + newStatus);
+            if (ssl != null) {
                 ssl.onServerStatusChange(this);
             }
         }
     }
+
     private synchronized void clearStatus() {
         ServerStatus newStatus = rawStatus;
 
-        if((!shouldStop && serverStatus==ServerStatus.TO_BE_STOPPED) || (!shouldPause && serverStatus==ServerStatus.TO_BE_PAUSED) ) {
+        if ((!shouldStop && serverStatus == ServerStatus.TO_BE_STOPPED) || (!shouldPause && serverStatus == ServerStatus.TO_BE_PAUSED)) {
             serverStatus = rawStatus;
-            logAction("Status set to "+newStatus);
-            if(ssl!=null) {
+            LOGGER.log("Status set to " + newStatus);
+            if (ssl != null) {
                 ssl.onServerStatusChange(this);
             }
         }
@@ -93,16 +90,15 @@ public class Server implements OrderConsumer {
         return this.orderHandler;
     }
 
+    @Override
+    public int getOrderProcessTime() {
+        return processTime;
+    }
 
     @Override
     public void setOrderProcessTime(int processTime) {
         if (processTime < 0) throw new InvalidParameterException("Process time must be greater than 0");
         this.processTime = processTime;
-    }
-
-    @Override
-    public int getOrderProcessTime() {
-        return processTime;
     }
 
     @Override
@@ -114,7 +110,6 @@ public class Server implements OrderConsumer {
         } else {
             System.out.println(getName() + "already started");
         }
-
     }
 
     @Override
@@ -128,14 +123,12 @@ public class Server implements OrderConsumer {
 
     @Override
     public void restartOrderProcess() {
-
-        shouldPause=false;
+        shouldPause = false;
         clearStatus();
 
         synchronized (serverThread) {
             serverThread.notify();
         }
-
     }
 
     /**
@@ -158,19 +151,13 @@ public class Server implements OrderConsumer {
 
     @Override
     public String toString() {
-        return "Server{" +
-                "processTime=" + processTime +
-                ", serverThread=" + serverThread +
-                '}';
-    }
-
-    private void logAction(String string) {
-        Log.getLogger().log(this.getName()+": "+string);
+        return "Server{" + "processTime=" + processTime + ", serverThread=" + serverThread + '}';
     }
 
     /**
      * This class is private, so nobody else can use it and create a potential misbehaviour.
-     * If the Server class would implement the Runnable interface, multiple threads(not only the serverThread) could be started out of the same server object.
+     * If the Server class would implement the Runnable interface, multiple threads(not only the serverThread) could
+     * be started out of the same server object.
      * We want to prevent this:
      * Server s = new Server();
      * Thread t1 = new Thread(s);
@@ -182,17 +169,17 @@ public class Server implements OrderConsumer {
         @Override
         public void run() {
             while (!shouldStop) {
-                Order currentOrder=null;
-                boolean takeNextOrder=true;
-                while(takeNextOrder){
+                Order currentOrder = null;
+                boolean takeNextOrder = true;
+                while (takeNextOrder) {
                     try {
                         //Wait forever until an external interruption occurs
                         currentOrder = orderQueue.take();
                         pauseIfneeded();
-                        takeNextOrder=false;
+                        takeNextOrder = false;
                     } catch (InterruptedException e) {
                         //If interrupt happens, we know we should either pause or stop
-                        if(shouldStop) {
+                        if (shouldStop) {
                             //Stop
                             break;
                         } else {
@@ -202,13 +189,13 @@ public class Server implements OrderConsumer {
                         }
                     }
                 }
-                if(shouldStop){
+                if (shouldStop) {
                     break;
                 }
 
                 updateStatus(ServerStatus.BUSY);
 
-                if(currentOrder==null){
+                if (currentOrder == null) {
                     //Should never happen
                     throw new java.lang.IllegalStateException("Current order is null");
                 }
@@ -220,7 +207,7 @@ public class Server implements OrderConsumer {
                     //Proceed item
                     orderHandler.itemTaken(currentOrder, orderItem, Server.this);
                     long sleepTime = processTime;
-                    while(true) {
+                    while (true) {
 
                         long startSleep = System.currentTimeMillis();
                         try {
@@ -228,10 +215,10 @@ public class Server implements OrderConsumer {
                             break;
                         } catch (InterruptedException e) {
                             updateStatus(serverStatus);
-                            long delta = startSleep-System.currentTimeMillis();
-                            if(sleepTime>=delta)break;
+                            long delta = startSleep - System.currentTimeMillis();
+                            if (sleepTime >= delta) break;
                             else {
-                                sleepTime = sleepTime-delta;
+                                sleepTime = sleepTime - delta;
                             }
                             //If interrupt happens, we know we should either pause or stop
                             //If the server should stop, continue finishing the order and then stop
