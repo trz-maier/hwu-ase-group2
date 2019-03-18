@@ -102,7 +102,6 @@ public class OrderController implements OrderProducerListener, OrdersDoneEvent, 
             Item item = stockItems.get(key);
             order.addOrderItem(item);
         }
-        this.loadedOrders.add(order);
         onOrderProduced(order);
     }
 
@@ -159,19 +158,19 @@ public class OrderController implements OrderProducerListener, OrdersDoneEvent, 
     }
 
     private void updateQueueFrame() {
-        Order[] sortedOrders = queuedOrders.toArray(new Order[queuedOrders.size()]);
+        Object[] sortedOrders = queuedOrders.toArray();
         Arrays.sort(sortedOrders);
 
         List<Order> orders = new Vector<>();
         List<Order> priorityOrders = new Vector<>();
-        for (Order order : sortedOrders) {
+        for (Object obj : sortedOrders) {
+            Order order= (Order) obj;
             if (order.hasPriority()) {
                 priorityOrders.add(order);
             } else {
                 orders.add(order);
             }
         }
-
         SwingUtilities.invokeLater(() -> {
             queueFrame.setOrdersInQueue(orders.toArray(new Order[orders.size()]));
             queueFrame.setOrdersInPriorityQueue(priorityOrders.toArray(new Order[priorityOrders.size()]));
