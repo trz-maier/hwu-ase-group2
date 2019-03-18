@@ -18,9 +18,6 @@ public class OrderQueue implements Runnable {
 
     public OrderQueue(Vector<Order> loadedOrders, OrderProducerListener listener) {
         this.loadedOrders = loadedOrders;
-//<<<<<<< HEAD
-//        this.opl = opl;
-
         this.listener = listener;
             if (orderQueueThread == null) {
                 orderQueueThread = new Thread(this);
@@ -33,9 +30,7 @@ public class OrderQueue implements Runnable {
 
     public String getName() {
         return name;
-//=======
-//
-//>>>>>>> master
+
     }
 
     public void setMaxDelayTime(int delay) {

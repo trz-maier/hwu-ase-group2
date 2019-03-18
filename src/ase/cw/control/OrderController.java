@@ -12,17 +12,10 @@ import ase.cw.view.QueueFrame;
 
 import javax.swing.*;
 import java.io.IOException;
-//<<<<<<< HEAD
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-//=======
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
-//>>>>>>> master
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.ThreadLocalRandom;
