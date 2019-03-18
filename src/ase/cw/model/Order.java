@@ -14,15 +14,14 @@ import java.util.List;
  * @author Ram
  */
 public class Order implements Comparable<Order> {
-    private static long counter = 0L;
 
     private String customerId;
     private Date timestamp;
     private List<OrderItem> orderItems;
     private Bill bill;
     private boolean isPriorityOrder;
-    private final long creationOrder;
-    
+    private long creationOrder = 0L;
+
 
     public Order(String customerId) throws InvalidCustomerIdException {
         this(customerId, false);
@@ -33,7 +32,6 @@ public class Order implements Comparable<Order> {
         this.customerId = customerId;
         this.orderItems = new ArrayList<>();
         this.isPriorityOrder = isPriorityOrder;
-        creationOrder = counter++;
     }
 
     public void addOrderItem(Item item) {
@@ -47,6 +45,9 @@ public class Order implements Comparable<Order> {
                 break;
             }
         }
+    }
+    public void setCreationOrder(Long n) {
+        this.creationOrder = n;
     }
 
     /**
@@ -109,7 +110,7 @@ public class Order implements Comparable<Order> {
 
     @Override
     public String toString() {
-        return String.format("Customer: %s, Items: %o", customerId, orderItems.size());
+        return String.format("[%s] Customer: %s, Items: %o", creationOrder, customerId, orderItems.size());
     }
 
     public boolean hasPriority() {
