@@ -160,17 +160,13 @@ public class OrderController implements OrderProducerListener, OrdersDoneEvent, 
     }
 
     private void updateQueueFrame() {
-        Order[] sortedOrders = queuedOrders.toArray(new Order[queuedOrders.size()]);
+        Object[] sortedOrders = queuedOrders.toArray();
         Arrays.sort(sortedOrders);
 
         List<Order> orders = new Vector<>();
         List<Order> priorityOrders = new Vector<>();
-        System.out.printf("queuedOrders size:%s, sortedOrders size:%s\n", queuedOrders.size(), sortedOrders.length);
-        System.out.println("ORDERS CONTAIN");
-        for (Order o : queuedOrders) {
-            System.out.println(o);
-        }
-        for (Order order : sortedOrders) {
+        for (Object obj : sortedOrders) {
+            Order order = (Order) obj;
             if (order.hasPriority()) {
                 priorityOrders.add(order);
             } else {
