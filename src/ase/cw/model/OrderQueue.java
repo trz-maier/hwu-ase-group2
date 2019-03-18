@@ -38,7 +38,7 @@ public class OrderQueue implements Runnable {
             Order order = loadedOrders.get(i);
             try {
                 Thread.sleep(delay);
-                counter++;
+                increaseCounter();
                 order.setCreationOrder(this.counter);
                 listener.onOrderProduced(order);
             } catch (InterruptedException e) {
