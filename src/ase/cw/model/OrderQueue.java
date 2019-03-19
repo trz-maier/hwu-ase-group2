@@ -11,12 +11,16 @@ public class OrderQueue implements Runnable {
     private List<Order> loadedOrders;
     private OrderProducerListener listener;
     private int maxDelayTime = 1000;
+    private Thread currentThread;
+    private boolean shouldPause = false;
 
     private Long counter = 0L;
 
     public OrderQueue(Vector<Order> loadedOrders, OrderProducerListener listener) {
         this.loadedOrders = loadedOrders;
         this.listener = listener;
+
+        currentThread = Thread.currentThread();
     }
 
     public void setMaxDelayTime(int delay) {
@@ -34,6 +38,15 @@ public class OrderQueue implements Runnable {
     @Override
     public void run() {
         for (int i = 0; i < this.loadedOrders.size(); i++) {
+            synchronized (currentThread) {
+                while (shouldPause) {
+                    try {
+                        currentThread.wait();
+                    } catch (InterruptedException e) {
+                    }
+                }
+            }
+
             int delay = (int) (Math.random() * maxDelayTime);
             Order order = loadedOrders.get(i);
             try {
@@ -46,4 +59,17 @@ public class OrderQueue implements Runnable {
             }
         }
     }
+
+    public void pauseOrderProcess() {
+        shouldPause = true;
+    }
+
+    public void restartOrderProcess() {
+        shouldPause = false;
+        synchronized (currentThread) {
+            currentThread.notify();
+        }
+    }
+
+
 }
