@@ -103,6 +103,8 @@ public class OrderController implements OrderProducerListener, OrdersDoneEvent, 
             Item item = stockItems.get(itemKeys[randomIndex]);
             order.addOrderItem(item);
         }
+        orderProducer.increaseCounter();
+        order.setCreationOrder(orderProducer.getCounter());
         onOrderProduced(order);
         this.extraRandomOrdersAdded++;
     }
