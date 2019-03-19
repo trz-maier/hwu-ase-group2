@@ -16,6 +16,8 @@ public class OrderQueue implements Runnable {
     private String name = "Order Queue";
 
 
+    private Long counter = 0L;
+
     public OrderQueue(Vector<Order> loadedOrders, OrderProducerListener listener) {
         this.loadedOrders = loadedOrders;
         this.listener = listener;
@@ -49,9 +51,25 @@ public class OrderQueue implements Runnable {
                     } catch (InterruptedException e) {
                     }
                 }
+
+    public void increaseCounter() {
+        this.counter++;
+    }
+
+    public Long getCounter() {
+        return this.counter;
+    }
+
+    @Override
+    public void run() {
+        for (int i = 0; i < this.loadedOrders.size(); i++) {
+
             int delay = (int) (Math.random() * maxDelayTime);
+            Order order = loadedOrders.get(i);
             try {
                 Thread.sleep(delay);
+                increaseCounter();
+                order.setCreationOrder(this.counter);
                 listener.onOrderProduced(order);
             } catch (InterruptedException e) {
                 e.printStackTrace();
