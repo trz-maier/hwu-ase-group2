@@ -6,10 +6,8 @@ import ase.cw.model.Item;
 import ase.cw.model.Item.Category;
 import ase.cw.model.Order;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
+import java.net.URL;
 import java.security.InvalidParameterException;
 import java.text.ParseException;
 import java.util.*;
@@ -33,7 +31,12 @@ public class FileReader {
     public static Vector<Order> parseOrders(String filename) throws IOException {
         File file = parseFileName(filename);
         Vector<Order> orderList = new Vector<>();
-        BufferedReader br = new BufferedReader(new java.io.FileReader(file));
+    //    InputStream in = FileReader.class.getClass().getResourceAsStream("res/"+filename);
+       URL url =  FileReader.class.getClassLoader().getResource(filename);
+        InputStreamReader inputStream = new InputStreamReader(url.openStream());
+        BufferedReader br = new BufferedReader(inputStream);
+
+     //   BufferedReader br = new BufferedReader(new java.io.FileReader(file));
         Scanner allOrderScanner = null;
 
         try {
@@ -135,9 +138,13 @@ public class FileReader {
      * @throws IllegalArgumentException if UUID,Category is not correctly formatted
      */
     public static TreeMap<String, Item> parseItems(String filename) throws IOException {
-        File file = parseFileName(filename);
         TreeMap<String, Item> items = new TreeMap<String, Item>();
-        BufferedReader br = new BufferedReader(new java.io.FileReader(file));
+
+
+        URL url =  FileReader.class.getClassLoader().getResource(filename);
+        InputStreamReader inputStream = new InputStreamReader(url.openStream());
+        BufferedReader br = new BufferedReader(inputStream);
+
         Scanner allItemsScanner = null;
         try {
             allItemsScanner = new Scanner(br);
@@ -227,11 +234,13 @@ public class FileReader {
      */
     private static File parseFileName(String filename) throws IllegalArgumentException, IOException {
         //Get file from resources folder
-        ClassLoader classLoader = FileReader.class.getClassLoader();
+    /*    ClassLoader classLoader = FileReader.class.getClassLoader();
         File file = null;
+
         java.net.URL url = classLoader.getResource(filename);
         if (url == null) throw new FileNotFoundException("File=" + filename + " does not exist");
         file = new File(classLoader.getResource(filename).getFile());
-        return file;
+        return file;*/
+    return null;
     }
 }
