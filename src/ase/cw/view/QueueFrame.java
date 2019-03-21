@@ -28,7 +28,7 @@ public class QueueFrame extends JFrame implements ActionListener, ChangeListener
     private JButton removeServerButton = new JButton("Remove");
     private JButton addOrderButton = new JButton("Add Order");
     private JButton addOrderPriorityButton = new JButton("Add Priority Order");
-    private JSlider speedSlider = new JSlider(JSlider.HORIZONTAL, 2, 18, 10);
+    private JSlider speedSlider = new JSlider(JSlider.HORIZONTAL, 1, 19, 10);
     private OrderController oc;
 
     // Frame constructor
@@ -67,13 +67,16 @@ public class QueueFrame extends JFrame implements ActionListener, ChangeListener
         removeServerButton.addActionListener(this);
         addOrderButton.addActionListener(this);
         addOrderPriorityButton.addActionListener(this);
-        speedSlider.addChangeListener(this::stateChanged);
+        speedSlider.addChangeListener(this);
+
+        startButton.setEnabled(false);
 
         Hashtable labelTable = new Hashtable();
-        labelTable.put(2, new JLabel("Fast") );
-        labelTable.put(18, new JLabel("Slow") );
+        labelTable.put(19, new JLabel("Fast") );
+        labelTable.put(1, new JLabel("Slow") );
         speedSlider.setLabelTable(labelTable);
         speedSlider.setPaintLabels(true);
+
 
         JPanel top = new JPanel(new BorderLayout(5, 5));
         top.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
@@ -92,7 +95,6 @@ public class QueueFrame extends JFrame implements ActionListener, ChangeListener
 
         JPanel controls3 = new JPanel(new GridLayout(1, 1, 5, 5));
         controls3.setBorder(BorderFactory.createTitledBorder("Speed"));
-        speedSlider.setInverted(true);
         controls3.add(speedSlider);
 
         controls.add(controls1, BorderLayout.PAGE_START);
@@ -138,7 +140,9 @@ public class QueueFrame extends JFrame implements ActionListener, ChangeListener
     @Override
     public void stateChanged(ChangeEvent e) {
         if (e.getSource() == speedSlider) {
-            oc.setProcessingSpeed(speedSlider.getValue()/10.0);
+            if (!speedSlider.getValueIsAdjusting()){
+                oc.setProcessingSpeed((20-speedSlider.getValue())/10.0);
+            }
         }
     }
 
@@ -148,13 +152,19 @@ public class QueueFrame extends JFrame implements ActionListener, ChangeListener
         if (e.getSource() == startButton) {
             logButtonPress(startButton);
             oc.startProcessing();
-            //TODO: this currently has no effect
+            pauseButton.setEnabled(true);
+            startButton.setEnabled(false);
+            addServerButton.setEnabled(true);
+            removeServerButton.setEnabled(true);
         }
 
         if (e.getSource() == pauseButton) {
             logButtonPress(startButton);
             oc.pauseProcessing();
-            //TODO: this currently has no effect
+            pauseButton.setEnabled(false);
+            startButton.setEnabled(true);
+            addServerButton.setEnabled(false);
+            removeServerButton.setEnabled(false);
         }
 
         if (e.getSource() == addServerButton) {
