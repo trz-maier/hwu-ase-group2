@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN" "http://www.w3.org/TR/2001/PR-SVG-20010719/DTD/svg10.dtd">
+<svg width="67cm" height="48cm" viewBox="139 -443 1336 947" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <g>
+    <rect style="fill: #ffffff" x="140.193" y="140" width="337.807" height="95"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="140.193" y="140" width="337.807" height="95"/>
+  </g>
+  <g>
+    <rect style="fill: #ffffff" x="742.351" y="-247.563" width="314.412" height="95"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="742.351" y="-247.563" width="314.412" height="95"/>
+  </g>
+  <g>
+    <rect style="fill: #ffffff" x="1027.49" y="15.8434" width="296.263" height="95"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="1027.49" y="15.8434" width="296.263" height="95"/>
+  </g>
+  <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="1068.33" y="63.3434">
+    <tspan x="1068.33" y="63.3434">Server1: Server</tspan>
+    <tspan x="1068.33" y="79.3434">orderQueue:BlockingQueue&lt;Order&gt;</tspan>
+  </text>
+  <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="1220.26" y="61.8453">
+    <tspan x="1220.26" y="61.8453"></tspan>
+  </text>
+  <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="1063.87" y="27.6776">
+    <tspan x="1063.87" y="27.6776"></tspan>
+  </text>
+  <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="1208.42" y="100.079">
+    <tspan x="1208.42" y="100.079"></tspan>
+  </text>
+  <g>
+    <rect style="fill: #ffffff" x="1029.27" y="139.68" width="291.732" height="95"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="1029.27" y="139.68" width="291.732" height="95"/>
+  </g>
+  <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="1067.84" y="187.18">
+    <tspan x="1067.84" y="187.18">Server2: Server</tspan>
+    <tspan x="1067.84" y="203.18">orderQueue:BlockingQueue&lt;Order&gt;</tspan>
+  </text>
+  <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="1222.04" y="185.681">
+    <tspan x="1222.04" y="185.681"></tspan>
+  </text>
+  <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="1065.65" y="151.514">
+    <tspan x="1065.65" y="151.514"></tspan>
+  </text>
+  <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="1210.2" y="223.915">
+    <tspan x="1210.2" y="223.915"></tspan>
+  </text>
+  <g>
+    <rect style="fill: #ffffff" x="1029.18" y="265.057" width="292.733" height="95"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="1029.18" y="265.057" width="292.733" height="95"/>
+  </g>
+  <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="1068.26" y="312.557">
+    <tspan x="1068.26" y="312.557">Server3: Server</tspan>
+    <tspan x="1068.26" y="328.557">orderQueue : BlockingQueue&lt;Order&gt;</tspan>
+  </text>
+  <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="1221.96" y="311.059">
+    <tspan x="1221.96" y="311.059"></tspan>
+  </text>
+  <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="1065.57" y="276.891">
+    <tspan x="1065.57" y="276.891"></tspan>
+  </text>
+  <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="1210.12" y="349.292">
+    <tspan x="1210.12" y="349.292"></tspan>
+  </text>
+  <g>
+    <rect style="fill: #ffffff" x="1034.14" y="408.093" width="284.137" height="95"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="1034.14" y="408.093" width="284.137" height="95"/>
+  </g>
+  <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="1068.92" y="455.593">
+    <tspan x="1068.92" y="455.593">Server4: Server</tspan>
+    <tspan x="1068.92" y="471.593">orderQueue : BlockingQueue&lt;Order&gt;</tspan>
+  </text>
+  <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="1226.92" y="454.095">
+    <tspan x="1226.92" y="454.095"></tspan>
+  </text>
+  <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="1070.53" y="419.927">
+    <tspan x="1070.53" y="419.927"></tspan>
+  </text>
+  <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="1215.08" y="492.328">
+    <tspan x="1215.08" y="492.328"></tspan>
+  </text>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="373.863" y1="236.002" x2="651.223" y2="443.709"/>
+    <polygon style="fill: #000000" points="657.226,448.204 646.224,446.212 651.223,443.709 652.219,438.208 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="657.226,448.204 646.224,446.212 651.223,443.709 652.219,438.208 "/>
+  </g>
+  <g>
+    <rect style="fill: #ffffff" x="660.113" y="15.2274" width="261.541" height="95"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="660.113" y="15.2274" width="261.541" height="95"/>
+  </g>
+  <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="683.249" y="62.7274">
+    <tspan x="683.249" y="62.7274">ServerController1:ServerController</tspan>
+    <tspan x="683.249" y="78.7274">Server1:Server</tspan>
+    <tspan x="683.249" y="94.7274"></tspan>
+  </text>
+  <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="860.46" y="61.2292">
+    <tspan x="860.46" y="61.2292"></tspan>
+  </text>
+  <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="704.068" y="27.0616">
+    <tspan x="704.068" y="27.0616"></tspan>
+  </text>
+  <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="848.618" y="99.4625">
+    <tspan x="848.618" y="99.4625"></tspan>
+  </text>
+  <g>
+    <rect style="fill: #ffffff" x="661.052" y="139.064" width="261.541" height="95"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="661.052" y="139.064" width="261.541" height="95"/>
+  </g>
+  <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="684.189" y="186.564">
+    <tspan x="684.189" y="186.564">ServerControler2: ServerController</tspan>
+    <tspan x="684.189" y="202.564">Server2:Server</tspan>
+    <tspan x="684.189" y="218.564"></tspan>
+  </text>
+  <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="862.24" y="185.065">
+    <tspan x="862.24" y="185.065"></tspan>
+  </text>
+  <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="705.849" y="150.898">
+    <tspan x="705.849" y="150.898"></tspan>
+  </text>
+  <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="850.398" y="223.299">
+    <tspan x="850.398" y="223.299"></tspan>
+  </text>
+  <g>
+    <rect style="fill: #ffffff" x="660.127" y="264.441" width="261.541" height="95"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="660.127" y="264.441" width="261.541" height="95"/>
+  </g>
+  <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="684.946" y="311.941">
+    <tspan x="684.946" y="311.941">ServerController3: ServerController</tspan>
+    <tspan x="684.946" y="327.941">Server3:Server</tspan>
+    <tspan x="684.946" y="343.941"></tspan>
+  </text>
+  <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="862.156" y="310.443">
+    <tspan x="862.156" y="310.443"></tspan>
+  </text>
+  <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="705.764" y="276.275">
+    <tspan x="705.764" y="276.275"></tspan>
+  </text>
+  <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="850.314" y="348.676">
+    <tspan x="850.314" y="348.676"></tspan>
+  </text>
+  <g>
+    <rect style="fill: #ffffff" x="660.884" y="407.477" width="261.541" height="95"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="660.884" y="407.477" width="261.541" height="95"/>
+  </g>
+  <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="685.702" y="454.977">
+    <tspan x="685.702" y="454.977">ServerControllerN: ServerController</tspan>
+    <tspan x="685.702" y="470.977">ServerN:Server</tspan>
+  </text>
+  <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="867.118" y="453.479">
+    <tspan x="867.118" y="453.479"></tspan>
+  </text>
+  <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="710.726" y="419.311">
+    <tspan x="710.726" y="419.311"></tspan>
+  </text>
+  <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="855.275" y="491.712">
+    <tspan x="855.275" y="491.712"></tspan>
+  </text>
+  <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="790.884" y="62.7274">
+    <tspan x="790.884" y="62.7274"></tspan>
+  </text>
+  <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="790.884" y="62.7274">
+    <tspan x="790.884" y="62.7274"></tspan>
+  </text>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="921.654" y1="62.7274" x2="1017.75" y2="63.2868"/>
+    <polygon style="fill: #000000" points="1025.25,63.3304 1015.22,68.2721 1017.75,63.2868 1015.28,58.2723 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="1025.25,63.3304 1015.22,68.2721 1017.75,63.2868 1015.28,58.2723 "/>
+  </g>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="922.594" y1="186.564" x2="1019.53" y2="187.123"/>
+    <polygon style="fill: #000000" points="1027.03,187.167 1017,192.109 1019.53,187.123 1017.06,182.109 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="1027.03,187.167 1017,192.109 1019.53,187.123 1017.06,182.109 "/>
+  </g>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="921.669" y1="311.941" x2="1019.45" y2="312.501"/>
+    <polygon style="fill: #000000" points="1026.95,312.544 1016.92,317.487 1019.45,312.501 1016.97,307.487 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="1026.95,312.544 1016.92,317.487 1019.45,312.501 1016.97,307.487 "/>
+  </g>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="922.426" y1="454.977" x2="1024.41" y2="455.539"/>
+    <polygon style="fill: #000000" points="1031.91,455.58 1021.88,460.525 1024.41,455.539 1021.93,450.525 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="1031.91,455.58 1021.88,460.525 1024.41,455.539 1021.93,450.525 "/>
+  </g>
+  <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="744.968" y="177.277">
+    <tspan x="744.968" y="177.277"></tspan>
+  </text>
+  <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="739.923" y="179.799">
+    <tspan x="739.923" y="179.799"></tspan>
+  </text>
+  <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="829.899" y="330.529">
+    <tspan x="829.899" y="330.529"></tspan>
+  </text>
+  <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="829.058" y="317.075">
+    <tspan x="829.058" y="317.075"></tspan>
+  </text>
+  <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="790.884" y="62.7274">
+    <tspan x="790.884" y="62.7274"></tspan>
+  </text>
+  <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="790.884" y="62.7274">
+    <tspan x="790.884" y="62.7274"></tspan>
+  </text>
+  <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="884.557" y="459.817">
+    <tspan x="884.557" y="459.817"></tspan>
+  </text>
+  <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="170.091" y="191.213">
+    <tspan x="170.091" y="191.213">ServerListController:List&lt;ServerController&gt;</tspan>
+  </text>
+  <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="1107.41" y="448.19">
+    <tspan x="1107.41" y="448.19"></tspan>
+  </text>
+  <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="744.222" y="445.106">
+    <tspan x="744.222" y="445.106"></tspan>
+  </text>
+  <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="400.31" y="182.16">
+    <tspan x="400.31" y="182.16"></tspan>
+  </text>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="445.918" y1="236.003" x2="650.951" y2="308.688"/>
+    <polygon style="fill: #000000" points="658.02,311.194 646.924,312.565 650.951,308.688 650.265,303.14 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="658.02,311.194 646.924,312.565 650.951,308.688 650.265,303.14 "/>
+  </g>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="478" y1="187.5" x2="651.317" y2="186.613"/>
+    <polygon style="fill: #000000" points="658.816,186.575 648.842,191.626 651.317,186.613 648.791,181.626 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="658.816,186.575 648.842,191.626 651.317,186.613 648.791,181.626 "/>
+  </g>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="445.548" y1="138.997" x2="650.939" y2="65.9883"/>
+    <polygon style="fill: #000000" points="658.006,63.4763 650.258,71.5368 650.939,65.9883 646.909,62.1144 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="658.006,63.4763 650.258,71.5368 650.939,65.9883 646.909,62.1144 "/>
+  </g>
+  <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="752.557" y="-205.949">
+    <tspan x="752.557" y="-205.949">OrderController:OrderController</tspan>
+    <tspan x="752.557" y="-189.949">ServerListController:List&lt;ServerController&gt;</tspan>
+    <tspan x="752.557" y="-173.949">orderQueue: BlockingQueue&lt;Order&gt;</tspan>
+  </text>
+  <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="826.359" y="-197.522">
+    <tspan x="826.359" y="-197.522"></tspan>
+  </text>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="316.755" y1="133.989" x2="742.351" y2="-200.063"/>
+    <polygon style="fill: #000000" points="310.855,138.619 315.634,128.512 316.755,133.989 321.809,136.378 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="310.855,138.619 315.634,128.512 316.755,133.989 321.809,136.378 "/>
+  </g>
+  <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="1030.7" y="-201.727">
+    <tspan x="1030.7" y="-201.727"></tspan>
+  </text>
+  <g>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="1056.76,-200.063 1474.14,-200.063 1474.14,455.593 1328.02,455.593 "/>
+    <polygon style="fill: #000000" points="1320.52,455.593 1330.52,450.593 1328.02,455.593 1330.52,460.593 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="1320.52,455.593 1330.52,450.593 1328.02,455.593 1330.52,460.593 "/>
+  </g>
+  <g>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="1056.76,-200.063 1473.22,-200.063 1473.22,312.557 1331.65,312.557 "/>
+    <polygon style="fill: #000000" points="1324.15,312.557 1334.15,307.557 1331.65,312.557 1334.15,317.557 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="1324.15,312.557 1334.15,307.557 1331.65,312.557 1334.15,317.557 "/>
+  </g>
+  <g>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="1056.76,-200.063 1473.22,-200.063 1473.22,187.18 1330.73,187.18 "/>
+    <polygon style="fill: #000000" points="1323.23,187.18 1333.23,182.18 1330.73,187.18 1333.23,192.18 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="1323.23,187.18 1333.23,182.18 1330.73,187.18 1333.23,192.18 "/>
+  </g>
+  <g>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="1056.76,-200.063 1473.22,-200.063 1473.22,63.3434 1333.48,63.3434 "/>
+    <polygon style="fill: #000000" points="1325.98,63.3434 1335.98,58.3434 1333.48,63.3434 1335.98,68.3434 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="1325.98,63.3434 1335.98,58.3434 1333.48,63.3434 1335.98,68.3434 "/>
+  </g>
+  <g>
+    <rect style="fill: #ffffff" x="742.207" y="-441.063" width="314.412" height="95"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="742.207" y="-441.063" width="314.412" height="95"/>
+  </g>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="899.547" y1="-257.299" x2="899.461" y2="-345.069"/>
+    <polygon style="fill: #000000" points="899.555,-249.799 894.545,-259.794 899.547,-257.299 904.545,-259.804 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="899.555,-249.799 894.545,-259.794 899.547,-257.299 904.545,-259.804 "/>
+  </g>
+  <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="1161.44" y="-275.53">
+    <tspan x="1161.44" y="-275.53"></tspan>
+  </text>
+  <g>
+    <polygon style="fill: #ffffff" points="1028.59,-314.983 1381.09,-314.983 1393.09,-302.983 1393.09,-280.983 1028.59,-280.983 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="1028.59,-314.983 1381.09,-314.983 1393.09,-302.983 1393.09,-280.983 1028.59,-280.983 "/>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" points="1381.09,-314.983 1381.09,-302.983 1393.09,-302.983 "/>
+    <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="1035.59" y="-290.083">
+      <tspan x="1035.59" y="-290.083">A produced order is added into the orderQueue</tspan>
+    </text>
+  </g>
+  <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke-dasharray: 4; stroke: #000000" points="899.413,-346.063 899.413,-297.983 1028.59,-297.983 "/>
+  <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="820.307" y="-395.508">
+    <tspan x="820.307" y="-395.508">OrderProducer:OrderQueue</tspan>
+  </text>
+  <g>
+    <polygon style="fill: #ffffff" points="196.879,330.529 410.779,330.529 422.779,342.529 422.779,364.529 196.879,364.529 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="196.879,330.529 410.779,330.529 422.779,342.529 422.779,364.529 196.879,364.529 "/>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" points="410.779,330.529 410.779,342.529 422.779,342.529 "/>
+    <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="203.879" y="355.429">
+      <tspan x="203.879" y="355.429">The list can have any size </tspan>
+    </text>
+  </g>
+  <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke-dasharray: 4; stroke: #000000" points="309.096,235 309.096,282.765 309.829,282.765 309.829,330.529 "/>
+</svg>

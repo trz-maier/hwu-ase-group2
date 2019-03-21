@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement>ase.cw.control.ServerController</OriginalElement>
+  <nodes>
+    <node x="368.39920634920645" y="962.0">ase.cw.control.ServerController</node>
+    <node x="82.0" y="221.0">ase.cw.view.ServerFrameView</node>
+    <node x="0.0" y="498.0">ase.cw.view.ServerFrame</node>
+    <node x="638.4814285714288" y="366.0">ase.cw.model.Server</node>
+    <node x="761.0" y="232.0">ase.cw.model.ServerStatusListener</node>
+    <node x="532.1314285714287" y="0.0">ase.cw.interfaces.OrderConsumer</node>
+    <node x="388.00000000000006" y="199.0">ase.cw.interfaces.OrderHandler</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="ase.cw.view.ServerFrame" target="ase.cw.interfaces.OrderConsumer">
+      <point x="-71.5" y="-136.0" />
+      <point x="71.5" y="159.0" />
+      <point x="551.2147619047621" y="159.0" />
+      <point x="-95.41666666666663" y="69.5" />
+    </edge>
+    <edge source="ase.cw.control.ServerController" target="ase.cw.view.ServerFrameView">
+      <point x="-65.42857142857144" y="-125.0" />
+      <point x="417.470634920635" y="932.0" />
+      <point x="296.50000000000006" y="932.0" />
+      <point x="71.5" y="36.5" />
+    </edge>
+    <edge source="ase.cw.control.ServerController" target="ase.cw.interfaces.OrderConsumer">
+      <point x="98.14285714285711" y="-125.0" />
+      <point x="581.0420634920636" y="942.0" />
+      <point x="1078.5" y="942.0" />
+      <point x="1078.5" y="159.0" />
+      <point x="742.0480952380954" y="159.0" />
+      <point x="95.41666666666663" y="69.5" />
+    </edge>
+    <edge source="ase.cw.view.ServerFrame" target="ase.cw.view.ServerFrameView">
+      <point x="71.5" y="-136.0" />
+      <point x="214.5" y="341.0" />
+      <point x="153.5" y="341.0" />
+      <point x="-71.5" y="36.5" />
+    </edge>
+    <edge source="ase.cw.control.ServerController" target="ase.cw.model.Server">
+      <point x="32.714285714285666" y="-125.0" />
+      <point x="515.6134920634921" y="922.0" />
+      <point x="769.4814285714288" y="922.0" />
+      <point x="0.0" y="268.0" />
+    </edge>
+    <edge source="ase.cw.model.Server" target="ase.cw.interfaces.OrderHandler">
+      <point x="-104.80000000000001" y="-268.0" />
+      <point x="664.6814285714287" y="341.0" />
+      <point x="608.0" y="341.0" />
+      <point x="44.0" y="58.5" />
+    </edge>
+    <edge source="ase.cw.model.Server" target="ase.cw.model.ServerStatusListener">
+      <point x="52.39999999999998" y="-268.0" />
+      <point x="821.8814285714286" y="341.0" />
+      <point x="812.1666666666667" y="341.0" />
+      <point x="-102.33333333333331" y="25.5" />
+    </edge>
+    <edge source="ase.cw.model.Server" target="ase.cw.interfaces.OrderConsumer">
+      <point x="0.0" y="-268.0" />
+      <point x="769.4814285714288" y="341.0" />
+      <point x="750.5" y="341.0" />
+      <point x="750.5" y="179.0" />
+      <point x="665.7147619047621" y="179.0" />
+      <point x="19.08333333333337" y="69.5" />
+    </edge>
+    <edge source="ase.cw.control.ServerController" target="ase.cw.model.ServerStatusListener">
+      <point x="65.42857142857144" y="-125.0" />
+      <point x="548.3277777777779" y="932.0" />
+      <point x="998.0417460317461" y="932.0" />
+      <point x="998.0417460317461" y="341.0" />
+      <point x="1016.8333333333333" y="341.0" />
+      <point x="102.33333333333326" y="25.5" />
+    </edge>
+    <edge source="ase.cw.control.ServerController" target="ase.cw.view.ServerFrame">
+      <point x="-98.14285714285711" y="-125.0" />
+      <point x="384.75634920634934" y="942.0" />
+      <point x="143.0" y="942.0" />
+      <point x="0.0" y="136.0" />
+    </edge>
+    <edge source="ase.cw.view.ServerFrameView" target="ase.cw.interfaces.OrderConsumer">
+      <point x="0.0" y="-36.5" />
+      <point x="225.0" y="169.0" />
+      <point x="589.3814285714287" y="169.0" />
+      <point x="-57.25" y="69.5" />
+    </edge>
+    <edge source="ase.cw.model.ServerStatusListener" target="ase.cw.interfaces.OrderConsumer">
+      <point x="0.0" y="-25.5" />
+      <point x="914.5" y="169.0" />
+      <point x="703.8814285714287" y="169.0" />
+      <point x="57.25" y="69.5" />
+    </edge>
+    <edge source="ase.cw.interfaces.OrderHandler" target="ase.cw.interfaces.OrderConsumer">
+      <point x="0.0" y="-58.5" />
+      <point x="564.0" y="179.0" />
+      <point x="627.5480952380954" y="179.0" />
+      <point x="-19.08333333333337" y="69.5" />
+    </edge>
+    <edge source="ase.cw.control.ServerController" target="ase.cw.interfaces.OrderHandler">
+      <point x="0.0" y="-125.0" />
+      <point x="482.89920634920645" y="341.0" />
+      <point x="520.0" y="341.0" />
+      <point x="-44.0" y="58.5" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic Group" zoom="0.8" x="817.7271339771339" y="731.0972222222222" />
+  <SelectedNodes>
+    <node>ase.cw.model.Server</node>
+  </SelectedNodes>
+  <Categories>
+    <Category>Fields</Category>
+    <Category>Methods</Category>
+  </Categories>
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>private</VISIBILITY>
+</Diagram>
+
