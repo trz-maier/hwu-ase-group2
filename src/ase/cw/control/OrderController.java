@@ -114,7 +114,10 @@ public class OrderController implements OrderProducerListener, OrdersDoneEvent, 
             if (!applicationClosing) { // If the application is currently closing(if the factory is done and the
                 // queue is empty) it is not allowed to add new servers
                 currentServerNumber = this.serverList.size() + 1;
-                this.serverList.add(new ServerController(currentServerNumber, queueFrame, queuedOrders, this));
+                ServerController sc = new ServerController(currentServerNumber, queueFrame, queuedOrders, this);
+                this.serverList.add(sc);
+                sc.setOrderProcessTime(BASE_PROCESSING_TIME);
+
             }
         }
     }
@@ -143,6 +146,8 @@ public class OrderController implements OrderProducerListener, OrdersDoneEvent, 
     public void startProcessing() {
         for (ServerController serverController : serverList) {
             serverController.unPause();
+            serverController.enableControls(true, false);
+
         }
         orderProducer.restartOrderProcess();
     }
@@ -150,6 +155,7 @@ public class OrderController implements OrderProducerListener, OrdersDoneEvent, 
     public void pauseProcessing() {
         for (ServerController serverController : serverList) {
             serverController.pause();
+            serverController.enableControls(false, false);
         }
         orderProducer.pauseOrderProcess();
     }

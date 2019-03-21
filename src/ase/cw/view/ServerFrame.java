@@ -22,6 +22,7 @@ public class ServerFrame extends JFrame implements ActionListener, ServerFrameVi
     private JButton restartButton = new JButton("Restart");
     private Pausable pausable;
     private int serverId;
+
     // Frame constructor
     public ServerFrame(int id, JFrame parentFrame, Pausable pausable) {
         this.serverId = id;
@@ -109,19 +110,22 @@ public class ServerFrame extends JFrame implements ActionListener, ServerFrameVi
         }
     }
 
-
     @Override
     public void updateView(OrderConsumer server) {
         updateView(server,null);
     }
 
-
+    @Override
+    public void enableControls(boolean pauseButton, boolean returnButton) {
+        breakButton.setEnabled(pauseButton);
+        restartButton.setEnabled(returnButton);
+    }
 
     private class exitButtonPress extends WindowAdapter {
         public void windowClosing(WindowEvent evt) {
             Log.getLogger().log("GUI: ServerFrame "+serverId+" window close button pressed.");
             pausable.stop();
-            //TODO: stop server thread and dispose of server frame after current order is processed
+
         }
     }
 }

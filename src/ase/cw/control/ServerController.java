@@ -33,6 +33,10 @@ public class ServerController implements Pausable {
         this.callback = handler;
     }
 
+    public void enableControls(boolean pauseButton, boolean restartButton){
+        serverFrame.enableControls(pauseButton, restartButton);
+    }
+
     @Override
     public void pause() {
         server.pauseOrderProcess();
@@ -50,11 +54,17 @@ public class ServerController implements Pausable {
         Thread t = new Thread(server::stopOrderProcess);
         t.setName("Server close task");
         t.start();
+        serverFrame.enableControls(false, false);
+        enableControls(false, false);
     }
 
     public void setOrderProcessTime(int orderProcessTime) {
-        if (orderProcessTime < 0) LOGGER.log("orderProcessTime must be greater 0");
-        this.server.setOrderProcessTime(orderProcessTime);
+        int prevTime = server.getOrderProcessTime();
+        if (orderProcessTime < 0) LOGGER.log("Processing time has not been changed as the value must be greater than 0");
+        if (orderProcessTime != prevTime) {
+            LOGGER.log("Processing time set from "+prevTime+" to "+orderProcessTime);
+            server.setOrderProcessTime(orderProcessTime);
+        }
     }
 
     public boolean isStopped() {
