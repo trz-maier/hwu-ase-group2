@@ -141,11 +141,17 @@ public class OrderController implements OrderProducerListener, OrdersDoneEvent, 
     }
 
     public void startProcessing() {
-        // TODO: Implement start processing method
+        for (ServerController serverController : serverList) {
+            serverController.unPause();
+        }
+        orderProducer.restartOrderProcess();
     }
 
     public void pauseProcessing() {
-        // TODO: Implement pause processing method
+        for (ServerController serverController : serverList) {
+            serverController.pause();
+        }
+        orderProducer.pauseOrderProcess();
     }
 
     private void generateReportTo(String filename) {
