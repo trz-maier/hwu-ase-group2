@@ -4,12 +4,13 @@ import ase.cw.control.OrderController;
 import ase.cw.exceptions.InvalidCustomerIdException;
 import ase.cw.log.Log;
 import ase.cw.model.Order;
-import ase.cw.view.QueueFrameView;
+
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Hashtable;
 
 /**
@@ -45,6 +46,7 @@ public class QueueFrame extends JFrame implements ActionListener, ChangeListener
         this.setVisible(true);
         this.oc = oc;
         Log.getLogger().log("GUI: "+this.getName()+" opened.");
+        this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
     }
 
     @Override
