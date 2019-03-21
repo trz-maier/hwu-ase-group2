@@ -10,6 +10,7 @@ public class Log {
     private String logString="";
     private final String logFileName = "log.txt";
     private FileWriter logFileWriter;
+    private static final String ENDLINE = System.lineSeparator();
 
     private Log(){
 
@@ -28,7 +29,7 @@ public class Log {
 
     public void log (String logLine){
 
-        logLine = "\n\n" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss"))+ "\n> " + logLine;
+        logLine = ENDLINE + ENDLINE + LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")) + ENDLINE + "> " + logLine;
         System.out.println(logLine);
         logString += logLine;
     }
