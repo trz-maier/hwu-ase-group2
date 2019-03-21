@@ -44,6 +44,7 @@ public class QueueFrame extends JFrame implements ActionListener, ChangeListener
         this.setLocationRelativeTo(null);
         this.setVisible(true);
         this.oc = oc;
+        this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         Log.getLogger().log("GUI: "+this.getName()+" opened.");
     }
 
